@@ -1,0 +1,18 @@
+node_modules/
+dist/
+
+.env
+.env.*
+!.env.example
+
+coverage/
+*.log
+vite.config.js.timestamp-*.mjs
+
+# Keep the active static dataset, but not timestamped ingestion workspaces.
+data/snapshots/*/
+!data/snapshots/active.json
+
+# Local browser/visual-validation artifacts.
+.chrome-*/
+*-preview.png

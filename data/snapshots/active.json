@@ -1,0 +1,19 @@
+{
+  "snapshotId": "2026-07-28T03-30-49-730Z",
+  "activatedAt": "2026-07-28T03:31:14.234Z",
+  "meta": {
+    "normalizedAt": "2026-07-28T03:31:07.781Z",
+    "counts": {
+      "files": 9159,
+      "sprites": 31726,
+      "crew": 545,
+      "roomGroups": 128,
+      "ships": 423,
+      "items": 2556,
+      "crafts": 143,
+      "missiles": 331,
+      "research": 322,
+      "missions": 354
+    }
+  }
+}

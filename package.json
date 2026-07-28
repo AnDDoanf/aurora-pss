@@ -1,0 +1,41 @@
+{
+  "name": "pss-unified-analytics",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "deploy:pages": "node scripts/build-github-pages.mjs",
+    "preview": "vite preview",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "split-guide": "node scripts/split-guide-content.mjs",
+    "sync-blog-updates": "node scripts/sync-blog-updates.mjs",
+    "sync-guide-assets": "node scripts/sync-topic-assets.mjs",
+    "audit-guide": "node scripts/audit-guide.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.9",
+    "@tanstack/react-virtual": "^3.2.0",
+    "axios": "^1.6.8",
+    "lucide-react": "^0.359.0",
+    "minisearch": "^6.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-router-dom": "^6.22.3",
+    "remark-gfm": "^4.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.5.4",
+    "fast-xml-parser": "^4.3.5",
+    "postcss": "^8.5.23",
+    "sharp": "^0.33.2",
+    "tailwindcss": "^3.4.19",
+    "vite": "^5.2.0"
+  }
+}

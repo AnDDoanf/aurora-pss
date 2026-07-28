@@ -1,0 +1,1246 @@
+{
+  "starSystems": [
+    {
+      "StarSystemId": 1,
+      "StarSystemTitle": "Nullspace void",
+      "StarSystemDescription": "[sounds of soda being poured into a tub of gravel]",
+      "IconSpriteId": 12024,
+      "X": -100,
+      "Y": 100,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt; 5 || userType == 8",
+      "ExplorationDuration": 3600,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 2,
+      "StarSystemTitle": "Arcturus",
+      "StarSystemDescription": "Founded at the height of the first Human Expansion era, the settlement at Arcturus was amongst the first to declare independence from the Federation.",
+      "IconSpriteId": 12035,
+      "X": -19,
+      "Y": -93,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || originalRaceId == 1 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 3,
+      "StarSystemTitle": "Spica",
+      "StarSystemDescription": "A rich and well travelled system, Spica has nonetheless proven an unpopular place to settle, due in no small part to its proximity to Qtarian space.",
+      "IconSpriteId": 12036,
+      "X": -7,
+      "Y": -79,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 4,
+      "StarSystemTitle": "Sirius",
+      "StarSystemDescription": "Once a lively trade hub with a direct route to Sol, this system's hypergate was sabotaged by rebel forces during the Pylon wars.",
+      "IconSpriteId": 12037,
+      "X": 8,
+      "Y": -96,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 5,
+      "StarSystemTitle": "Wolf 359",
+      "StarSystemDescription": "An unremarkable system located conveniently close to Earth, Wolf 359 serves as neutral ground for diplomatic meetings of the three major factions.",
+      "IconSpriteId": 12103,
+      "X": 1,
+      "Y": -54,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 4 || userType == 8",
+      "ExplorationDuration": 120,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 6,
+      "StarSystemTitle": "Discipline",
+      "StarSystemDescription": "Once a simple mining station, the importance of Discipline as a gateway into Federation space has led to the development of a strong Naval presence.",
+      "IconSpriteId": 12038,
+      "X": 41,
+      "Y": -32,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 7,
+      "StarSystemTitle": "Alpha Centauri",
+      "StarSystemDescription": "One of the first extrasolar locations settled by humanity, this system sits on the edge of the brilliant golden nebula known as The Torch of Shax-Reshev.",
+      "IconSpriteId": 12053,
+      "X": 52,
+      "Y": -19,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 8,
+      "StarSystemTitle": "Sol",
+      "StarSystemDescription": "The birthplace of humanity, as well as the headquarters of the Federation.",
+      "IconSpriteId": 12124,
+      "X": 61,
+      "Y": -33,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || originalRaceId == 2 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 9,
+      "StarSystemTitle": "Canopus",
+      "StarSystemDescription": "Although the presence of ancient Qtarian ruins draws occasional interest from archaeological concerns, strong radiation from the nearby star has made it too dangerous and expensive to allow any long-term settlement.",
+      "IconSpriteId": 12055,
+      "X": -48,
+      "Y": -26,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 10,
+      "StarSystemTitle": "Tau Ceti",
+      "StarSystemDescription": "In spite of the dangerous conditions of this highly volcanic system, the Qtarian empire maintains a strong presence here, harvesting rare minerals from the half-molten planetoids.",
+      "IconSpriteId": 12132,
+      "X": -71,
+      "Y": -32,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 11,
+      "StarSystemTitle": "Homeworld",
+      "StarSystemDescription": "The ancient home of the Qtarian race, this world's original name has been lost to the ravages of time.",
+      "IconSpriteId": 12137,
+      "X": -72,
+      "Y": -13,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || originalRaceId == 3 || userType == 8",
+      "ExplorationDuration": 60,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 12,
+      "StarSystemTitle": "Gamma Draconis",
+      "StarSystemDescription": "The home of the long-dead Draconian race. A dull and lifeless desert of a system.",
+      "IconSpriteId": 12190,
+      "X": -3,
+      "Y": -36,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 13,
+      "StarSystemTitle": "LHS 292",
+      "StarSystemDescription": "This system is dominated by crystalline structures of unknown, possibly unknowable composition, which suppress all communications in and out of the area.",
+      "IconSpriteId": 12196,
+      "X": -22,
+      "Y": 4,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 600,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 14,
+      "StarSystemTitle": "Proxima Centauri",
+      "StarSystemDescription": "This dull red dwarf system has little to recommend it, except as a burial ground for the Children of the Torch.",
+      "IconSpriteId": 12200,
+      "X": 38,
+      "Y": -17,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 15,
+      "StarSystemTitle": "Rigel",
+      "StarSystemDescription": "In spite of Rigel's proximity to the Qtarian homeworld, the inhospitable nature of it's ternary star system has discouraged even the incautious Qtarians from thorough exploration.",
+      "IconSpriteId": 12205,
+      "X": -38,
+      "Y": -57,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 360,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 16,
+      "StarSystemTitle": "Fortitude",
+      "StarSystemDescription": "Once an unmanned listening post to watch for extraterrestrial intelligence, Fortitude station now functions as a high-security prison for enemies of the Federation.",
+      "IconSpriteId": 12038,
+      "X": 53,
+      "Y": -61,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 480,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 17,
+      "StarSystemTitle": "Luyten 726-8",
+      "StarSystemDescription": "A binary star system, Lyuten 726-8's orbital period of almost 27 years has consistently been highlighted, to poor effect, by its tourism industry.",
+      "IconSpriteId": 12123,
+      "X": 12,
+      "Y": -44,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 180,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 18,
+      "StarSystemTitle": "Ross 154",
+      "StarSystemDescription": "This star system is one of over a thousand catalogued by ancient American astronomer Frank Elmore Ross in the years leading up to the space age.",
+      "IconSpriteId": 12119,
+      "X": -12,
+      "Y": -59,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 240,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 19,
+      "StarSystemTitle": "Ross 248",
+      "StarSystemDescription": "With only 0.2% of the luminosity of Earth's sun, Ross 248 is one of the few solar bodies that can be safely observed with the naked eye.",
+      "IconSpriteId": 12136,
+      "X": 0,
+      "Y": -44,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 240,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 20,
+      "StarSystemTitle": "Ross 128",
+      "StarSystemDescription": "This dim red star radiates mainly in the infrared band, requiring colonists to undergo experimental eye surgery to let them see in the star's light.",
+      "IconSpriteId": 12134,
+      "X": 22,
+      "Y": -48,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 240,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 21,
+      "StarSystemTitle": "Epsilon Eridani",
+      "StarSystemDescription": "This bright youthful star is orbited by several vast asteroid belts, and sees constant low-key conflicts between the countless mining concerns based here.",
+      "IconSpriteId": 12193,
+      "X": -41,
+      "Y": -69,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 540,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 22,
+      "StarSystemTitle": "Formalhaut",
+      "StarSystemDescription": "Home of the notorious warlord, Admiral 'pops' Rookwood, this system was used by rebel supply trains to circumvent Federation blockades during the pylon wars.",
+      "IconSpriteId": 12207,
+      "X": 28,
+      "Y": -73,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 360,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 23,
+      "StarSystemTitle": "Lacaille 9352",
+      "StarSystemDescription": "The presence of several aeon-old artificial structures in orbit around the systems gas giants has ignited debate amongst scholars for generations. Unfortunately, a century of study has yielded nothing of the artifacts' origins.",
+      "IconSpriteId": 12194,
+      "X": -67,
+      "Y": -85,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 10 || userType == 8",
+      "ExplorationDuration": 540,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 24,
+      "StarSystemTitle": "Gliese 1",
+      "StarSystemDescription": "Prolonged exposure to gamma radiation from the young star has left the otherwise thriving colony of Gliese 1 with high rates of infertility, requiring sustained immigration to maintain the population.",
+      "IconSpriteId": 12122,
+      "X": -34,
+      "Y": 0,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 540,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 25,
+      "StarSystemTitle": "Freyja",
+      "StarSystemDescription": "Isolated by the Pylon wars, Freyja was left to fend for itself against the Qtarian Empire. Now xenophobic and bitter, the colony has cut off all contact to the rest of humanity.",
+      "IconSpriteId": 12110,
+      "X": -59,
+      "Y": -56,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 360,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 26,
+      "StarSystemTitle": "Groombridge 1618",
+      "StarSystemDescription": "This farflung system would likely be an idyllic paradise, if not for the near-constant depredations of Grays, Visiri, and malevolent AIs.",
+      "IconSpriteId": 12107,
+      "X": 39,
+      "Y": -82,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 9 || userType == 8",
+      "ExplorationDuration": 600,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 27,
+      "StarSystemTitle": "Lucifer Lux",
+      "StarSystemDescription": "The point of first contact between Humans and Qtarians during the first Human Expansion Era, this system has been a source of repeated conflict between the two races in subsequent millennia.",
+      "IconSpriteId": 12113,
+      "X": -24,
+      "Y": -64,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 28,
+      "StarSystemTitle": "Betelgeuse",
+      "StarSystemDescription": "This elderly red supergiant is expected to go supernova in the next million or so years. Until then, its solar winds are an important source of hyperspace fuel ingredients.",
+      "IconSpriteId": 12053,
+      "X": -58,
+      "Y": -12,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 29,
+      "StarSystemTitle": "Vega",
+      "StarSystemDescription": "Repeat failed attempts by the Pirate kingdoms to colonize the planets orbiting this blazing white giant have led to rumours that the system is cursed.",
+      "IconSpriteId": 12036,
+      "X": -44,
+      "Y": -86,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 480,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 30,
+      "StarSystemTitle": "Aldebaran",
+      "StarSystemDescription": "Whilst the thermonuclear winds pouring from this dying red giant make colonization all but impossible, many mining outfits brave the violent conditions to harvest the rare minerals found in abundance here.",
+      "IconSpriteId": 12121,
+      "X": 29,
+      "Y": -29,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 360,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 31,
+      "StarSystemTitle": "Antares",
+      "StarSystemDescription": "The main red giant of this binary star system is expected to go supernova any day now. The spacer colonies nearby refute the evidence however, and refuse to evacuate.",
+      "IconSpriteId": 12132,
+      "X": -37,
+      "Y": -22,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 32,
+      "StarSystemTitle": "Alpha Draconis",
+      "StarSystemDescription": "Conspiracy theorists say that lizardmen from this system secretly lurk in human society, plotting their downfall. A ridiculous claim, of course; As any schoolchild can tell you, lizardmen are from Gamma Draconis.",
+      "IconSpriteId": 12133,
+      "X": 25,
+      "Y": -92,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 33,
+      "StarSystemTitle": "Algol",
+      "StarSystemDescription": "Known colloquially as the Demon Star, this ternary star system has done nothing to earn the moniker. Home to several Qtarian factory worlds.",
+      "IconSpriteId": 12140,
+      "X": -56,
+      "Y": -72,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 34,
+      "StarSystemTitle": "Deneb",
+      "StarSystemDescription": "An uninhabited system, Host to several gas giants, and notable primarily for its importance in Visiri migratory patterns.",
+      "IconSpriteId": 12035,
+      "X": 10,
+      "Y": -81,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 35,
+      "StarSystemTitle": "Regulus",
+      "StarSystemDescription": "One of a rare few quadruple star systems capable of supporting life, Regulus was an important stepping stone in the early expansion of the new Qtarian empire.",
+      "IconSpriteId": 12115,
+      "X": -14,
+      "Y": -46,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 180,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 36,
+      "StarSystemTitle": "Capella",
+      "StarSystemDescription": "Whilst the planets of this system show evidence of Qtarian habitation in the distant past, extreme heat from the quadruple stars has made recolonization impractical with current technologies.",
+      "IconSpriteId": 12114,
+      "X": -64,
+      "Y": -3,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 480,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 37,
+      "StarSystemTitle": "Demeter",
+      "StarSystemDescription": "Named for an ancient human deity of agriculture, this system (by pure coincidence) is well suited for growing crops, and supplies much of the Qtarian empire with the food produced here.",
+      "IconSpriteId": 12199,
+      "X": -28,
+      "Y": -49,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 38,
+      "StarSystemTitle": "Lalande 21185",
+      "StarSystemDescription": "Home to one of the oldest human colonies, the vast factory cities of this system serve to arm the entirety of the Federation Navy.",
+      "IconSpriteId": 12104,
+      "X": 48,
+      "Y": -50,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 10 || userType == 8",
+      "ExplorationDuration": 540,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 39,
+      "StarSystemTitle": "Epsilon Aurigae",
+      "StarSystemDescription": "An artificial cloud of unknown provenance enshrouds the bright twin stars of this system, causing regular solar eclipses.",
+      "IconSpriteId": 12105,
+      "X": -28,
+      "Y": -76,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 40,
+      "StarSystemTitle": "Pylon",
+      "StarSystemDescription": "Primary battleground of the eponymous Pylon wars, this war-shattered system serves as the dividing line between the two modern human nations.",
+      "IconSpriteId": 12138,
+      "X": 51,
+      "Y": -74,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 41,
+      "StarSystemTitle": "Eurynome",
+      "StarSystemDescription": "The rich ocean moons of this system's primary gas giant provide clean water and food to the wider galaxy, and have made its inhabitants fabulously wealthy.",
+      "IconSpriteId": 12106,
+      "X": 11,
+      "Y": -69,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 360,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 42,
+      "StarSystemTitle": "Valhalla",
+      "StarSystemDescription": "Home to the Federation's most remote listening station, this system is a frequent point of contention in Federation-Qtarian diplomacy.",
+      "IconSpriteId": 12103,
+      "X": -42,
+      "Y": -14,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 43,
+      "StarSystemTitle": "Whitestar",
+      "StarSystemDescription": "The harsh desert planets of this forbidding system are used as a testing ground for new Federation weaponry, much to the chagrin of those already settled there.",
+      "IconSpriteId": 12037,
+      "X": 64,
+      "Y": -51,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 480,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 44,
+      "StarSystemTitle": "Pilgrimage",
+      "StarSystemDescription": "The settlers of this system live in low-tech religious communes, making or growing what they need. This self-reliance makes them an object of both ridicule and envy to the rest of human society.",
+      "IconSpriteId": 12127,
+      "X": 20,
+      "Y": -64,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 45,
+      "StarSystemTitle": "Tartarus",
+      "StarSystemDescription": "A gloomy realm of grey nebulae and blizzard-wracked tundra worlds, this system produces some of the hardiest warriors in the galaxy.",
+      "IconSpriteId": 12102,
+      "X": -69,
+      "Y": -65,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 9 || userType == 8",
+      "ExplorationDuration": 540,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 46,
+      "StarSystemTitle": "Durendal",
+      "StarSystemDescription": "Artificial satellites of unknown make orbit the planets of this system, broadcasting strange messages in a long-dead tongue.",
+      "IconSpriteId": 12208,
+      "X": -27,
+      "Y": -12,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 8 || userType == 8",
+      "ExplorationDuration": 600,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 47,
+      "StarSystemTitle": "Polaris",
+      "StarSystemDescription": "A wasteland of ruined warships and radioactive rubble. Nothing lives here, nor would it if it could.",
+      "IconSpriteId": 12120,
+      "X": 48,
+      "Y": -86,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 10 || userType == 8",
+      "ExplorationDuration": 600,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 48,
+      "StarSystemTitle": "Pegasus",
+      "StarSystemDescription": "Gigantic amoeba-like lifeforms drift silently between the gas giants orbiting this tiny white star. Kind of disconcerting, if you're being honest.",
+      "IconSpriteId": 12205,
+      "X": -100,
+      "Y": 100,
+      "Z": 0,
+      "RequirementString": "",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 1,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 49,
+      "StarSystemTitle": "Osiris 2",
+      "StarSystemDescription": "Proximity to the galactic core has produced rare and novel compounds on this system's terrestrial bodies.",
+      "IconSpriteId": 12141,
+      "X": -5,
+      "Y": -24,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 6 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 50,
+      "StarSystemTitle": "Discovery",
+      "StarSystemDescription": "Long abandoned by both the Federation and the pirate kingdoms, this tiny outpost is forced to deal with smugglers, slavers, and other dregs of society, in order to stay afloat.",
+      "IconSpriteId": 12024,
+      "X": 32,
+      "Y": -54,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 5 || userType == 8",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 51,
+      "StarSystemTitle": "Ship Graveyard",
+      "StarSystemDescription": "Irregular Electromagnetic pulses from this pulsar have crippled many an unwary deep space explorer, their lifeless ships drifting in the periphery of its orbit.",
+      "IconSpriteId": 12024,
+      "X": -100,
+      "Y": 100,
+      "Z": 0,
+      "RequirementString": "",
+      "ExplorationDuration": 350,
+      "RequirementDescription": "",
+      "Flags": 1,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 52,
+      "StarSystemTitle": "Visiri Spawning Worlds",
+      "StarSystemDescription": "The heat of this young white star has attracted countless billions of the Visiri's insectile broodships. Best not to draw attention to yourself.",
+      "IconSpriteId": 12024,
+      "X": -100,
+      "Y": 100,
+      "Z": 0,
+      "RequirementString": "",
+      "ExplorationDuration": 400,
+      "RequirementDescription": "",
+      "Flags": 1,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 53,
+      "StarSystemTitle": "Golgotha",
+      "StarSystemDescription": "By pure chance, one of this system's moons looks vaguely like a human skull. A popular tourist destination, especially amongst the Pirate kingdoms.",
+      "IconSpriteId": 12117,
+      "X": -4,
+      "Y": -69,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 3 || userType == 8",
+      "ExplorationDuration": 180,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 54,
+      "StarSystemTitle": "Tycho",
+      "StarSystemDescription": "Although no life exists on the searing surface of this system's tectonically active world, the volcanic ashes fetch a high price on farming colonies galaxy-wide.",
+      "IconSpriteId": 12053,
+      "X": -40,
+      "Y": -40,
+      "Z": 0,
+      "RequirementString": "shipLevel &gt;= 7 || userType == 8",
+      "ExplorationDuration": 420,
+      "RequirementDescription": "",
+      "Flags": 0,
+      "BackgroundSpriteId": 0
+    },
+    {
+      "StarSystemId": 55,
+      "StarSystemTitle": "McSystem™",
+      "StarSystemDescription": "A sad but inevitable result of unchecked capitalist power-brokering, this system is governed entirely by competing mega-corporations. A lawless, barely habitable locale.",
+      "IconSpriteId": 12528,
+      "X": -100,
+      "Y": 100,
+      "Z": 0,
+      "RequirementString": "",
+      "ExplorationDuration": 300,
+      "RequirementDescription": "",
+      "Flags": 1,
+      "BackgroundSpriteId": 0
+    }
+  ],
+  "systemLinks": [
+    {
+      "StarSystemLinkId": 1,
+      "FromStarSystemId": 2,
+      "ToStarSystemId": 3,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 2,
+      "FromStarSystemId": 4,
+      "ToStarSystemId": 2,
+      "IsTwoWay": true,
+      "TravelTime": 50
+    },
+    {
+      "StarSystemLinkId": 3,
+      "FromStarSystemId": 3,
+      "ToStarSystemId": 4,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 4,
+      "FromStarSystemId": 3,
+      "ToStarSystemId": 53,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 5,
+      "FromStarSystemId": 6,
+      "ToStarSystemId": 8,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 6,
+      "FromStarSystemId": 8,
+      "ToStarSystemId": 7,
+      "IsTwoWay": true,
+      "TravelTime": 50
+    },
+    {
+      "StarSystemLinkId": 7,
+      "FromStarSystemId": 7,
+      "ToStarSystemId": 6,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 8,
+      "FromStarSystemId": 6,
+      "ToStarSystemId": 17,
+      "IsTwoWay": true,
+      "TravelTime": 300
+    },
+    {
+      "StarSystemLinkId": 9,
+      "FromStarSystemId": 10,
+      "ToStarSystemId": 9,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 10,
+      "FromStarSystemId": 9,
+      "ToStarSystemId": 11,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 11,
+      "FromStarSystemId": 11,
+      "ToStarSystemId": 10,
+      "IsTwoWay": true,
+      "TravelTime": 50
+    },
+    {
+      "StarSystemLinkId": 12,
+      "FromStarSystemId": 9,
+      "ToStarSystemId": 35,
+      "IsTwoWay": true,
+      "TravelTime": 300
+    },
+    {
+      "StarSystemLinkId": 14,
+      "FromStarSystemId": 5,
+      "ToStarSystemId": 35,
+      "IsTwoWay": true,
+      "TravelTime": 400
+    },
+    {
+      "StarSystemLinkId": 15,
+      "FromStarSystemId": 7,
+      "ToStarSystemId": 30,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 16,
+      "FromStarSystemId": 11,
+      "ToStarSystemId": 36,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 17,
+      "FromStarSystemId": 6,
+      "ToStarSystemId": 50,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 18,
+      "FromStarSystemId": 16,
+      "ToStarSystemId": 43,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 19,
+      "FromStarSystemId": 24,
+      "ToStarSystemId": 36,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 20,
+      "FromStarSystemId": 14,
+      "ToStarSystemId": 30,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 21,
+      "FromStarSystemId": 8,
+      "ToStarSystemId": 43,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 22,
+      "FromStarSystemId": 53,
+      "ToStarSystemId": 18,
+      "IsTwoWay": true,
+      "TravelTime": 180
+    },
+    {
+      "StarSystemLinkId": 23,
+      "FromStarSystemId": 18,
+      "ToStarSystemId": 35,
+      "IsTwoWay": true,
+      "TravelTime": 180
+    },
+    {
+      "StarSystemLinkId": 24,
+      "FromStarSystemId": 19,
+      "ToStarSystemId": 35,
+      "IsTwoWay": true,
+      "TravelTime": 180
+    },
+    {
+      "StarSystemLinkId": 25,
+      "FromStarSystemId": 20,
+      "ToStarSystemId": 50,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 26,
+      "FromStarSystemId": 20,
+      "ToStarSystemId": 17,
+      "IsTwoWay": true,
+      "TravelTime": 180
+    },
+    {
+      "StarSystemLinkId": 27,
+      "FromStarSystemId": 4,
+      "ToStarSystemId": 22,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 28,
+      "FromStarSystemId": 40,
+      "ToStarSystemId": 22,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 29,
+      "FromStarSystemId": 50,
+      "ToStarSystemId": 44,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 30,
+      "FromStarSystemId": 22,
+      "ToStarSystemId": 32,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 31,
+      "FromStarSystemId": 4,
+      "ToStarSystemId": 22,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 34,
+      "FromStarSystemId": 12,
+      "ToStarSystemId": 31,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 35,
+      "FromStarSystemId": 12,
+      "ToStarSystemId": 30,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 36,
+      "FromStarSystemId": 33,
+      "ToStarSystemId": 23,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 37,
+      "FromStarSystemId": 29,
+      "ToStarSystemId": 21,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 38,
+      "FromStarSystemId": 30,
+      "ToStarSystemId": 42,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 39,
+      "FromStarSystemId": 25,
+      "ToStarSystemId": 33,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 40,
+      "FromStarSystemId": 29,
+      "ToStarSystemId": 2,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 41,
+      "FromStarSystemId": 10,
+      "ToStarSystemId": 25,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 42,
+      "FromStarSystemId": 3,
+      "ToStarSystemId": 27,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 43,
+      "FromStarSystemId": 25,
+      "ToStarSystemId": 15,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 44,
+      "FromStarSystemId": 27,
+      "ToStarSystemId": 18,
+      "IsTwoWay": true,
+      "TravelTime": 61
+    },
+    {
+      "StarSystemLinkId": 45,
+      "FromStarSystemId": 9,
+      "ToStarSystemId": 31,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 46,
+      "FromStarSystemId": 15,
+      "ToStarSystemId": 37,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 47,
+      "FromStarSystemId": 40,
+      "ToStarSystemId": 26,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 48,
+      "FromStarSystemId": 26,
+      "ToStarSystemId": 47,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 49,
+      "FromStarSystemId": 40,
+      "ToStarSystemId": 16,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 50,
+      "FromStarSystemId": 19,
+      "ToStarSystemId": 17,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 51,
+      "FromStarSystemId": 28,
+      "ToStarSystemId": 31,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 53,
+      "FromStarSystemId": 18,
+      "ToStarSystemId": 27,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 54,
+      "FromStarSystemId": 24,
+      "ToStarSystemId": 46,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 56,
+      "FromStarSystemId": 44,
+      "ToStarSystemId": 22,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 57,
+      "FromStarSystemId": 46,
+      "ToStarSystemId": 13,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 58,
+      "FromStarSystemId": 16,
+      "ToStarSystemId": 38,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 59,
+      "FromStarSystemId": 27,
+      "ToStarSystemId": 39,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 60,
+      "FromStarSystemId": 34,
+      "ToStarSystemId": 41,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 61,
+      "FromStarSystemId": 24,
+      "ToStarSystemId": 42,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 62,
+      "FromStarSystemId": 23,
+      "ToStarSystemId": 45,
+      "IsTwoWay": true,
+      "TravelTime": 30
+    },
+    {
+      "StarSystemLinkId": 63,
+      "FromStarSystemId": 15,
+      "ToStarSystemId": 27,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 64,
+      "FromStarSystemId": 33,
+      "ToStarSystemId": 21,
+      "IsTwoWay": true,
+      "TravelTime": 45
+    },
+    {
+      "StarSystemLinkId": 65,
+      "FromStarSystemId": 41,
+      "ToStarSystemId": 44,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 66,
+      "FromStarSystemId": 12,
+      "ToStarSystemId": 19,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 67,
+      "FromStarSystemId": 53,
+      "ToStarSystemId": 5,
+      "IsTwoWay": true,
+      "TravelTime": 240
+    },
+    {
+      "StarSystemLinkId": 68,
+      "FromStarSystemId": 5,
+      "ToStarSystemId": 20,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 69,
+      "FromStarSystemId": 17,
+      "ToStarSystemId": 5,
+      "IsTwoWay": true,
+      "TravelTime": 240
+    },
+    {
+      "StarSystemLinkId": 70,
+      "FromStarSystemId": 12,
+      "ToStarSystemId": 49,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    },
+    {
+      "StarSystemLinkId": 71,
+      "FromStarSystemId": 25,
+      "ToStarSystemId": 54,
+      "IsTwoWay": true,
+      "TravelTime": 90
+    },
+    {
+      "StarSystemLinkId": 72,
+      "FromStarSystemId": 54,
+      "ToStarSystemId": 37,
+      "IsTwoWay": true,
+      "TravelTime": 60
+    }
+  ],
+  "planets": []
+}

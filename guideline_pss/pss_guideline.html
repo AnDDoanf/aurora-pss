@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>pss_guideline.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="part-1-basic-mechanisms"><strong>PART 1: Basic Mechanisms</strong></h1>
+<h2 id="a-rooms-and-rooms-bonus-stat"><strong>A. Rooms and Room's Bonus Stat</strong></h2>
+<h3 id="i-combat-rooms-vs-non-combat-rooms"><strong>I. Combat Rooms vs. Non-Combat Rooms</strong></h3>
+<p>Understanding rooms is one of the key foundations that influence ship design, AI design, and tactical planning.</p>
+<p>First, you need to distinguish between two types of rooms: combat rooms and non-combat rooms, or rooms with HP and without HP, or rooms that can be targeted and those that cannot. Note that armor, elevators, and tunnels do not fall into either of these two categories.</p>
+<p>Saying that non-combat rooms &quot;cannot be targeted&quot; isn’t entirely accurate, but it’s close. You cannot configure the AI to aim at these rooms, and their defensive stats are too high (80% damage reduction) to make them worthwhile targets. These include all rooms that do not display an HP bar, excluding armor, elevators, and tunnels.</p>
+<p>They are called non-combat rooms because they do not play any role in combat and do not benefit from crew stats.
+There is one exception, which is the BRD room — the Pilot stat of the crew inside it affects your ship’s escape chance.</p>
+<p>In contrast, targetable (combat) rooms:</p>
+<ul>
+<li>Have HP bars</li>
+<li>Have relatively low innate defense and thus need armor support</li>
+<li>Serve specific combat functions</li>
+<li>Are enhanced by the stats of crew members inside</li>
+<li>Are all valid targets for attacks</li>
+</ul>
+<h3 id="ii-rooms-bonus-stat"><strong>II. Room's Bonus Stat</strong></h3>
+<p>Rooms Can Be Buffed — Improving Their Performance — Through Three Sources: Armor, Modules, and the Stats of the Crew Standing in the Room’s Slot.</p>
+<h4 id="1-armor"><strong>1. Armor</strong></h4>
+<ul>
+<li>Armor reduces both system damage and hull damage caused by any destructive force — including guns, cannons, lasers, missiles, etc. — for the room it is attached to.</li>
+<li>Armor reduces the damage taken by crew members standing in the room from external destructive sources.</li>
+<li>Armor also reduces damage caused by enemy boarding crews and fires inside the room.</li>
+<li>Armor does <em>not</em> reduce damage your crew members receive from enemy crew in direct combat inside the room.</li>
+<li>Armor does <em>not</em> reduce EMP effects.</li>
+<li>Armor does <em>not</em> reduce burn duration from fires.</li>
+</ul>
+<p>Damage resistance produced by armors can be calculate as:</p>
+<p>$ Damage Taken = \frac{1}{1+(Combined Armor Stat*0.01)} * Shot Damage $</p>
+<h4 id="2-modules"><strong>2. Modules</strong></h4>
+<p>Currently, there are four types of modules:</p>
+<p><strong>HP Boosters</strong></p>
+<ul>
+<li>Sandbags, bricks, concrete walls, energy barriers</li>
+<li>They absorb damage before the room’s HP is affected.</li>
+<li>They do not absorb damage from armor-piercing missiles or EMP blasts.</li>
+<li>In combat, they are single-use items — once destroyed, they’re gone.</li>
+<li>Crew cannot repair them during battle.</li>
+<li>You can repair them after combat ends.</li>
+</ul>
+<p><strong>Fire Suppression Modules</strong></p>
+<ul>
+<li>They help crew extinguish fires faster.</li>
+<li>They do not put out fires on their own — crew presence is still required.</li>
+<li>They cannot be destroyed and do not need repairs.</li>
+</ul>
+<p><strong>Mines</strong></p>
+<ul>
+<li>They are triggered when enemy crew pass through the room.</li>
+<li>They deal damage to all crew in the room, including your own.</li>
+<li>They do not damage the room itself.</li>
+<li>Like HP boosters, they are single-use during combat, and cannot be repaired by crew.</li>
+<li>You can repair/reload them after combat.</li>
+</ul>
+<p><strong>Recall Beacon</strong></p>
+<ul>
+<li>They immediately teleport friendly crew into the friendly room containing them if the crew is far away and is targeting that room</li>
+<li>They have 1 second cooldown each time they are activated.</li>
+<li>They reset the Crew Action Timers when activated.</li>
+<li>They can be used 1-3 times a battle based on their tier.</li>
+<li>You can repair/reload them after combat.</li>
+</ul>
+<h4 id="3-crew-stats">3. Crew Stats</h4>
+<p>Crew members have two sets of stats, commonly referred to as the left-side stats and the right-side stats.</p>
+<p>The left-side stats do not provide buffs to rooms, so in this post, we will focus on the right-side stats, which include:</p>
+<ul>
+<li>Pilot (PLT)</li>
+<li>Science (SCI)</li>
+<li>Engine (ENG)</li>
+<li>Weapons (WPN)</li>
+</ul>
+<p>Except for the reactor rooms (REA, FRE, PC, CR), the rooms that participate in combat have a support stat, which information tells which room is buffed by which stats from the crew.</p>
+<p>Look at the image below, to see that Shield is buffed by the SCI stat.
+<img src="image.png" alt="alt text"></p>
+<ul>
+<li><strong>PLT</strong> reduce the charge time of every rooms that deploy crafts and increase the attack/repair speed of the crafts. PLT also reduce the charge time of Anti-craft rooms as AA, BT, GDS, etc.</li>
+<li><strong>SCI</strong> reduce the charge time of Shield , Super Laser, Teleport and Anti-Teleport rooms.</li>
+<li><strong>ENG</strong> reduce the charge time of Missle rooms and the evasion regenerate of Engine rooms.</li>
+<li><strong>WPN</strong> increase fire rate of Laser and Cannon rooms.</li>
+</ul>
+
+</body>
+</html>

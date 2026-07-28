@@ -1,0 +1,341 @@
+/* Modern PSS Unified Portal CSS Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+:root {
+  --bg-main: #0c0d21;
+  --bg-card: #151736;
+  --bg-card-header: #1e204c;
+  --bg-input: #1e204c;
+  --border-color: #2e316e;
+  --text-main: #f8fafc;
+  --text-muted: #a5b4fc;
+  --accent-primary: #4a4db5;
+  --accent-primary-hover: #3b3e9a;
+  --accent-cyan: #38bdf8;
+  --accent-purple: #a855f7;
+  --accent-gold: #fbbf24;
+  --font-family: 'Inter', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body.light-mode {
+  --bg-main: #f5f6ff;
+  --bg-card: #ffffff;
+  --bg-card-header: #eef2ff;
+  --bg-input: #ffffff;
+  --border-color: #c7d2fe;
+  --text-main: #0f102b;
+  --text-muted: #4a4db5;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
+}
+
+/* Reduced Border Radius App-Wide */
+.rounded-3xl,
+.rounded-2xl,
+.rounded-xl {
+  border-radius: 8px !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0c0d21;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e316e;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4db5;
+}
+
+/* Light Mode Scrollbar Override */
+html.light ::-webkit-scrollbar-track,
+body.light-mode ::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+
+html.light ::-webkit-scrollbar-thumb,
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 4px !important;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover,
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: #4a4db5 !important;
+}
+
+/* Glassmorphism & Glowing Card Utilities */
+.glass-panel {
+  background: rgba(21, 23, 54, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 77, 181, 0.4);
+}
+
+.glow-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-card:hover {
+  border-color: rgba(74, 77, 181, 0.6);
+  box-shadow: 0 8px 30px rgba(74, 77, 181, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Comprehensive Light Mode Overrides */
+html.light, body.light-mode {
+  background-color: #f5f6ff !important;
+  color: #0f102b !important;
+}
+
+html.light body,
+body.light-mode body {
+  background-color: #f5f6ff !important;
+  color: #0f102b !important;
+}
+
+/* Header Light Mode Overrides */
+html.light header,
+body.light-mode header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f102b !important;
+  box-shadow: 0 2px 10px rgba(74, 77, 181, 0.05) !important;
+}
+
+html.light header .dropdown-item,
+body.light-mode header .dropdown-item {
+  color: #1e204c !important;
+}
+
+html.light header .dropdown-item:hover,
+body.light-mode header .dropdown-item:hover {
+  background-color: #eef2ff !important;
+  color: #4a4db5 !important;
+}
+
+html.light header .dropdown-item:hover *,
+body.light-mode header .dropdown-item:hover * {
+  color: #4a4db5 !important;
+}
+
+html.light header .dropdown-item.bg-indigo-600,
+html.light header .dropdown-item.bg-indigo-600 *,
+body.light-mode header .dropdown-item.bg-indigo-600,
+body.light-mode header .dropdown-item.bg-indigo-600 * {
+  background-color: #4a4db5 !important;
+  color: #ffffff !important;
+}
+
+/* Hero Banner Light Mode Override */
+html.light .hero-banner,
+body.light-mode .hero-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%) !important;
+  border: 1px solid #c7d2fe !important;
+  color: #0f102b !important;
+  box-shadow: 0 4px 20px rgba(74, 77, 181, 0.08) !important;
+}
+
+html.light .hero-banner h1,
+body.light-mode .hero-banner h1 {
+  color: #0f102b !important;
+}
+
+html.light .hero-banner p,
+body.light-mode .hero-banner p {
+  color: #3730a3 !important;
+}
+
+html.light .hero-banner button,
+body.light-mode .hero-banner button {
+  background-color: #ffffff !important;
+  border: 1px solid #c7d2fe !important;
+  color: #1e204c !important;
+}
+
+html.light .hero-banner button *,
+body.light-mode .hero-banner button * {
+  color: #1e204c !important;
+}
+
+/* Page Background */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/40,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/90,
+body.light-mode .bg-slate-950,
+body.light-mode .bg-slate-950\/40,
+body.light-mode .bg-slate-950\/60,
+body.light-mode .bg-slate-950\/80,
+body.light-mode .bg-slate-950\/90 {
+  background-color: #eef2ff !important;
+}
+
+/* Card & Filter Toolbar Containers */
+html.light .bg-slate-900,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/85,
+html.light .bg-slate-900\/90,
+body.light-mode .bg-slate-900,
+body.light-mode .bg-slate-900\/50,
+body.light-mode .bg-slate-900\/60,
+body.light-mode .bg-slate-900\/70,
+body.light-mode .bg-slate-900\/80,
+body.light-mode .bg-slate-900\/85,
+body.light-mode .bg-slate-900\/90 {
+  background-color: #ffffff !important;
+  color: #0f102b !important;
+  box-shadow: 0 2px 10px rgba(74, 77, 181, 0.05) !important;
+}
+
+/* Secondary Button / Box Containers */
+html.light .bg-slate-800,
+html.light .bg-slate-800\/40,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/70,
+html.light .bg-slate-800\/80,
+body.light-mode .bg-slate-800,
+body.light-mode .bg-slate-800\/40,
+body.light-mode .bg-slate-800\/50,
+body.light-mode .bg-slate-800\/60,
+body.light-mode .bg-slate-800\/70,
+body.light-mode .bg-slate-800\/80 {
+  background-color: #eef2ff !important;
+  color: #3730a3 !important;
+}
+
+/* Primary Active Buttons & White Text Preservation */
+html.light .bg-indigo-600,
+html.light .bg-indigo-500,
+html.light .bg-indigo-600 *,
+html.light .bg-indigo-500 *,
+body.light-mode .bg-indigo-600,
+body.light-mode .bg-indigo-500,
+body.light-mode .bg-indigo-600 *,
+body.light-mode .bg-indigo-500 * {
+  background-color: #4a4db5 !important;
+  color: #ffffff !important;
+}
+
+/* Text Colors */
+html.light .text-slate-100,
+body.light-mode .text-slate-100 {
+  color: #0f102b !important;
+}
+
+html.light .text-slate-200,
+body.light-mode .text-slate-200 {
+  color: #1e204c !important;
+}
+
+html.light .text-slate-300,
+html.light .text-slate-400,
+body.light-mode .text-slate-300,
+body.light-mode .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light input,
+html.light select,
+body.light-mode input,
+body.light-mode select {
+  background-color: #ffffff !important;
+  color: #0f102b !important;
+  border-color: #c7d2fe !important;
+}
+
+/* Badge Light Mode Overrides */
+html.light .bg-indigo-950\/60,
+html.light .bg-indigo-950\/80,
+body.light-mode .bg-indigo-950\/60,
+body.light-mode .bg-indigo-950\/80 {
+  background-color: #e0e7ff !important;
+  color: #3730a3 !important;
+}
+
+html.light .bg-sky-950\/80,
+body.light-mode .bg-sky-950\/80 {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+
+html.light .bg-purple-950\/80,
+body.light-mode .bg-purple-950\/80 {
+  background-color: #f3e8ff !important;
+  color: #6b21a8 !important;
+}
+
+html.light .bg-amber-950\/80,
+body.light-mode .bg-amber-950\/80 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+html.light .bg-amber-500\/10,
+body.light-mode .bg-amber-500\/10 {
+  background-color: #fef3c7 !important;
+  color: #b45309 !important;
+  border-color: #fcd34d !important;
+}
+
+html.light .bg-rose-950\/80,
+body.light-mode .bg-rose-950\/80 {
+  background-color: #ffe4e6 !important;
+  color: #9f1239 !important;
+}
+
+html.light .bg-emerald-600,
+html.light .bg-emerald-500,
+body.light-mode .bg-emerald-600,
+body.light-mode .bg-emerald-500 {
+  background-color: #4a4db5 !important;
+  color: #ffffff !important;
+}
+
+html.light .text-emerald-400,
+html.light .text-emerald-500,
+html.light .text-emerald-300,
+body.light-mode .text-emerald-400,
+body.light-mode .text-emerald-500,
+body.light-mode .text-emerald-300 {
+  color: #4a4db5 !important;
+}
