@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-// Use Vite proxy route in browser environment to prevent CORS issues
-const FLEET_DATA_BASE = typeof window !== 'undefined' ? '/api-fleetdata' : 'https://fleetdata.dolores2.xyz';
 const FALLBACK_DIRECT_URL = 'https://fleetdata.dolores2.xyz';
+// The Vite proxy only exists during local development. Production can point
+// VITE_FLEET_DATA_BASE_URL at a CORS-enabled reverse proxy when needed.
+const FLEET_DATA_BASE = import.meta.env.VITE_FLEET_DATA_BASE_URL
+  || (import.meta.env.DEV ? '/api-fleetdata' : FALLBACK_DIRECT_URL);
 
 const requestFleetData = async (path, config = {}) => {
   try {
     return await axios.get(`${FLEET_DATA_BASE}${path}`, config);
   } catch (error) {
+    if (FLEET_DATA_BASE === FALLBACK_DIRECT_URL) throw error;
     return axios.get(`${FALLBACK_DIRECT_URL}${path}`, config);
   }
 };
@@ -73,17 +76,9 @@ const mapAllianceMembers = (users, fleetId, fleetName) =>
 
 export const getRunningCollectionId = async () => {
   try {
-    // 1. Try querying recent tournament collection via proxy or direct endpoint
-    let response;
-    try {
-      response = await axios.get(`${FLEET_DATA_BASE}/collections`, {
-        params: { tournaments_only: true }
-      });
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/collections`, {
-        params: { tournaments_only: true }
-      });
-    }
+    const response = await requestFleetData('/collections', {
+      params: { tournaments_only: true }
+    });
 
     const collections = response.data;
     if (Array.isArray(collections) && collections.length > 0) {
@@ -269,12 +264,9 @@ export const getAllianceTournamentProgression = async (
 
 export const getAllianceDataFromCollection = async (collectionId, fleetId, fleetName) => {
   try {
-    let response;
-    try {
-      response = await axios.get(`${FLEET_DATA_BASE}/collections/${collectionId}/alliances/${fleetId}`);
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/collections/${collectionId}/alliances/${fleetId}`);
-    }
+    const response = await requestFleetData(
+      `/collections/${collectionId}/alliances/${fleetId}`
+    );
 
     const alliance = response.data;
     
@@ -290,12 +282,7 @@ export const getAllianceDataFromCollection = async (collectionId, fleetId, fleet
 
 export const getUserHistory = async (userId) => {
   try {
-    let response;
-    try {
-      response = await axios.get(`${FLEET_DATA_BASE}/userHistory/${userId}`);
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/userHistory/${userId}`);
-    }
+    const response = await requestFleetData(`/userHistory/${userId}`);
 
     if (Array.isArray(response.data)) {
       const historyList = response.data.map(item => {

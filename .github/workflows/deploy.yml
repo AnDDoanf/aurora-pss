@@ -23,9 +23,9 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -71,6 +71,11 @@ jobs:
         run: node scripts/audit-relationships.mjs
 
       - name: Build GitHub Pages artifact
+        env:
+          VITE_PSS_API_BASE_URL: ${{ vars.VITE_PSS_API_BASE_URL }}
+          VITE_FLEET_DATA_BASE_URL: ${{ vars.VITE_FLEET_DATA_BASE_URL }}
+          VITE_REALITY_API_BASE_URL: ${{ vars.VITE_REALITY_API_BASE_URL }}
+          VITE_PIXYSHIP_API_BASE_URL: ${{ vars.VITE_PIXYSHIP_API_BASE_URL }}
         run: npm run deploy:pages -- --base="$PAGES_BASE_PATH" --site-url="$PAGES_SITE_URL"
 
       - name: Upload GitHub Pages artifact

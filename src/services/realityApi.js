@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-const REALITY_NET_BASE = typeof window !== 'undefined'
-  ? '/api-reality'
-  : 'https://pss.reality.net';
+const REALITY_NET_BASE = import.meta.env.VITE_REALITY_API_BASE_URL
+  || (import.meta.env.DEV ? '/api-reality' : 'https://pss.reality.net');
 
 export const runPrestigePathFinder = async (shipName, targetCrew, unownedExclude = '', unownedExtra = '') => {
   try {

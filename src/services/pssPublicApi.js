@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-const PSS_API_BASE = typeof window !== 'undefined' ? '/api-pss' : 'http://api.pixelstarships.com';
-const FALLBACK_DIRECT_URL = 'http://api.pixelstarships.com';
+const FALLBACK_DIRECT_URL = 'https://api.pixelstarships.com';
+const PSS_API_BASE = import.meta.env.VITE_PSS_API_BASE_URL
+  || (import.meta.env.DEV ? '/api-pss' : FALLBACK_DIRECT_URL);
+
+const requestPss = async (path, config = {}) => {
+  try {
+    return await axios.get(`${PSS_API_BASE}${path}`, config);
+  } catch (error) {
+    if (PSS_API_BASE === FALLBACK_DIRECT_URL) throw error;
+    return axios.get(`${FALLBACK_DIRECT_URL}${path}`, config);
+  }
+};
 
 export const getTournamentStatus = (now = new Date()) => {
   const year = now.getUTCFullYear();
@@ -46,16 +56,10 @@ export const getTournamentStatus = (now = new Date()) => {
 
 export const getAllianceRankingsWithDivisions = async (skip = 0, take = 100) => {
   try {
-    let response;
-    try {
-      response = await axios.get(`${PSS_API_BASE}/AllianceService/ListAlliancesByRanking`, {
-        params: { skip, take }
-      });
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/AllianceService/ListAlliancesByRanking`, {
-        params: { skip, take }
-      });
-    }
+    const response = await requestPss(
+      '/AllianceService/ListAlliancesByRanking',
+      { params: { skip, take } }
+    );
 
     const xmlData = typeof response.data === 'string' ? response.data : String(response.data);
     const parser = new DOMParser();
@@ -125,16 +129,10 @@ export const getAllianceRankingsWithDivisions = async (skip = 0, take = 100) => 
 
 export const getDivisionAlliances = async (skip = 0, take = 6) => {
   try {
-    let response;
-    try {
-      response = await axios.get(`${PSS_API_BASE}/AllianceService/ListAlliancesByRanking`, {
-        params: { skip, take }
-      });
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/AllianceService/ListAlliancesByRanking`, {
-        params: { skip, take }
-      });
-    }
+    const response = await requestPss(
+      '/AllianceService/ListAlliancesByRanking',
+      { params: { skip, take } }
+    );
     
     // Parse XML string response from SavySoda PSS API
     const xmlData = typeof response.data === 'string' ? response.data : String(response.data);
@@ -175,16 +173,10 @@ export const getDivisionAlliances = async (skip = 0, take = 6) => {
 
 export const searchUsers = async (searchStr) => {
   try {
-    let response;
-    try {
-      response = await axios.get(`${PSS_API_BASE}/UserService/SearchUsers`, {
-        params: { searchString: searchStr }
-      });
-    } catch (e) {
-      response = await axios.get(`${FALLBACK_DIRECT_URL}/UserService/SearchUsers`, {
-        params: { searchString: searchStr }
-      });
-    }
+    const response = await requestPss(
+      '/UserService/SearchUsers',
+      { params: { searchString: searchStr } }
+    );
 
     const xmlData = typeof response.data === 'string' ? response.data : String(response.data);
     const parser = new DOMParser();
