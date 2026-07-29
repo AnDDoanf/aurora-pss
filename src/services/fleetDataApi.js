@@ -1,12 +1,58 @@
 import axios from 'axios';
 
 const FALLBACK_DIRECT_URL = 'https://fleetdata.dolores2.xyz';
-// The Vite proxy only exists during local development. Production can point
-// VITE_FLEET_DATA_BASE_URL at a CORS-enabled reverse proxy when needed.
-const FLEET_DATA_BASE = import.meta.env.VITE_FLEET_DATA_BASE_URL
+const configuredBase = String(import.meta.env.VITE_FLEET_DATA_BASE_URL || '')
+  .trim()
+  .replace(/\/+$/, '');
+const configuredProxy = String(import.meta.env.VITE_FLEET_DATA_PROXY_URL || '')
+  .trim()
+  .replace(/\/+$/, '');
+const baseIsAppsScript = /script\.google\.com\/macros\/s\//i.test(configuredBase);
+const FLEET_DATA_PROXY_URL = configuredProxy
+  || (baseIsAppsScript ? configuredBase : '');
+const FLEET_DATA_BASE = (baseIsAppsScript ? '' : configuredBase)
   || (import.meta.env.DEV ? '/api-fleetdata' : FALLBACK_DIRECT_URL);
 
+const appsScriptParams = (path, params = {}) => {
+  let match = path.match(/^\/allianceHistory\/(\d+)$/);
+  if (match) {
+    return { ...params, action: 'getAllianceHistory', fleetId: match[1] };
+  }
+
+  match = path.match(/^\/collections\/(\d+)\/alliances\/(\d+)$/);
+  if (match) {
+    return {
+      ...params,
+      action: 'getAlliance',
+      collectionId: match[1],
+      fleetId: match[2]
+    };
+  }
+
+  match = path.match(/^\/userHistory\/(\d+)$/);
+  if (match) {
+    return { ...params, action: 'getUser', userId: match[1] };
+  }
+
+  if (path === '/collections') {
+    return { ...params, action: 'getCollections' };
+  }
+
+  throw new Error(`Unsupported FleetData proxy path: ${path}`);
+};
+
 const requestFleetData = async (path, config = {}) => {
+  if (FLEET_DATA_PROXY_URL) {
+    const response = await axios.get(FLEET_DATA_PROXY_URL, {
+      ...config,
+      params: appsScriptParams(path, config.params)
+    });
+    if (response.data?.error) {
+      throw new Error(response.data.error);
+    }
+    return response;
+  }
+
   try {
     return await axios.get(`${FLEET_DATA_BASE}${path}`, config);
   } catch (error) {

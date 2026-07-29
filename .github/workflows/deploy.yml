@@ -73,6 +73,7 @@ jobs:
       - name: Build GitHub Pages artifact
         env:
           VITE_PSS_API_BASE_URL: ${{ vars.VITE_PSS_API_BASE_URL }}
+          VITE_FLEET_DATA_PROXY_URL: ${{ vars.VITE_FLEET_DATA_PROXY_URL }}
           VITE_FLEET_DATA_BASE_URL: ${{ vars.VITE_FLEET_DATA_BASE_URL }}
           VITE_REALITY_API_BASE_URL: ${{ vars.VITE_REALITY_API_BASE_URL }}
           VITE_PIXYSHIP_API_BASE_URL: ${{ vars.VITE_PIXYSHIP_API_BASE_URL }}
