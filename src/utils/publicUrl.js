@@ -5,7 +5,15 @@ export function publicUrl(path = '') {
     return path;
   }
 
-  return `${BASE_URL}${String(path).replace(/^\/+/, '')}`;
+  const cleanPath = String(path).replace(/^\/+/, '');
+  const cleanBase = BASE_URL.replace(/^\/+|\/+$/g, '');
+
+  if (cleanBase && (cleanPath === cleanBase || cleanPath.startsWith(cleanBase + '/'))) {
+    return '/' + cleanPath;
+  }
+
+  const prefix = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
+  return `${prefix}${cleanPath}`;
 }
 
 export function installBaseAwareFetch() {
