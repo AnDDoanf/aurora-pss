@@ -127,7 +127,37 @@ export function normalizeSnapshot(snapshotDir) {
     raw: c
   }));
 
-  // 3. Rooms
+  // 3. Training programs
+  const trainingRaw = readRaw('TrainingService/ListAllTrainingDesigns2');
+  const trainingCatalog = trainingRaw.map(training => ({
+    id: training.TrainingDesignId,
+    name: training.TrainingName || '',
+    description: training.TrainingDescription || '',
+    rank: training.Rank || 0,
+    mineralCost: training.MineralCost || 0,
+    gasCost: training.GasCost || 0,
+    duration: training.Duration || 0,
+    fatigue: training.Fatigue || 0,
+    roomLevel: training.RequiredRoomLevel || 0,
+    xpChance: training.XpChance || 0,
+    minGuarantee: training.MinimumGuarantee || 0,
+    variableChance: training.VariableChance ?? 0.25,
+    hp: training.HpChance || 0,
+    atk: training.AttackChance || 0,
+    plt: training.PilotChance || 0,
+    rpr: training.RepairChance || 0,
+    wpn: training.WeaponChance || 0,
+    sci: training.ScienceChance || 0,
+    eng: training.EngineChance || 0,
+    sta: training.StaminaChance || 0,
+    abl: training.AbilityChance || 0,
+    prereq: training.RequiredTrainingDesignId || 0,
+    reqResearch: training.RequiredResearchDesignId || 0,
+    spriteId: training.TrainingSpriteId || null,
+    animationStyle: training.TrainingAnimationStyle || ''
+  }));
+
+  // 4. Rooms
   const roomsRaw = readRaw('RoomService/ListRoomDesigns2');
   const roomSpritesRaw = readRaw('RoomDesignSpriteService/ListRoomDesignSprites2');
   const roomActionsRaw = readRaw('RoomService/ListActionTypes2');
@@ -176,7 +206,7 @@ export function normalizeSnapshot(snapshotDir) {
     group.levels.sort((a, b) => a.level - b.level);
   });
 
-  // 4. Ships
+  // 5. Ships
   const shipsRaw = readRaw('ShipService/ListAllShipDesigns2');
   const shipsCatalog = shipsRaw.map(s => ({
     id: s.ShipDesignId,
@@ -195,7 +225,7 @@ export function normalizeSnapshot(snapshotDir) {
     raw: s
   }));
 
-  // 5. Items
+  // 6. Items
   const itemsRaw = readRaw('ItemService/ListItemDesigns2');
   const itemsCatalog = itemsRaw.map(item => ({
     id: item.ItemDesignId,
@@ -212,20 +242,20 @@ export function normalizeSnapshot(snapshotDir) {
     raw: item
   }));
 
-  // 6. Crafts & Missiles
+  // 7. Crafts & Missiles
   const craftsRaw = readRaw('RoomService/ListCraftDesigns');
   const missilesRaw = readRaw('RoomService/ListMissileDesigns');
 
-  // 7. Research & Missions
+  // 8. Research & Missions
   const researchRaw = readRaw('ResearchService/ListAllResearchDesigns2');
   const missionsRaw = readRaw('MissionService/ListAllMissionDesigns4');
 
-  // 8. Galaxy
+  // 9. Galaxy
   const starSystems = readRaw('GalaxyService/ListStarSystems');
   const systemLinks = readRaw('GalaxyService/ListStarSystemLinks');
   const planets = readRaw('GalaxyService/ListPlanets');
 
-  // 9. Collections
+  // 10. Collections
   const collectionsRaw = readRaw('CollectionService/ListAllCollectionDesigns');
   const collectionsCatalog = collectionsRaw.map(col => ({
     id: col.CollectionDesignId,
@@ -254,6 +284,7 @@ export function normalizeSnapshot(snapshotDir) {
   writeJson('files.json', filesMap);
   writeJson('sprites.json', spritesMap);
   writeJson('crew.json', crewCatalog);
+  writeJson('training.json', trainingCatalog);
   writeJson('rooms.json', Object.values(roomGroups));
   writeJson('ships.json', shipsCatalog);
   writeJson('items.json', itemsCatalog);
@@ -270,6 +301,7 @@ export function normalizeSnapshot(snapshotDir) {
       files: Object.keys(filesMap).length,
       sprites: Object.keys(spritesMap).length,
       crew: crewCatalog.length,
+      training: trainingCatalog.length,
       roomGroups: Object.keys(roomGroups).length,
       ships: shipsCatalog.length,
       items: itemsCatalog.length,

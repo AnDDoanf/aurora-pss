@@ -3,7 +3,7 @@ import {
   Activity, AlertTriangle, BarChart3, BatteryCharging, BookOpen, ChevronDown,
   Clock3, Dumbbell, Info, RotateCcw, Search, Sparkles, Target
 } from 'lucide-react';
-import trainingPrograms from '../../../training_designs_parsed.json';
+import fallbackTrainingPrograms from '../../../training_designs_parsed.json';
 import { SEOHead } from '../../components/SEOHead';
 import { useTranslation } from '../../i18n/useTranslation';
 import { publicUrl } from '../../utils/publicUrl';
@@ -559,6 +559,8 @@ export function TrainingTool() {
   const { t, lang } = useTranslation();
   const [crew, setCrew] = useState([]);
   const [instantItems, setInstantItems] = useState([]);
+  const [apiPrograms, setApiPrograms] = useState(fallbackTrainingPrograms);
+  const [programSource, setProgramSource] = useState('fallback');
   const [crewId, setCrewId] = useState('');
   const [target, setTarget] = useState('abl');
   const [training, setTraining] = useState({ ...EMPTY_TRAINING });
@@ -567,20 +569,27 @@ export function TrainingTool() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchJson = (path) => fetch(publicUrl(path)).then((response) => {
+      if (!response.ok) throw new Error(`${path} request failed (${response.status})`);
+      return response.json();
+    });
+
     Promise.all([
-      fetch('/data/active/crew.json').then((response) => {
-        if (!response.ok) throw new Error(`Crew request failed (${response.status})`);
-        return response.json();
-      }),
-      fetch('/data/active/items.json').then((response) => {
-        if (!response.ok) throw new Error(`Items request failed (${response.status})`);
-        return response.json();
+      fetchJson('/data/active/crew.json'),
+      fetchJson('/data/active/items.json'),
+      fetchJson('/data/active/training.json').catch((error) => {
+        console.warn('Using bundled training-design fallback:', error);
+        return null;
       })
     ])
-      .then(([crewData, itemData]) => {
+      .then(([crewData, itemData, trainingData]) => {
         const sorted = [...crewData].sort((a, b) => a.name.localeCompare(b.name));
         setCrew(sorted);
         setInstantItems(itemData.filter((item) => item.itemSubType === 'InstantTraining' && item.raw?.TrainingDesignId));
+        if (Array.isArray(trainingData) && trainingData.length > 0) {
+          setApiPrograms(trainingData);
+          setProgramSource('snapshot');
+        }
         setCrewId(String((sorted.find((item) => item.name === 'Silver Paladin') || sorted[0])?.id ?? ''));
       })
       .catch((error) => console.error('Failed to load crew for training tool:', error))
@@ -596,7 +605,7 @@ export function TrainingTool() {
       // canonical consumable (for example, Super Protein Shake for HP tier 4).
       if (!itemsByTrainingId.has(trainingId)) itemsByTrainingId.set(trainingId, item);
     });
-    return trainingPrograms.map((program) => {
+    return apiPrograms.map((program) => {
       const item = itemsByTrainingId.get(Number(program.id));
       return item ? {
         ...program,
@@ -606,7 +615,7 @@ export function TrainingTool() {
         itemRarity: item.rarity
       } : program;
     });
-  }, [instantItems]);
+  }, [apiPrograms, instantItems]);
   const capacity = getTrainingCapacity(selectedCrew);
   const summary = summarizeTraining(training, capacity);
   const recommendations = useMemo(() => recommendPrograms(programs, target, 'regular', fatigue), [fatigue, programs, target]);
@@ -629,9 +638,14 @@ export function TrainingTool() {
     const newFatigue = Math.min(fatigue + addedFatigue, 100);
 
     const newTraining = { ...training };
+    let remainingCapacity = summary.remaining;
     distribution.forEach((row) => {
+      if (remainingCapacity <= 0) return;
       const minVal = Math.max(0, Math.floor(row.min ?? 0));
-      const maxVal = Math.max(minVal, Math.floor(row.max ?? row.expected ?? 0));
+      const maxVal = Math.min(
+        remainingCapacity,
+        Math.max(minVal, Math.floor(row.max ?? row.expected ?? 0))
+      );
 
       let gain = 0;
       if (maxVal > minVal) {
@@ -643,6 +657,7 @@ export function TrainingTool() {
 
       if (gain > 0) {
         newTraining[row.key] = clampTrainingValue((newTraining[row.key] || 0) + gain, capacity);
+        remainingCapacity -= gain;
       }
     });
 
@@ -665,6 +680,16 @@ export function TrainingTool() {
         <div>
           <h1 className="page-title ">{t('training.pageTitle')}</h1>
           <p className="mt-1 text-xs text-slate-400">{t('training.pageDescription')}</p>
+        </div>
+        <div
+          className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
+            programSource === 'snapshot'
+              ? 'bg-emerald-500/10 text-emerald-300'
+              : 'bg-amber-500/10 text-amber-300'
+          }`}
+          title={programSource === 'snapshot' ? t('training.snapshotSourceHint') : t('training.fallbackSourceHint')}
+        >
+          {programSource === 'snapshot' ? t('training.snapshotSource') : t('training.fallbackSource')} · {programs.length}
         </div>
       </header>
 

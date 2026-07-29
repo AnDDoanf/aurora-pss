@@ -54,7 +54,20 @@
     "catalogSection": "Reference Catalogs",
     "toolsSection": "Combat Tools",
     "craftsMissiles": "Crafts & Missiles",
-    "researchTree": "Research Tech Tree"
+    "researchTree": "Research Tech Tree",
+    "crewCount": "545 crew",
+    "roomCount": "128 room groups",
+    "shipCount": "423 ships",
+    "itemCount": "2,556 items",
+    "ammunitionCount": "474 crafts & missiles",
+    "researchCount": "322 technologies",
+    "trainingEyebrow": "New API-backed tool",
+    "trainingTitle": "Build a better crew",
+    "trainingDescription": "Choose any crew, allocate training points, model fatigue, and compare all current programs and instant consumables.",
+    "openTraining": "Open training calculator",
+    "trainingPrograms": "Programs",
+    "trainableStats": "Stats",
+    "crewDesigns": "Crew"
   },
   "pages": {
     "guide": {
@@ -247,6 +260,10 @@
   "training": {
     "pageTitle": "Crew Training Calculator",
     "pageDescription": "Allocate training points, preview trained stats, and choose the strongest program for your crew.",
+    "snapshotSource": "TrainingService snapshot",
+    "snapshotSourceHint": "Training programs loaded from the latest normalized Pixel Starships API snapshot.",
+    "fallbackSource": "Bundled fallback",
+    "fallbackSourceHint": "The training API snapshot was unavailable, so the last bundled program list is in use.",
     "seoTitle": "Crew Training Calculator | Pixel Starships",
     "seoDescription": "Plan crew training points and compare every PSS training program.",
     "crewDetails": "Crew details",

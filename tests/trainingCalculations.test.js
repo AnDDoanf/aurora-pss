@@ -87,4 +87,29 @@ describe('crew training calculations', () => {
     expect(fresh.find((row) => row.key === 'hp').max).toBeGreaterThan(trained.find((row) => row.key === 'hp').max);
     expect(fresh.find((row) => row.key === 'hp').min).toBe(1);
   });
+
+  it('applies both total and per-stat saturation from the reference model', () => {
+    const focused = { ...program, hp: 12, atk: 0, minGuarantee: 0 };
+    const hpHeavy = calculateTrainingPossibilities(focused, 100, { hp: 50 }, 0, 'hp');
+    const otherHeavy = calculateTrainingPossibilities(focused, 100, { atk: 50 }, 0, 'hp');
+    expect(hpHeavy.find((row) => row.key === 'hp').max).toBe(3);
+    expect(otherHeavy.find((row) => row.key === 'hp').max).toBe(6);
+  });
+
+  it('uses the reference fatigue threshold and Stamina ceiling rule', () => {
+    const hpProgram = { ...program, hp: 4, atk: 0, minGuarantee: 0 };
+    const staProgram = { ...program, hp: 0, sta: 4, minGuarantee: 0 };
+    const threshold = calculateTrainingPossibilities(hpProgram, 100, {}, 25, 'hp');
+    const tiredHp = calculateTrainingPossibilities(hpProgram, 100, {}, 75, 'hp');
+    const tiredSta = calculateTrainingPossibilities(staProgram, 100, {}, 75, 'sta');
+    expect(threshold.find((row) => row.key === 'hp').max).toBe(4);
+    expect(tiredHp.find((row) => row.key === 'hp').max).toBe(1);
+    expect(tiredSta.find((row) => row.key === 'sta').max).toBe(2);
+  });
+
+  it('preserves the API minimum guarantee at full fatigue', () => {
+    const guaranteed = { ...program, hp: 25, atk: 0, minGuarantee: 4 };
+    const result = calculateTrainingPossibilities(guaranteed, 110, {}, 100, 'hp');
+    expect(result.find((row) => row.key === 'hp')).toMatchObject({ min: 4, max: 4 });
+  });
 });

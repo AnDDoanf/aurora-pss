@@ -54,7 +54,20 @@
     "catalogSection": "Thư viện tra cứu",
     "toolsSection": "Công cụ tác chiến",
     "craftsMissiles": "Máy bay và tên lửa",
-    "researchTree": "Cây công nghệ"
+    "researchTree": "Cây công nghệ",
+    "crewCount": "545 crew",
+    "roomCount": "128 nhóm phòng",
+    "shipCount": "423 tàu",
+    "itemCount": "2.556 vật phẩm",
+    "ammunitionCount": "474 máy bay & tên lửa",
+    "researchCount": "322 công nghệ",
+    "trainingEyebrow": "Công cụ mới dùng dữ liệu API",
+    "trainingTitle": "Xây dựng crew tối ưu",
+    "trainingDescription": "Chọn crew, phân bổ điểm huấn luyện, mô phỏng độ mệt và so sánh toàn bộ chương trình cùng vật phẩm dùng ngay.",
+    "openTraining": "Mở công cụ huấn luyện",
+    "trainingPrograms": "Chương trình",
+    "trainableStats": "Chỉ số",
+    "crewDesigns": "Crew"
   },
   "pages": {
     "guide": {
@@ -247,6 +260,10 @@
   "training": {
     "pageTitle": "Công cụ huấn luyện Crew",
     "pageDescription": "Phân bổ điểm huấn luyện, xem trước chỉ số và chọn chương trình tối ưu cho crew.",
+    "snapshotSource": "Bản chụp TrainingService",
+    "snapshotSourceHint": "Chương trình huấn luyện được tải từ bản chụp API Pixel Starships mới nhất đã chuẩn hóa.",
+    "fallbackSource": "Dữ liệu dự phòng",
+    "fallbackSourceHint": "Không tải được bản chụp API huấn luyện nên công cụ đang dùng danh sách tích hợp gần nhất.",
     "seoTitle": "Công cụ Huấn luyện Crew | Pixel Starships",
     "seoDescription": "Tính điểm huấn luyện và tìm chương trình tối ưu cho crew.",
     "crewDetails": "Chọn crew",

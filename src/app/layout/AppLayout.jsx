@@ -51,7 +51,7 @@ export function AppLayout() {
         theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
       }`}>
         <main className="flex-1 w-full mx-auto px-4 py-4">
-          <Outlet />
+          <Outlet context={{ onOpenSearch: () => setIsSearchOpen(true) }} />
         </main>
       </div>
     );
@@ -77,7 +77,7 @@ export function AppLayout() {
       <main className={`flex-1 max-w-[1600px] w-full min-w-0 mx-auto px-3 sm:px-6 lg:px-8 ${
         isTrainingTool ? 'py-4 sm:py-6 xl:h-[calc(100dvh-7.75rem)] xl:flex-none xl:overflow-hidden' : 'py-4 sm:py-6'
       }`}>
-        <Outlet />
+        <Outlet context={{ onOpenSearch: () => setIsSearchOpen(true) }} />
       </main>
 
       <Footer />
