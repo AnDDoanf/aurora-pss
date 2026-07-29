@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Award } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
+import { publicUrl } from '../../utils/publicUrl';
 
 const getTechnicalPerkDescription = (col) => {
   const triggerMap = {
@@ -39,7 +40,12 @@ const getTechnicalPerkDescription = (col) => {
     ReduceRoomStatusSkill: 'reduce negative status effect duration on rooms',
     CloakAttack: 'apply cloaking effect',
     MoveSpeedBoost: 'increase crew movement speed',
-    Repair: 'increase Repair skill'
+    Repair: 'increase Repair skill',
+    BonusDamageSkill: 'boost bonus damage dealt',
+    ShieldRepairSkill: 'restore ship shield',
+    CriticalStunSkill: 'stun target enemy crew',
+    CriticalPoisonSkill: 'apply poison to target enemy crew',
+    FireWalkSkill: 'ignite room with fire walk'
   };
 
   const trigger = triggerMap[col.TriggerType] || col.TriggerType || 'On trigger';
@@ -59,11 +65,28 @@ const getTechnicalPerkDescription = (col) => {
 export function CollectionCatalog() {
   const { lang } = useParams();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [crewList, setCrewList] = useState([]);
   const [collectionsList, setCollectionsList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeIframeCrewId, setActiveIframeCrewId] = useState(null);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setActiveIframeCrewId(null);
+    };
+    const handleMessage = (e) => {
+      if (e.data && e.data.type === 'OPEN_CREW_MODAL' && e.data.crewId) {
+        setActiveIframeCrewId(e.data.crewId);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -127,7 +150,6 @@ export function CollectionCatalog() {
               </div>
             </div>
 
-            {/* Scaling Combo Levels */}
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Perk Level Scaling</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
@@ -161,14 +183,13 @@ export function CollectionCatalog() {
               </div>
             </div>
 
-            {/* Roster crew list with profile sprites */}
             <div className="space-y-2 pt-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Roster Members</span>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {col.members.map(m => (
                   <div 
                     key={m.id} 
-                    onClick={() => navigate(`/${lang}/library/crew/${m.id}`)}
+                    onClick={() => setActiveIframeCrewId(m.id)}
                     className="flex items-center space-x-2 p-2 rounded-lg bg-slate-950 hover:bg-slate-950/80 text-xs cursor-pointer transition-all hover:scale-[1.01] group min-w-0"
                   >
                     <SpriteFrame spriteId={m.profileSpriteId} alt={m.name} size="sm" borderless className="bg-slate-900 shrink-0" />
@@ -183,6 +204,31 @@ export function CollectionCatalog() {
           </div>
         ))}
       </div>
+
+      {activeIframeCrewId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-sm sm:p-6">
+          <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl sm:h-[85vh]">
+            <div className="flex items-center justify-between gap-2 bg-slate-950/60 px-3 py-3 sm:px-6 sm:py-4">
+              <span className="min-w-0 truncate text-xs font-bold text-slate-400 font-mono tracking-wider">Crew Profile Preview</span>
+              <button 
+                onClick={() => setActiveIframeCrewId(null)}
+                className="text-xs font-mono font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
+              >
+                Close (ESC)
+              </button>
+            </div>
+            <div className="flex-1 w-full bg-slate-950 relative">
+              <iframe
+                src={publicUrl(
+                  `/${lang}/library/crew/${activeIframeCrewId}?embed=true`
+                )}
+                title="Crew Profile Details"
+                className="w-full h-full border-0 absolute inset-0"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

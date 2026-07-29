@@ -718,14 +718,20 @@ body.light-mode .bg-rose-950\/80 {
 html.light .bg-rose-950\/60:hover,
 body.light-mode .bg-rose-950\/60:hover,
 html.light .bg-rose-900:hover,
-body.light-mode .bg-rose-900:hover {
-  background-color: #fecdd3 !important;
-  color: #be123c !important;
+/* Range Slider Input Track in Light Mode */
+html.light input[type="range"],
+body.light-mode input[type="range"] {
+  background-color: #cbd5e1 !important;
 }
 
-html.light .text-rose-300,
-body.light-mode .text-rose-300,
-html.light .text-rose-400,
-body.light-mode .text-rose-400 {
-  color: #e11d48 !important;
+html.light input[type="range"]::-webkit-slider-runnable-track,
+body.light-mode input[type="range"]::-webkit-slider-runnable-track {
+  background-color: #cbd5e1 !important;
+  border-radius: 9999px;
+}
+
+html.light input[type="range"]::-moz-range-track,
+body.light-mode input[type="range"]::-moz-range-track {
+  background-color: #cbd5e1 !important;
+  border-radius: 9999px;
 }

@@ -118,8 +118,17 @@ export function CrewCatalog() {
     const handleEsc = (e) => {
       if (e.key === 'Escape') setActiveIframeCrewId(null);
     };
+    const handleMessage = (e) => {
+      if (e.data && e.data.type === 'OPEN_CREW_MODAL' && e.data.crewId) {
+        setActiveIframeCrewId(e.data.crewId);
+      }
+    };
     window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   useEffect(() => {
@@ -376,14 +385,14 @@ export function CrewCatalog() {
       {/* Embedded Crew Details Iframe Dialog Modal */}
       {activeIframeCrewId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-sm sm:p-6">
-          <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl sm:h-[85vh]">
+          <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl sm:h-[85vh]">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between gap-2 border-b border-slate-800 bg-slate-950/40 px-3 py-3 sm:px-6 sm:py-4">
+            <div className="flex items-center justify-between gap-2 bg-slate-950/60 px-3 py-3 sm:px-6 sm:py-4">
               <span className="min-w-0 truncate text-xs font-bold text-slate-400 font-mono tracking-wider">Crew Profile Preview</span>
               <button 
                 onClick={() => setActiveIframeCrewId(null)}
-                className="text-xs font-mono font-bold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors border border-slate-700"
+                className="text-xs font-mono font-bold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors shadow-sm"
               >
                 Close (ESC)
               </button>

@@ -17,8 +17,16 @@ export function EntityCard({
   onToggleCompare,
   onClick
 }) {
+  const handleLinkClick = (e) => {
+    if (onClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      onClick(id);
+    }
+  };
+
   const handleCardClick = (e) => {
-    if (e.target.closest('button') || e.target.closest('a')) {
+    if (e.target.closest('button')) {
       return;
     }
     if (onClick) {
@@ -35,7 +43,7 @@ export function EntityCard({
     >
       <div className="w-full flex flex-col items-center gap-3">
         {/* Featured Large Sprite Container */}
-        <Link to={targetPath} className="w-full relative block">
+        <Link to={targetPath} onClick={handleLinkClick} className="w-full relative block">
           <div className="w-full h-52 sm:h-56 bg-slate-950/60 rounded-lg flex items-center justify-center p-3 overflow-hidden transition-all relative shadow-inner">
             {rarity && (
               <div className="absolute top-2.5 right-2.5 z-10">
@@ -70,7 +78,7 @@ export function EntityCard({
 
         {/* Name & Subtitle below sprite container */}
         <div className="text-center w-full min-w-0 pt-1">
-          <Link to={targetPath}>
+          <Link to={targetPath} onClick={handleLinkClick}>
             <h3 className="font-extrabold text-sm text-slate-100 group-hover:text-indigo-400 transition-colors truncate">
               {name}
             </h3>

@@ -228,10 +228,10 @@ export function CrewDetail() {
       )}
 
       {/* Hero detail card */}
-      <div className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8">
+      <div className="space-y-6 rounded-2xl bg-slate-900/90 p-4 sm:p-8 shadow-lg backdrop-blur-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
-            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-slate-950/40 rounded-xl border border-slate-800 flex items-center justify-center p-2">
+            <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-slate-950/60 rounded-xl flex items-center justify-center p-2 shadow-inner">
               {headSpriteId || bodySpriteId || legSpriteId ? (
                 <div className="flex flex-col items-center justify-center -space-y-1.5 select-none pointer-events-none scale-125">
                   {headSpriteId && (
@@ -245,7 +245,7 @@ export function CrewDetail() {
                   )}
                 </div>
               ) : (
-                <SpriteFrame spriteId={crew.profileSpriteId} alt={crew.name} size="full" className="max-w-full max-h-full" />
+                <SpriteFrame spriteId={crew.profileSpriteId} alt={crew.name} size="full" borderless className="max-w-full max-h-full" />
               )}
             </div>
             <div className="min-w-0 flex-1">
@@ -281,7 +281,7 @@ export function CrewDetail() {
 
         {/* Droid Grade/Level Selector */}
         {familyGrades.length > 1 && (
-          <div className="rounded-xl bg-slate-950/80 border border-slate-800 p-4 space-y-3">
+          <div className="rounded-xl bg-slate-950/80 p-4 space-y-3 shadow-inner">
             <div className="text-xs font-semibold text-emerald-400">
               Select Droid Grade / Design
             </div>
@@ -295,10 +295,10 @@ export function CrewDetail() {
                   <button
                     key={gradeCrew.id}
                     onClick={() => handleGradeChange(gradeCrew.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all border ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                       isActive 
-                        ? 'bg-emerald-600 border-emerald-500 text-white shadow-sm' 
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-emerald-400 hover:border-emerald-500/50'
+                        ? 'bg-emerald-600 text-white shadow-md' 
+                        : 'bg-slate-900 text-slate-400 hover:text-emerald-400 hover:bg-slate-800'
                     }`}
                   >
                     Grade {gradeLabel}
@@ -310,7 +310,7 @@ export function CrewDetail() {
         )}
 
         {/* Level Scaling Slider */}
-        <div className="rounded-xl bg-slate-950/80 border border-slate-800 p-4 space-y-3">
+        <div className="rounded-xl bg-slate-950/80 p-4 space-y-3 shadow-inner">
           <div className="flex items-center justify-between text-xs font-semibold">
             <span className="flex items-center space-x-2 text-emerald-400">
               <Sliders className="h-4 w-4" />
@@ -325,7 +325,7 @@ export function CrewDetail() {
             max={crew.maxLevel || 40}
             value={level}
             onChange={(e) => setLevel(Number(e.target.value))}
-            className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+            className="w-full h-2 bg-slate-700/80 rounded-lg appearance-none cursor-pointer accent-emerald-400"
           />
         </div>
 
@@ -353,7 +353,7 @@ export function CrewDetail() {
         </div>
 
         {/* Special Ability & Slots */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800/30">
           {(() => {
             const mapped = abilityMapping[crew.specialAbilityType] || {
               name: crew.specialAbilityType || 'None',
@@ -361,7 +361,7 @@ export function CrewDetail() {
               spriteId: null
             };
             return (
-              <div className="rounded-lg bg-slate-950 p-4 flex items-start space-x-3 border border-slate-850">
+              <div className="rounded-lg bg-slate-950 p-4 flex items-start space-x-3">
                 {mapped.spriteId && (
                   <SpriteFrame spriteId={mapped.spriteId} alt={mapped.name} size="xs" borderless className="shrink-0 bg-transparent mt-0.5" />
                 )}
@@ -399,7 +399,7 @@ export function CrewDetail() {
 
       {/* Prestige Paths Section */}
       {!prestigeLoading && (prestigeTo.length > 0 || prestigeFrom.length > 0) && (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6">
+        <div className="rounded-2xl bg-slate-900/90 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-sm">
           <div className="flex items-center space-x-2 text-sm font-bold text-amber-400">
             <Award className="h-5 w-5" />
             <span>Prestige Paths</span>
@@ -411,7 +411,6 @@ export function CrewDetail() {
               <h3 className="text-xs font-bold text-emerald-400 tracking-wider uppercase">How to get {crew.name}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {(() => {
-                  // Deduplicate: treat (id1,id2) and (id2,id1) as the same recipe
                   const seen = new Set();
                   const unique = prestigeTo.filter(r => {
                     const key = [Math.min(r.id1, r.id2), Math.max(r.id1, r.id2)].join('-');
@@ -423,13 +422,21 @@ export function CrewDetail() {
                     const c1 = allCrew.find(c => c.id === recipe.id1);
                     const c2 = allCrew.find(c => c.id === recipe.id2);
                     return (
-                      <div key={idx} className="flex items-center space-x-2 bg-slate-950 rounded-lg px-3 py-2 border border-slate-800/60">
-                        <Link to={`/${lang}/library/crew/${recipe.id1}${window.location.search}`} className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors">
+                      <div key={idx} className="flex items-center space-x-2 bg-slate-950 rounded-lg px-3 py-2">
+                        <Link 
+                          to={`/${lang}/library/crew/${recipe.id1}${window.location.search}`} 
+                          onClick={(e) => handleCrewLinkClick(e, recipe.id1)}
+                          className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
+                        >
                           {c1 && <SpriteFrame spriteId={c1.profileSpriteId} alt={c1.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{c1?.name || `#${recipe.id1}`}</span>
                         </Link>
                         <span className="text-[10px] text-slate-500 font-bold">+</span>
-                        <Link to={`/${lang}/library/crew/${recipe.id2}${window.location.search}`} className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors">
+                        <Link 
+                          to={`/${lang}/library/crew/${recipe.id2}${window.location.search}`} 
+                          onClick={(e) => handleCrewLinkClick(e, recipe.id2)}
+                          className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
+                        >
                           {c2 && <SpriteFrame spriteId={c2.profileSpriteId} alt={c2.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{c2?.name || `#${recipe.id2}`}</span>
                         </Link>
@@ -443,11 +450,10 @@ export function CrewDetail() {
 
           {/* Recipes FROM this crew (what it can make) */}
           {prestigeFrom.length > 0 && (
-            <div className="space-y-3 pt-4 border-t border-slate-800">
+            <div className="space-y-3 pt-4 border-t border-slate-800/30">
               <h3 className="text-xs font-bold text-indigo-400 tracking-wider uppercase">What {crew.name} can make</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {(() => {
-                  // Group by result crew, then show partner
                   const seen = new Set();
                   const unique = prestigeFrom.filter(r => {
                     const key = [Math.min(r.id1, r.id2), Math.max(r.id1, r.id2), r.toId].join('-');
@@ -460,14 +466,22 @@ export function CrewDetail() {
                     const partner = allCrew.find(c => c.id === partnerId);
                     const result = allCrew.find(c => c.id === recipe.toId);
                     return (
-                      <div key={idx} className="flex items-center space-x-2 bg-slate-950 rounded-lg px-3 py-2 border border-slate-800/60">
-                        <Link to={`/${lang}/library/crew/${partnerId}${window.location.search}`} className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors">
+                      <div key={idx} className="flex items-center space-x-2 bg-slate-950 rounded-lg px-3 py-2">
+                        <Link 
+                          to={`/${lang}/library/crew/${partnerId}${window.location.search}`} 
+                          onClick={(e) => handleCrewLinkClick(e, partnerId)}
+                          className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
+                        >
                           <span className="text-[10px] text-slate-500 font-bold">+</span>
                           {partner && <SpriteFrame spriteId={partner.profileSpriteId} alt={partner.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{partner?.name || `#${partnerId}`}</span>
                         </Link>
                         <span className="text-[10px] text-slate-500 font-bold">→</span>
-                        <Link to={`/${lang}/library/crew/${recipe.toId}${window.location.search}`} className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors">
+                        <Link 
+                          to={`/${lang}/library/crew/${recipe.toId}${window.location.search}`} 
+                          onClick={(e) => handleCrewLinkClick(e, recipe.toId)}
+                          className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
+                        >
                           {result && <SpriteFrame spriteId={result.profileSpriteId} alt={result.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-emerald-400 truncate font-bold hover:text-emerald-300 transition-colors">{result?.name || `#${recipe.toId}`}</span>
                         </Link>
