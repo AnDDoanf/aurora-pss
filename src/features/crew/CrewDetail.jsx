@@ -4,6 +4,7 @@ import { ArrowLeft, Zap, Shield, Award, Sliders, ExternalLink } from 'lucide-rea
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { StatBar, StatComparisonRow } from '../../components/ui/StatBar';
+import { pssApiUrl } from '../../config/api';
 
 const abilityMapping = {
   DeductReload: {
@@ -140,10 +141,9 @@ export function CrewDetail() {
     setPrestigeTo([]);
     setPrestigeFrom([]);
 
-    const base = 'https://api.pixelstarships.com/CharacterService';
     Promise.all([
-      fetch(`${base}/PrestigeCharacterTo?characterDesignId=${activeId}`).then(r => r.text()).catch(() => ''),
-      fetch(`${base}/PrestigeCharacterFrom?characterDesignId=${activeId}`).then(r => r.text()).catch(() => '')
+      fetch(pssApiUrl(`/CharacterService/PrestigeCharacterTo?characterDesignId=${activeId}`)).then(r => r.text()).catch(() => ''),
+      fetch(pssApiUrl(`/CharacterService/PrestigeCharacterFrom?characterDesignId=${activeId}`)).then(r => r.text()).catch(() => '')
     ]).then(([toXml, fromXml]) => {
       setPrestigeTo(parsePrestigeXml(toXml));
       setPrestigeFrom(parsePrestigeXml(fromXml));

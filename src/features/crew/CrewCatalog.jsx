@@ -8,6 +8,7 @@ import { CompareTray } from '../../components/ui/CompareTray';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { getStoredCompareIds, setStoredCompareIds } from '../compare/compareStorage';
+import { publicUrl } from '../../utils/publicUrl';
 
 const abilityMapping = {
   DeductReload: {
@@ -391,7 +392,9 @@ export function CrewCatalog() {
             {/* Iframe Viewport Container */}
             <div className="flex-1 w-full bg-slate-950 relative">
               <iframe
-                src={`/${lang}/library/crew/${activeIframeCrewId}?embed=true`}
+                src={publicUrl(
+                  `/${lang}/library/crew/${activeIframeCrewId}?embed=true`
+                )}
                 title="Crew Profile Details"
                 className="w-full h-full border-0 absolute inset-0"
               />

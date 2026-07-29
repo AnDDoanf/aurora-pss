@@ -1,15 +1,19 @@
 import axios from 'axios';
-
-const FALLBACK_DIRECT_URL = 'https://api.pixelstarships.com';
-const PSS_API_BASE = import.meta.env.VITE_PSS_API_BASE_URL
-  || (import.meta.env.DEV ? '/api-pss' : FALLBACK_DIRECT_URL);
+import {
+  PSS_API_BASE_URL,
+  PSS_DIRECT_API_BASE_URL,
+  pssApiUrl
+} from '../config/api';
 
 const requestPss = async (path, config = {}) => {
   try {
-    return await axios.get(`${PSS_API_BASE}${path}`, config);
+    return await axios.get(pssApiUrl(path), config);
   } catch (error) {
-    if (PSS_API_BASE === FALLBACK_DIRECT_URL) throw error;
-    return axios.get(`${FALLBACK_DIRECT_URL}${path}`, config);
+    if (PSS_API_BASE_URL === PSS_DIRECT_API_BASE_URL) throw error;
+    return axios.get(
+      `${PSS_DIRECT_API_BASE_URL}/${String(path).replace(/^\/+/, '')}`,
+      config
+    );
   }
 };
 
