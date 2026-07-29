@@ -169,8 +169,11 @@ export function RoomCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-black text-slate-100">Room Systems Catalog</h1>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.roomCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.roomCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

@@ -110,11 +110,11 @@ export function ResearchCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Research Tree Reference Catalog</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Complete technological tree detailing research requirements, gas costs, duration, and prerequisite graphs.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.researchCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.researchCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

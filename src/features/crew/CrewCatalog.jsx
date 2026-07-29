@@ -7,6 +7,7 @@ import { FilterDrawer } from '../../components/ui/FilterDrawer';
 import { CompareTray } from '../../components/ui/CompareTray';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { RarityBadge } from '../../components/ui/RarityBadge';
+import { getStoredCompareIds, setStoredCompareIds } from '../compare/compareStorage';
 
 const abilityMapping = {
   DeductReload: {
@@ -109,7 +110,7 @@ export function CrewCatalog() {
   const [viewMode, setViewMode] = useState('grid');
   const [sortColumn, setSortColumn] = useState('hp');
   const [sortDirection, setSortDirection] = useState('desc');
-  const [comparedIds, setComparedIds] = useState([]);
+  const [comparedIds, setComparedIds] = useState(() => getStoredCompareIds('crew'));
   const [activeIframeCrewId, setActiveIframeCrewId] = useState(null);
 
   useEffect(() => {
@@ -137,9 +138,13 @@ export function CrewCatalog() {
   }, []);
 
   const toggleCompare = (id) => {
-    setComparedIds(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : (prev.length < 4 ? [...prev, id] : prev)
-    );
+    const normalizedId = String(id);
+    setComparedIds((previous) => {
+      const updated = previous.includes(normalizedId)
+        ? previous.filter((currentId) => currentId !== normalizedId)
+        : (previous.length < 4 ? [...previous, normalizedId] : previous);
+      return setStoredCompareIds('crew', updated);
+    });
   };
 
   const romanToNum = (roman) => {
@@ -304,8 +309,11 @@ export function CrewCatalog() {
   return (
     <div className="space-y-6 pb-20">
       
-      <div>
-        <h1 className="text-2xl font-black text-slate-100">Crew Catalog</h1>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.crewCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.crewCatalog.description')}</p>
+        </div>
       </div>
 
       {/* Filter drawer */}
@@ -335,7 +343,7 @@ export function CrewCatalog() {
               spriteId={c.profileSpriteId}
               targetPath={`/${lang}/library/crew/${c.id}`}
               onClick={setActiveIframeCrewId}
-              isCompared={comparedIds.includes(c.id)}
+              isCompared={comparedIds.includes(String(c.id))}
               onToggleCompare={toggleCompare}
               stats={[
                 { label: 'HP', value: `${c.hp} → ${c.finalHp}` },
@@ -361,17 +369,17 @@ export function CrewCatalog() {
       <CompareTray
         selectedIds={comparedIds}
         type="crew"
-        onClear={() => setComparedIds([])}
+        onClear={() => setComparedIds(setStoredCompareIds('crew', []))}
       />
 
       {/* Embedded Crew Details Iframe Dialog Modal */}
       {activeIframeCrewId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 sm:p-6">
-          <div className="relative w-full max-w-4xl h-[85vh] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-sm sm:p-6">
+          <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl sm:h-[85vh]">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 bg-slate-950/40 border-b border-slate-800">
-              <span className="text-xs font-bold text-slate-400 font-mono tracking-wider">Crew Profile Preview</span>
+            <div className="flex items-center justify-between gap-2 border-b border-slate-800 bg-slate-950/40 px-3 py-3 sm:px-6 sm:py-4">
+              <span className="min-w-0 truncate text-xs font-bold text-slate-400 font-mono tracking-wider">Crew Profile Preview</span>
               <button 
                 onClick={() => setActiveIframeCrewId(null)}
                 className="text-xs font-mono font-bold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors border border-slate-700"

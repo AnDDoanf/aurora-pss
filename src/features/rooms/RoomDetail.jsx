@@ -310,7 +310,7 @@ export function RoomDetail() {
         <span>Back to Room Catalog</span>
       </Link>
 
-      <div className="rounded-lg bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+      <div className="space-y-6 rounded-lg bg-slate-900 p-4 shadow-sm sm:p-8">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start gap-6">
@@ -328,9 +328,9 @@ export function RoomDetail() {
             />
           </div>
 
-          <div className="flex-1 space-y-2 pt-1">
+          <div className="min-w-0 flex-1 space-y-2 pt-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100">{selectedLvl.name}</h1>
+              <h1 className="break-words text-xl font-extrabold text-slate-100 sm:text-3xl">{selectedLvl.name}</h1>
               <CategoryBadge category={roomGroup.type} />
               {meaningful(raw.CategoryType) && <CategoryBadge category={raw.CategoryType} />}
             </div>

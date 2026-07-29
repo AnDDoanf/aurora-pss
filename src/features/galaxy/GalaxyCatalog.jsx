@@ -64,11 +64,11 @@ export function GalaxyCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Galaxy Map & Star Systems Library</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Explore star system definitions, planets, jump route connectivity, and infrastructure designs.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.galaxyCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.galaxyCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

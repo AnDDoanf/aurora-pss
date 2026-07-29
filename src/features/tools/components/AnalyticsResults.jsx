@@ -1,8 +1,10 @@
 import React from 'react';
 import { BarChart3, Shield, Zap, Users, Crosshair, HeartPulse, Flame, Target, Sparkles, Layers } from 'lucide-react';
 import { calculateSnapshotTotals, calculateTimelineSummary, calculateWeaponMetrics, calculateDefenseMetrics } from '../utils/capacityCalculations';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
+  const { t } = useTranslation();
   const activeSnapshot = snapshots.find(s => s.id === activeSnapshotId) || snapshots[0];
   const activeTotals = activeSnapshot ? calculateSnapshotTotals(activeSnapshot) : null;
   const timelineSummary = calculateTimelineSummary(snapshots);
@@ -23,13 +25,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
             </div>
             <div>
               <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider flex items-center space-x-2">
-                <span>Current Snapshot Analytics: {activeSnapshot.name}</span>
+                <span>{t('pages.capacity.analyticsTitle', { name: activeSnapshot.name })}</span>
                 <span className="text-xs px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono">
-                  {isInfinite ? 'Infinite Duration ∞' : `${evalDuration}s`}
+                  {isInfinite ? t('pages.capacity.infiniteDuration') : `${evalDuration}s`}
                 </span>
               </h3>
               <p className="text-[11px] text-slate-400">
-                Damage output rates and defensive generation capacity per second
+                {t('pages.capacity.analyticsDescription')}
               </p>
             </div>
           </div>
@@ -41,13 +43,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-orange-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-orange-400 uppercase tracking-wider flex items-center space-x-1">
               <Target className="h-3 w-3" />
-              <span>System DPS</span>
+              <span>{t('pages.capacity.systemDps')}</span>
             </div>
             <div className="text-lg font-black text-slate-100 font-mono">
               {activeTotals.systemDmgRate.toFixed(2)}
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              Total: {activeTotals.accumSystemDmg.toFixed(1)}
+              {t('pages.capacity.total', { value: activeTotals.accumSystemDmg.toFixed(1) })}
             </div>
           </div>
 
@@ -55,13 +57,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-sky-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider flex items-center space-x-1">
               <Zap className="h-3 w-3" />
-              <span>Shield DPS</span>
+              <span>{t('pages.capacity.shieldDps')}</span>
             </div>
             <div className="text-lg font-black text-slate-100 font-mono">
               {activeTotals.shieldDmgRate.toFixed(2)}
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              Total: {activeTotals.accumShieldDmg.toFixed(1)}
+              {t('pages.capacity.total', { value: activeTotals.accumShieldDmg.toFixed(1) })}
             </div>
           </div>
 
@@ -69,13 +71,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-purple-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider flex items-center space-x-1">
               <Users className="h-3 w-3" />
-              <span>Crew DPS</span>
+              <span>{t('pages.capacity.crewDps')}</span>
             </div>
             <div className="text-lg font-black text-slate-100 font-mono">
               {activeTotals.crewDmgRate.toFixed(2)}
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              Total: {activeTotals.accumCrewDmg.toFixed(1)}
+              {t('pages.capacity.total', { value: activeTotals.accumCrewDmg.toFixed(1) })}
             </div>
           </div>
 
@@ -83,13 +85,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-rose-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-1">
               <Flame className="h-3 w-3" />
-              <span>Hull DPS</span>
+              <span>{t('pages.capacity.hullDps')}</span>
             </div>
             <div className="text-lg font-black text-slate-100 font-mono">
               {activeTotals.hullDmgRate.toFixed(2)}
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              Total: {activeTotals.accumHullDmg.toFixed(1)}
+              {t('pages.capacity.total', { value: activeTotals.accumHullDmg.toFixed(1) })}
             </div>
           </div>
 
@@ -97,13 +99,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-amber-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1">
               <Crosshair className="h-3 w-3" />
-              <span>AP DPS</span>
+              <span>{t('pages.capacity.apDps')}</span>
             </div>
             <div className="text-lg font-black text-slate-100 font-mono">
               {activeTotals.apDmgRate.toFixed(2)}
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              Total: {activeTotals.accumApDmg.toFixed(1)}
+              {t('pages.capacity.total', { value: activeTotals.accumApDmg.toFixed(1) })}
             </div>
           </div>
 
@@ -111,13 +113,13 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-emerald-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1">
               <Shield className="h-3 w-3" />
-              <span>Shield Gen</span>
+              <span>{t('pages.capacity.shieldGen')}</span>
             </div>
             <div className="text-lg font-black text-emerald-400 font-mono">
               +{activeTotals.shieldGenRate.toFixed(2)}/s
             </div>
             <div className="text-[10px] text-slate-400">
-              Shield HP / sec
+              {t('pages.capacity.shieldPerSecond')}
             </div>
           </div>
 
@@ -125,13 +127,15 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           <div className="bg-slate-950/80 border border-teal-900/40 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-teal-400 uppercase tracking-wider flex items-center space-x-1">
               <HeartPulse className="h-3 w-3" />
-              <span>Evasion Rate</span>
+              <span>{t('pages.capacity.evasionRate')}</span>
             </div>
             <div className="text-lg font-black text-teal-400 font-mono">
               {activeTotals.evasionContribution.toFixed(1)}%
             </div>
             <div className="text-[10px] text-slate-400">
-              {activeTotals.rawEvasion > 75 ? `(Raw: ${activeTotals.rawEvasion.toFixed(1)}%)` : 'Dodge Rate'}
+              {activeTotals.rawEvasion > 75
+                ? t('pages.capacity.rawRate', { value: activeTotals.rawEvasion.toFixed(1) })
+                : t('pages.capacity.dodgeRate')}
             </div>
           </div>
         </div>
@@ -139,22 +143,22 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
         {/* Individual Room Contribution Table */}
         <div className="space-y-2 pt-2">
           <div className="text-xs font-extrabold text-slate-300 uppercase tracking-wider">
-            Room Breakdown (Current Snapshot)
+            {t('pages.capacity.roomBreakdown')}
           </div>
 
           <div className="overflow-x-auto rounded-lg border border-slate-800">
             <table className="w-full text-left text-xs font-mono">
               <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
                 <tr>
-                  <th className="p-2.5">Room</th>
-                  <th className="p-2.5">Pwr / Qty</th>
-                  <th className="p-2.5">Shots/s</th>
-                  <th className="p-2.5 text-orange-400">Sys DPS</th>
-                  <th className="p-2.5 text-sky-400">Shield DPS</th>
-                  <th className="p-2.5 text-purple-400">Crew DPS</th>
-                  <th className="p-2.5 text-rose-400">Hull DPS</th>
-                  <th className="p-2.5 text-amber-400">AP DPS</th>
-                  <th className="p-2.5 text-emerald-400">Shield Gen</th>
+                  <th className="p-2.5">{t('pages.capacity.room')}</th>
+                  <th className="p-2.5">{t('pages.capacity.powerQuantity')}</th>
+                  <th className="p-2.5">{t('pages.capacity.shotsSecond')}</th>
+                  <th className="p-2.5 text-orange-400">{t('pages.capacity.systemDps')}</th>
+                  <th className="p-2.5 text-sky-400">{t('pages.capacity.shieldDps')}</th>
+                  <th className="p-2.5 text-purple-400">{t('pages.capacity.crewDps')}</th>
+                  <th className="p-2.5 text-rose-400">{t('pages.capacity.hullDps')}</th>
+                  <th className="p-2.5 text-amber-400">{t('pages.capacity.apDps')}</th>
+                  <th className="p-2.5 text-emerald-400">{t('pages.capacity.shieldGen')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
@@ -221,39 +225,39 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
             <Layers className="h-5 w-5 text-indigo-400" />
             <div>
               <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
-                Full Battle Timeline Synthesis ({snapshots.length} Snapshots)
+                {t('pages.capacity.timelineTitle', { count: snapshots.length })}
               </h3>
               <p className="text-[11px] text-slate-400">
-                Accumulated damage and duration-weighted average defense generation across all snapshots
+                {t('pages.capacity.timelineDescription')}
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
             <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
-              <div className="text-[10px] text-slate-400 font-sans uppercase">Total Defined Timeline</div>
+              <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalTimeline')}</div>
               <div className="text-lg font-bold text-slate-100">
-                {timelineSummary.totalDuration > 0 ? `${timelineSummary.totalDuration} seconds` : 'Continuous'}
-                {timelineSummary.hasInfinite && <span className="text-xs text-amber-400 ml-1">(+Infinite tail)</span>}
+                {timelineSummary.totalDuration > 0 ? t('pages.capacity.seconds', { value: timelineSummary.totalDuration }) : t('pages.capacity.continuous')}
+                {timelineSummary.hasInfinite && <span className="text-xs text-amber-400 ml-1">{t('pages.capacity.infiniteTail')}</span>}
               </div>
             </div>
 
             <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
-              <div className="text-[10px] text-slate-400 font-sans uppercase">Total System Damage</div>
+              <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalSystemDamage')}</div>
               <div className="text-lg font-bold text-orange-400">
                 {timelineSummary.totalSystemDmg.toFixed(1)}
               </div>
             </div>
 
             <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
-              <div className="text-[10px] text-slate-400 font-sans uppercase">Total Hull Damage</div>
+              <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalHullDamage')}</div>
               <div className="text-lg font-bold text-rose-400">
                 {timelineSummary.totalHullDmg.toFixed(1)}
               </div>
             </div>
 
             <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
-              <div className="text-[10px] text-slate-400 font-sans uppercase">Weighted Shield Gen Rate</div>
+              <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.weightedShield')}</div>
               <div className="text-lg font-bold text-emerald-400">
                 +{timelineSummary.avgShieldGenRate.toFixed(2)} HP/s
               </div>

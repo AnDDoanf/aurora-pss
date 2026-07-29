@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity, AlertTriangle, BarChart3, BatteryCharging, BookOpen, ChevronDown,
-  Clock3, Dumbbell, RotateCcw, Search, Sparkles, Target
+  Clock3, Dumbbell, Info, RotateCcw, Search, Sparkles, Target
 } from 'lucide-react';
 import trainingPrograms from '../../../training_designs_parsed.json';
 import { SEOHead } from '../../components/SEOHead';
@@ -9,7 +9,7 @@ import { useTranslation } from '../../i18n/useTranslation';
 import { publicUrl } from '../../utils/publicUrl';
 import {
   EMPTY_TRAINING, TRAINING_STATS, clampTrainingValue,
-  calculateTrainingPossibilities, formatDuration, getTrainingCapacity,
+  calculateTrainedStat, calculateTrainingPossibilities, formatDuration, getTrainingCapacity,
   isPrimaryTrainingStat, recommendPrograms, summarizeTraining
 } from './trainingCalculations';
 
@@ -48,19 +48,90 @@ function FatigueSprite({ fatigue, size = 28 }) {
   );
 }
 
-function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loading, onCrewChange, onFatigueChange, lang }) {
+function InfoTooltip({ text }) {
+  return (
+    <span className="group/tooltip relative inline-flex shrink-0">
+      <span
+        tabIndex="0"
+        aria-label={text}
+        className="cursor-help text-slate-500 outline-none transition hover:text-cyan-300 focus:text-cyan-300"
+      >
+        <Info className="h-3.5 w-3.5" />
+      </span>
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute bottom-full left-1/2 z-[80] mb-2 w-64 -translate-x-1/2 rounded-md border border-cyan-500/30 bg-slate-950 px-3 py-2 text-left text-[10px] font-medium normal-case leading-relaxed tracking-normal text-slate-200 opacity-0 shadow-2xl transition-opacity group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
+      >
+        {text}
+      </span>
+    </span>
+  );
+}
+
+function HoldStepButton({ direction, disabled, onStep, label, className }) {
+  const timerRef = useRef(null);
+  const holdStartedAtRef = useRef(0);
+
+  const stopRepeating = () => {
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = null;
+  };
+
+  useEffect(() => stopRepeating, []);
+
+  const repeat = () => {
+    const heldFor = performance.now() - holdStartedAtRef.current;
+    const amount = heldFor >= 3000 ? 5 : heldFor >= 1500 ? 2 : 1;
+    const delay = Math.max(45, 140 - Math.floor(heldFor / 30));
+    onStep(direction * amount);
+    timerRef.current = window.setTimeout(repeat, delay);
+  };
+
+  const startRepeating = (event) => {
+    if (disabled || event.button !== 0) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    stopRepeating();
+    onStep(direction);
+    holdStartedAtRef.current = performance.now();
+    timerRef.current = window.setTimeout(repeat, 380);
+  };
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onPointerDown={startRepeating}
+      onPointerUp={stopRepeating}
+      onPointerCancel={stopRepeating}
+      onLostPointerCapture={stopRepeating}
+      onClick={(event) => {
+        // Keyboard and assistive-technology clicks do not trigger pointerdown.
+        if (event.detail === 0 && !disabled) onStep(direction);
+      }}
+      onContextMenu={(event) => event.preventDefault()}
+      className={`${className} select-none touch-none`}
+      aria-label={label}
+      title={label}
+    >
+      {direction < 0 ? '−' : '+'}
+    </button>
+  );
+}
+
+function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loading, onCrewChange, onFatigueChange, t }) {
   const state = getFatigueState(fatigue);
   const usedPercent = capacity ? Math.min((summary.spent / capacity) * 100, 100) : 0;
   const fatiguePercent = Math.min(Math.max(fatigue, 0), 100);
 
   return (
-    <section className={`${panel} flex min-h-[590px] flex-col overflow-hidden`}>
-      <div className="border-b border-cyan-500/30 bg-[#073b63] px-4 py-3">
+    <section className={`${panel} flex min-h-[540px] flex-col overflow-hidden xl:h-full xl:min-h-0`}>
+      <div className="border-b border-cyan-500/30 bg-[#073b63] px-4 py-2.5">
         <div className="block">
-          <span className="mb-1.5 block text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">{lang === 'vi' ? 'Chọn crew' : 'Crew details'}</span>
+          <span className="mb-1.5 block text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">{t('training.crewDetails')}</span>
           <div className="relative">
-            <select disabled={loading} value={crewId} onChange={(event) => onCrewChange(event.target.value)} className={`${input} appearance-none border-cyan-500/30 bg-[#082f4d] pr-9 font-bold`}>
-              {loading && <option>{lang === 'vi' ? 'Đang tải…' : 'Loading…'}</option>}
+            <select disabled={loading} value={crewId} onChange={(event) => onCrewChange(event.target.value)} title={t('training.crewChangeHint')} className={`${input} appearance-none border-cyan-500/30 bg-[#082f4d] pr-9 font-bold`}>
+              {loading && <option>{t('common.loadingShort')}</option>}
               {crew.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.rarity}</option>)}
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-cyan-300" />
@@ -68,7 +139,7 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
         </div>
       </div>
 
-      <div className={`relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-gradient-to-b ${state.glow} via-[#082f4d] to-[#061f35] px-5 py-8`}>
+      <div className={`relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden bg-gradient-to-b ${state.glow} via-[#082f4d] to-[#061f35] px-5 py-4`}>
         <div className="absolute inset-x-8 top-1/2 h-px bg-cyan-300/25" />
         <div className="absolute right-4 top-4 flex items-center gap-2 rounded-lg border border-white/10 bg-slate-950/60 px-2.5 py-1.5 backdrop-blur">
           <FatigueSprite fatigue={fatigue} size={28} />
@@ -76,7 +147,7 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
         </div>
 
         {selectedCrew && <>
-          <div className="relative z-10 flex h-56 w-56 items-center justify-center">
+          <div className="relative z-10 flex h-40 w-40 items-center justify-center 2xl:h-48 2xl:w-48">
             <div className="absolute inset-3 rounded-full bg-cyan-400/10 blur-2xl" />
             <img
               src={publicUrl(`/assets/sprites/${selectedCrew.profileSpriteId}.webp`)}
@@ -84,30 +155,30 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
               className={`relative max-h-full max-w-full scale-[1.65] object-contain [image-rendering:pixelated] transition-all duration-300 ${fatigue >= 90 ? 'grayscale contrast-75' : fatigue >= 65 ? 'saturate-50' : ''}`}
             />
           </div>
-          <div className="relative z-10 mt-5 text-center">
+          <div className="relative z-10 mt-3 text-center">
             <h2 className="text-xl font-black text-yellow-300">{selectedCrew.name}</h2>
             <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">{selectedCrew.rarity} · Lv. {selectedCrew.maxLevel}</p>
           </div>
         </>}
       </div>
 
-      <div className="space-y-4 border-t border-cyan-500/30 bg-[#073b63] p-4">
+      <div className="space-y-3 border-t border-cyan-500/30 bg-[#073b63] p-3.5">
         <div>
           <div className="mb-1.5 flex items-center justify-between text-xs font-black text-cyan-100">
-            <span>{lang === 'vi' ? 'Huấn luyện' : 'Training'}</span>
+            <span>{t('training.training')}</span>
             <span className="font-mono">{summary.spent}/{capacity}</span>
           </div>
-          <div className="h-3 overflow-hidden rounded-sm border border-cyan-300/20 bg-[#041e31] p-0.5">
+          <div title={`${summary.spent} of ${capacity} training points allocated`} className="h-3 overflow-hidden rounded-sm border border-cyan-300/20 bg-[#041e31] p-0.5">
             <div className={`h-full transition-all ${summary.overCapacity ? 'bg-rose-500' : 'bg-yellow-400'}`} style={{ width: `${usedPercent}%` }} />
           </div>
         </div>
         <label className="block">
           <span className="mb-1.5 flex justify-between text-[10px] font-black uppercase tracking-wider text-cyan-200/70">
-            <span>{lang === 'vi' ? 'Mệt mỏi' : 'Fatigue'}</span>
+            <span>{t('training.fatigue')}</span>
             <span className={`flex items-center gap-1.5 ${state.color}`}><FatigueSprite fatigue={fatigue} size={18} />{fatigue}/100</span>
           </span>
           <div className="relative">
-            <input type="range" min="0" max="100" value={fatigue} onChange={(event) => onFatigueChange(Number(event.target.value))} className="relative z-10 w-full accent-cyan-400" />
+            <input type="range" min="0" max="100" value={fatigue} onChange={(event) => onFatigueChange(Number(event.target.value))} title={t('training.fatigueHint')} className="relative z-10 w-full accent-cyan-400" />
             <div className="pointer-events-none absolute left-0 top-1/2 h-1 -translate-y-1/2 bg-orange-400/30" style={{ width: `${fatiguePercent}%` }} />
           </div>
         </label>
@@ -116,12 +187,16 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
   );
 }
 
-function ProgramSelector({ programs, selectedId, selected, target, quality, onSelect, onTargetChange, onQualityChange, lang }) {
+function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoints, onSelect, onTargetChange, t, embedded = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const targetPrograms = programs.filter((program) => isPrimaryTrainingStat(program, target));
   const repeatable = targetPrograms.filter((program) => Number(program.rank) !== 100);
   const consumables = targetPrograms.filter((program) => Number(program.rank) === 100);
+  const targetLabel = TRAINING_STATS.find((stat) => stat.key === target)?.label || target.toUpperCase();
+  const outcomeTooltip = selected
+    ? t('training.outcomeHint', { item: selected.name, points: number(maxTargetPoints), stat: targetLabel })
+    : t('training.selectProgramHint');
 
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
@@ -159,7 +234,7 @@ function ProgramSelector({ programs, selectedId, selected, target, quality, onSe
         <span className="block truncate text-sm font-bold">{program.name}</span>
         <span className={`block text-[10px] ${program.id === selected?.id ? 'text-blue-100' : 'text-cyan-300/60'}`}>
           {Number(program.rank) === 100
-            ? (lang === 'vi' ? 'Dùng ngay' : 'Instant consumable')
+            ? t('training.instantConsumable')
             : `${formatDuration(program.duration)} · +${program.fatigue} fatigue`}
         </span>
       </span>
@@ -167,46 +242,50 @@ function ProgramSelector({ programs, selectedId, selected, target, quality, onSe
   );
 
   return (
-    <section className={`${panel} relative z-30 overflow-visible`}>
-      <div className="border-b border-cyan-500/30 bg-[#073b63] px-5 py-3">
+    <section className={`${embedded ? 'relative z-30 bg-slate-900' : `${panel} relative z-30`} overflow-visible`}>
+      <div className="border-b border-cyan-500/30 bg-[#073b63] px-4 py-2.5">
         <div className="flex items-center gap-2 text-cyan-200">
           <Dumbbell className="h-4 w-4" />
-          <h2 className="text-sm font-black uppercase tracking-wider">{lang === 'vi' ? 'Trạm huấn luyện' : 'Training station'}</h2>
+          <h2 className="text-sm font-black uppercase tracking-wider">{t('training.station')}</h2>
         </div>
       </div>
-      <div className="space-y-5 p-5">
+      <div className={`space-y-3 ${embedded ? 'p-3.5' : 'p-5'}`}>
         <div className="block">
-          <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">{lang === 'vi' ? 'Chương trình hoặc vật phẩm' : 'Training or consumable'}</span>
+          <span className="mb-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+            {t('training.programOrItem')}
+            <InfoTooltip text={outcomeTooltip} />
+          </span>
           <div ref={dropdownRef} className="relative">
             <button
               type="button"
               onClick={() => setIsOpen((current) => !current)}
               aria-haspopup="listbox"
               aria-expanded={isOpen}
-              className={`${input} flex min-h-14 items-center gap-3 border-cyan-500/40 bg-[#082f4d] py-2 pr-10 text-left`}
+              title={outcomeTooltip}
+              className={`${input} flex min-h-12 items-center gap-3 border-cyan-500/40 bg-[#082f4d] py-1.5 pr-10 text-left`}
             >
-              {selected && <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-cyan-400/40 bg-slate-950/70">
-                <img src={publicUrl(`/assets/sprites/${selected.spriteId}.webp`)} alt="" className="h-9 w-9 object-contain [image-rendering:pixelated]" />
+              {selected && <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-cyan-400/40 bg-slate-950/70">
+                <img src={publicUrl(`/assets/sprites/${selected.spriteId}.webp`)} alt="" className="h-8 w-8 object-contain [image-rendering:pixelated]" />
               </span>}
               <span className="min-w-0">
-                <span className="block truncate text-base font-black text-cyan-100">{selected?.name || (lang === 'vi' ? 'Chọn chương trình' : 'Select a program')}</span>
+                <span className="block truncate text-base font-black text-cyan-100">{selected?.name || t('training.selectProgram')}</span>
                 {selected && <span className="block text-[10px] text-cyan-300/60">
-                  {Number(selected.rank) === 100 ? (lang === 'vi' ? 'Dùng ngay' : 'Instant consumable') : `${formatDuration(selected.duration)} · +${selected.fatigue} fatigue`}
+                  {Number(selected.rank) === 100 ? t('training.instantConsumable') : `${formatDuration(selected.duration)} · +${selected.fatigue} ${t('training.fatigue').toLowerCase()}`}
                 </span>}
               </span>
             </button>
-            <ChevronDown className={`pointer-events-none absolute right-3 top-5 h-5 w-5 text-cyan-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`pointer-events-none absolute right-3 top-3.5 h-5 w-5 text-cyan-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             {isOpen && (
               <div role="listbox" className="absolute z-50 mt-1 max-h-[430px] w-full overflow-y-auto border border-cyan-400/60 bg-[#082f4d] shadow-2xl">
                 {repeatable.length > 0 && <>
                   <div className="sticky top-0 z-10 bg-[#061f35] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
-                    {lang === 'vi' ? 'Chương trình huấn luyện' : 'Training programs'}
+                    {t('training.programs')}
                   </div>
                   {repeatable.map(renderOption)}
                 </>}
                 {consumables.length > 0 && <>
                   <div className="sticky top-0 z-10 border-t border-cyan-400/30 bg-[#061f35] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
-                    {lang === 'vi' ? 'Vật phẩm dùng ngay' : 'Instant consumables'}
+                    {t('training.instantItems')}
                   </div>
                   {consumables.map(renderOption)}
                 </>}
@@ -215,18 +294,13 @@ function ProgramSelector({ programs, selectedId, selected, target, quality, onSe
           </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1fr_220px]">
-          <div>
-            <span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-slate-500">{lang === 'vi' ? 'Chỉ số mục tiêu' : 'Target stat'}</span>
-            <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-9">
-              {TRAINING_STATS.map((stat) => <button key={stat.key} onClick={() => onTargetChange(stat.key)} className={`rounded-md border px-2 py-2 text-xs font-black transition ${target === stat.key ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200' : 'border-slate-800 bg-slate-950 text-slate-500 hover:border-slate-700'}`}>{stat.label}</button>)}
-            </div>
-          </div>
-          <div>
-            <span className="mb-2 block text-[10px] font-black uppercase tracking-wider text-slate-500">{lang === 'vi' ? 'Chất lượng' : 'Quality'}</span>
-            <div className="grid grid-cols-2 rounded-lg bg-slate-950 p-1">
-              {['regular', 'elite'].map((item) => <button key={item} onClick={() => onQualityChange(item)} className={`rounded-md px-3 py-2 text-xs font-black transition ${quality === item ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}>{item === 'regular' ? (lang === 'vi' ? 'Thường' : 'Regular') : 'Elite'}</button>)}
-            </div>
+        <div>
+          <span className="mb-1.5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500">
+            {t('training.targetStat')}
+            <InfoTooltip text={t('training.targetFilterHint', { stat: targetLabel })} />
+          </span>
+          <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-9">
+            {TRAINING_STATS.map((stat) => <button key={stat.key} onClick={() => onTargetChange(stat.key)} title={t('training.setTargetHint', { stat: stat.label })} className={`rounded-md border px-2 py-1.5 text-xs font-black transition ${target === stat.key ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200' : 'border-slate-800 bg-slate-950 text-slate-500 hover:border-slate-700'}`}>{stat.label}</button>)}
           </div>
         </div>
       </div>
@@ -234,77 +308,87 @@ function ProgramSelector({ programs, selectedId, selected, target, quality, onSe
   );
 }
 
-function TrainingStats({ selectedCrew, training, capacity, summary, distribution, fatigue, onChange, lang }) {
+function TrainingStats({ selectedCrew, training, capacity, summary, distribution, fatigue, onChange, onStep, t, children }) {
   const renderStat = (stat) => {
     const outcome = distribution.find((row) => row.key === stat.key);
     const base = stat.crewKey ? selectedCrew?.[stat.crewKey] : null;
     const value = training[stat.key];
+    const trained = calculateTrainedStat(base, value, stat.key);
     return (
-      <div key={stat.key} className="grid grid-cols-[34px_54px_minmax(58px,1fr)_120px] items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center border border-cyan-400/70 bg-[#07517b]">
-          <img src={publicUrl(`/assets/sprites/${stat.spriteId}.webp`)} alt="" className="h-7 w-7 object-contain [image-rendering:pixelated]" />
+      <div key={stat.key} title={base != null ? `${stat.label}: ${number(base)} base × (1 + ${value}%) = ${number(trained)}` : `${stat.label} has no base stat available.`} className="grid w-full min-w-0 grid-cols-[28px_max-content_minmax(30px,1fr)_120px] items-center gap-1 sm:grid-cols-[34px_96px_minmax(38px,1fr)_120px] sm:gap-2">
+        <div className="flex h-7 w-7 items-center justify-center border border-cyan-400/70 bg-[#07517b] sm:h-8 sm:w-8">
+          <img src={publicUrl(`/assets/sprites/${stat.spriteId}.webp`)} alt="" className="h-6 w-6 object-contain [image-rendering:pixelated] sm:h-7 sm:w-7" />
         </div>
-        <div className="min-w-0">
-          <div className="text-base font-black leading-none" style={{ color: stat.color }}>{stat.label}</div>
-          <div className="mt-1 truncate text-[9px] text-slate-500">{lang === 'vi' ? 'Gốc' : 'Base'} {base != null ? number(base) : '—'}</div>
+        <div className="min-w-0 overflow-hidden">
+          <div className="text-sm font-black leading-none sm:text-base" style={{ color: stat.color }}>{stat.label}</div>
+          <div className="mt-0.5 flex min-w-0 items-baseline gap-0.5 whitespace-nowrap sm:gap-1.5">
+            {base != null
+              ? <>
+                  <span className="text-[10px] font-bold text-slate-300 sm:text-xs"><span className="hidden sm:inline">{t('training.base')} </span>{number(base)}</span>
+                  <span className="text-[10px] text-cyan-600 sm:text-xs">→</span>
+                  <span className="text-xs font-black leading-none text-cyan-300 sm:text-sm">{number(trained)}</span>
+                </>
+              : <span className="text-xs text-slate-500">—</span>}
+          </div>
         </div>
-        <div className={`whitespace-nowrap text-right font-mono text-xs font-black ${outcome?.max > 0 ? 'text-cyan-300' : 'text-slate-600'}`}>
+        <div title={`${t('training.nextRange')}: ${number(outcome?.min)}–${number(outcome?.max)} ${stat.label}`} className={`whitespace-nowrap text-right font-mono text-[10px] font-black sm:text-xs ${outcome?.max > 0 ? 'text-cyan-300' : 'text-slate-600'}`}>
           {number(outcome?.min)} ~ {number(outcome?.max)}
         </div>
-        <div className="grid grid-cols-[36px_48px_36px] overflow-hidden border-2 border-cyan-400/60 bg-[#073b63] shadow-[inset_0_0_0_1px_rgba(2,20,35,0.8)]">
-          <button
-            type="button"
-            onClick={() => onChange(stat.key, value - 1)}
+        <div className="grid w-[126px] grid-cols-[36px_48px_36px] overflow-hidden border-2 border-cyan-400/60 bg-[#073b63] shadow-[inset_0_0_0_1px_rgba(2,20,35,0.8)]">
+          <HoldStepButton
+            direction={-1}
             disabled={value <= 0}
             className="h-9 border-r border-cyan-400/30 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
-            aria-label={`Decrease ${stat.label}`}
-          >
-            −
-          </button>
+            label={t('training.decrease', { stat: stat.label })}
+            onStep={(delta) => onStep(stat.key, delta)}
+          />
           <input
             type="number"
             min="0"
             max={capacity || 0}
             value={value}
             onChange={(event) => onChange(stat.key, event.target.value)}
-            className="h-9 min-w-0 bg-[#258de2] px-1 text-center font-mono text-base font-black text-white outline-none focus:bg-[#38a4fa]"
+            className="training-number-input h-9 min-w-0 bg-[#258de2] px-1 text-center font-mono text-base font-black text-white outline-none focus:bg-[#38a4fa]"
             aria-label={`${stat.label} training points`}
           />
-          <button
-            type="button"
-            onClick={() => onChange(stat.key, value + 1)}
+          <HoldStepButton
+            direction={1}
             disabled={value >= capacity}
             className="h-9 border-l border-cyan-400/30 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
-            aria-label={`Increase ${stat.label}`}
-          >
-            +
-          </button>
+            label={t('training.increase', { stat: stat.label })}
+            onStep={(delta) => onStep(stat.key, delta)}
+          />
         </div>
       </div>
     );
   };
 
   return (
-    <section className={`${panel} overflow-hidden`}>
-      <div className="flex items-center justify-between border-b border-cyan-500/30 bg-[#073b63] px-5 py-3">
-        <div className="flex items-center gap-2 text-cyan-200"><Activity className="h-4 w-4" /><h2 className="text-sm font-black uppercase tracking-wider">{lang === 'vi' ? 'Chỉ số huấn luyện' : 'Training stats'}</h2></div>
+    <section className={`${panel} flex flex-col overflow-visible xl:h-full`}>
+      {children}
+      <div className="flex flex-col items-start gap-2 border-b border-cyan-500/30 bg-[#073b63] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="flex items-center gap-2 text-cyan-200">
+          <Activity className="h-4 w-4" />
+          <h2 className="text-sm font-black uppercase tracking-wider">{t('training.stats')}</h2>
+          <InfoTooltip text={t('training.statsHint')} />
+        </div>
         <div className="flex items-center gap-2 font-mono text-xs font-black text-cyan-100">
           <FatigueSprite fatigue={fatigue} size={20} />
           <span>{fatigue}/100</span>
           <span className="text-cyan-400/40">·</span>
-          <span>{summary.remaining} TP {lang === 'vi' ? 'còn lại' : 'remaining'}</span>
+          <span>{summary.remaining} TP {t('training.remaining')}</span>
         </div>
       </div>
-      <div className="grid gap-x-8 gap-y-3 p-5 lg:grid-cols-2">
+      <div className="grid gap-x-6 gap-0 sm:gap-y-2.5 p-1.5 sm:p-4 lg:grid-cols-2">
         <div className="space-y-2.5">{TRAINING_STATS.slice(0, 5).map(renderStat)}</div>
         <div className="space-y-2.5">{TRAINING_STATS.slice(5).map(renderStat)}</div>
       </div>
-      {summary.overCapacity > 0 && <div className="mx-5 mb-5 flex gap-2 rounded-lg bg-rose-500/10 p-2 text-[10px] text-rose-300"><AlertTriangle className="h-3.5 w-3.5 shrink-0" />{lang === 'vi' ? `Vượt dung lượng ${summary.overCapacity} TP.` : `${summary.overCapacity} TP over capacity.`}</div>}
+      {summary.overCapacity > 0 && <div className="mx-5 mb-5 flex gap-2 rounded-lg bg-rose-500/10 p-2 text-[10px] text-rose-300"><AlertTriangle className="h-3.5 w-3.5 shrink-0" />{t('training.overCapacity', { points: summary.overCapacity })}</div>}
     </section>
   );
 }
 
-function ProgramSummary({ program, target, lang }) {
+function ProgramSummary({ program, target, t }) {
   if (!program) return null;
   return (
     <section className="rounded-xl border border-indigo-500/40 bg-indigo-500/10 p-4">
@@ -312,24 +396,24 @@ function ProgramSummary({ program, target, lang }) {
         <div>
           <div className="mb-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.18em] text-indigo-300">
             <Sparkles className="h-3.5 w-3.5" />
-            {lang === 'vi' ? 'Chương trình đang chọn' : 'Selected program'}
+            {t('training.selectedProgram')}
           </div>
           <h3 className="text-lg font-black text-white">{program.name}</h3>
           <p className="mt-1 text-xs text-slate-400">
-            {lang === 'vi' ? 'Tỷ lệ dự kiến vào' : 'Expected allocation to'} {target.toUpperCase()}:{' '}
+            {t('training.expectedAllocation')} {target.toUpperCase()}:{' '}
             <strong className="text-indigo-300">{number(program.targetShare * 100)}%</strong>
           </p>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase ${program.available ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'}`}>
-          {program.available ? (lang === 'vi' ? 'Có thể dùng' : 'Available') : (lang === 'vi' ? 'Quá mệt' : 'Fatigue blocked')}
+          {program.available ? t('training.available') : t('training.fatigueBlocked')}
         </span>
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          [lang === 'vi' ? 'Hạng' : 'Rank', program.rank === 100 ? (lang === 'vi' ? 'Tức thì' : 'Instant') : program.rank],
-          [lang === 'vi' ? 'Thời gian' : 'Duration', formatDuration(program.duration)],
-          [lang === 'vi' ? 'Mệt mỏi' : 'Fatigue', `+${program.fatigue}`],
-          [lang === 'vi' ? 'Đảm bảo' : 'Guarantee', program.minGuarantee || '—']
+          [t('training.rank'), program.rank === 100 ? t('training.instant') : program.rank],
+          [t('training.duration'), formatDuration(program.duration)],
+          [t('training.fatigue'), `+${program.fatigue}`],
+          [t('training.guarantee'), program.minGuarantee || '—']
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg bg-slate-950/60 p-2">
             <div className="text-[9px] font-bold uppercase tracking-wider text-slate-500">{label}</div>
@@ -341,13 +425,13 @@ function ProgramSummary({ program, target, lang }) {
   );
 }
 
-function Distribution({ rows, lang }) {
+function Distribution({ rows, t }) {
   const active = rows.filter((row) => row.share > 0);
   return (
     <section className={`${panel} p-5`}>
       <div className="mb-4 flex items-center gap-2">
         <BarChart3 className="h-4 w-4 text-cyan-400" />
-        <h2 className="text-sm font-black text-slate-100">{lang === 'vi' ? 'Phân bổ dự kiến' : 'Expected distribution'}</h2>
+        <h2 className="text-sm font-black text-slate-100">{t('training.expectedDistribution')}</h2>
       </div>
       {active.length ? <div className="space-y-3">
         {active.map((row) => (
@@ -359,11 +443,11 @@ function Distribution({ rows, lang }) {
             <div className="h-2.5 overflow-hidden rounded-full bg-slate-800">
               <div className="h-full rounded-full transition-all" style={{ width: `${row.share * 100}%`, backgroundColor: row.color }} />
             </div>
-            <div className="mt-1 text-[10px] text-slate-500">{lang === 'vi' ? 'Khoảng ước tính' : 'Estimated range'} {number(row.min)}–{number(row.max)} TP</div>
+            <div className="mt-1 text-[10px] text-slate-500">{t('training.estimatedRange')} {number(row.min)}–{number(row.max)} TP</div>
           </div>
         ))}
       </div> : <div className="rounded-lg border border-dashed border-slate-700 py-10 text-center text-xs text-slate-500">
-        {lang === 'vi' ? 'Không có trọng số huấn luyện.' : 'No training weights available.'}
+        {t('training.noWeights')}
       </div>}
     </section>
   );
@@ -446,12 +530,11 @@ function ProgramBrowser({ programs, selectedId, onSelect, lang }) {
 }
 
 export function TrainingTool() {
-  const { lang } = useTranslation();
+  const { t, lang } = useTranslation();
   const [crew, setCrew] = useState([]);
   const [instantItems, setInstantItems] = useState([]);
   const [crewId, setCrewId] = useState('');
   const [target, setTarget] = useState('abl');
-  const [quality, setQuality] = useState('regular');
   const [training, setTraining] = useState({ ...EMPTY_TRAINING });
   const [fatigue, setFatigue] = useState(0);
   const [selectedProgramId, setSelectedProgramId] = useState(null);
@@ -500,43 +583,39 @@ export function TrainingTool() {
   }, [instantItems]);
   const capacity = getTrainingCapacity(selectedCrew);
   const summary = summarizeTraining(training, capacity);
-  const recommendations = useMemo(() => recommendPrograms(programs, target, quality, fatigue), [fatigue, programs, quality, target]);
+  const recommendations = useMemo(() => recommendPrograms(programs, target, 'regular', fatigue), [fatigue, programs, target]);
   const recommended = recommendations[0];
   const selectedBase = programs.find((item) => item.id === selectedProgramId);
   const selected = selectedBase
-    ? recommendPrograms([selectedBase], target, quality, fatigue)[0] || {
+    ? recommendPrograms([selectedBase], target, 'regular', fatigue)[0] || {
         ...selectedBase,
         targetShare: 0,
         available: Number(fatigue) + (Number(selectedBase.fatigue) || 0) <= 100
       }
     : recommended;
-  const distribution = calculateTrainingPossibilities(selected, capacity, training, fatigue, target, quality);
+  const distribution = calculateTrainingPossibilities(selected, capacity, training, fatigue, target, 'regular');
+  const maxTargetPoints = distribution.find((row) => row.key === target)?.max || 0;
 
   const reset = () => {
     setTraining({ ...EMPTY_TRAINING });
     setFatigue(0);
     setTarget('abl');
-    setQuality('regular');
     setSelectedProgramId(null);
   };
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-6 pb-12">
-      <SEOHead title={lang === 'vi' ? 'Công cụ Huấn luyện Crew | Pixel Starships' : 'Crew Training Calculator | Pixel Starships'} description={lang === 'vi' ? 'Tính điểm huấn luyện và tìm chương trình tối ưu cho crew.' : 'Plan crew training points and compare every PSS training program.'} />
+    <div className="mx-auto w-full max-w-[1180px] space-y-3 pb-8 xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:pb-0">
+      <SEOHead title={t('training.seoTitle')} description={t('training.seoDescription')} />
 
-      <header className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-md">
-        <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-16 translate-x-16 rounded-full bg-indigo-500/15 blur-3xl" />
-        <div className="relative flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400"><Dumbbell className="h-4 w-4" />{lang === 'vi' ? 'Công cụ lập kế hoạch' : 'Planning tool'}</div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-100 sm:text-3xl">{lang === 'vi' ? 'Huấn luyện Crew' : 'Crew Training Calculator'}</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-400">{lang === 'vi' ? 'Phân bổ dung lượng huấn luyện, so sánh kết quả và tìm chương trình tốt nhất cho chỉ số mục tiêu.' : 'Allocate training capacity, compare possible outcomes, and find the strongest program for your target stat.'}</p>
-          </div>
-          <button onClick={reset} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-slate-300 transition hover:bg-slate-700"><RotateCcw className="h-3.5 w-3.5" />{lang === 'vi' ? 'Đặt lại' : 'Reset'}</button>
+      <header className="page-header shrink-0">
+        <div>
+            <h1 className="page-title">{t('training.pageTitle')}</h1>
+            <p className="mt-1 text-xs text-slate-400">{t('training.pageDescription')}</p>
         </div>
+        <button onClick={reset} title={t('training.resetHint')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 transition hover:bg-slate-800"><RotateCcw className="h-3.5 w-3.5" />{t('training.reset')}</button>
       </header>
 
-      <div className="grid gap-5 xl:grid-cols-[330px_minmax(0,1fr)]">
+      <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[280px_minmax(0,1fr)]">
         <CrewStage
           crew={crew}
           crewId={crewId}
@@ -550,43 +629,11 @@ export function TrainingTool() {
             setTraining({ ...EMPTY_TRAINING });
           }}
           onFatigueChange={setFatigue}
-          lang={lang}
+          t={t}
         />
 
-        <main className="space-y-5">
-          <ProgramSelector
-            programs={programs}
-            selectedId={selectedProgramId}
-            selected={selected}
-            target={target}
-            quality={quality}
-            onSelect={setSelectedProgramId}
-            onTargetChange={(value) => {
-              setTarget(value);
-              setSelectedProgramId(null);
-            }}
-            onQualityChange={setQuality}
-            lang={lang}
-          />
-
-          <div className="grid gap-5 2xl:grid-cols-[minmax(300px,0.8fr)_minmax(420px,1.2fr)]">
-            <div className="space-y-5">
-              <ProgramSummary program={selected} target={target} lang={lang} />
-              <Distribution rows={distribution} lang={lang} />
-              <section className="grid gap-2 sm:grid-cols-3">
-                {[
-                  [Activity, lang === 'vi' ? 'Còn lại' : 'Remaining TP', summary.remaining, 'text-emerald-400'],
-                  [Dumbbell, lang === 'vi' ? 'Đã dùng' : 'Allocated TP', summary.spent, 'text-cyan-400'],
-                  [Clock3, lang === 'vi' ? 'Mức mệt trống' : 'Fatigue room', Math.max(100 - fatigue, 0), 'text-amber-400']
-                ].map(([Icon, label, value, color]) => (
-                  <div key={label} className={`${panel} flex items-center gap-3 p-3`}>
-                    <Icon className={`h-4 w-4 ${color}`} />
-                    <div><div className="text-[9px] font-bold uppercase tracking-wider text-slate-500">{label}</div><div className="text-lg font-black text-slate-100">{value}</div></div>
-                  </div>
-                ))}
-              </section>
-            </div>
-
+        <main className="min-h-0">
+          <div className="xl:h-full">
             <TrainingStats
               selectedCrew={selectedCrew}
               training={training}
@@ -595,8 +642,27 @@ export function TrainingTool() {
               distribution={distribution}
               fatigue={fatigue}
               onChange={(key, value) => setTraining((current) => ({ ...current, [key]: clampTrainingValue(value, capacity) }))}
-              lang={lang}
-            />
+              onStep={(key, delta) => setTraining((current) => ({
+                ...current,
+                [key]: clampTrainingValue(current[key] + delta, capacity)
+              }))}
+              t={t}
+            >
+              <ProgramSelector
+                embedded
+                programs={programs}
+                selectedId={selectedProgramId}
+                selected={selected}
+                target={target}
+                maxTargetPoints={maxTargetPoints}
+                onSelect={setSelectedProgramId}
+                onTargetChange={(value) => {
+                  setTarget(value);
+                  setSelectedProgramId(null);
+                }}
+                t={t}
+              />
+            </TrainingStats>
           </div>
         </main>
       </div>

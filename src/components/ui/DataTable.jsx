@@ -26,7 +26,7 @@ export function DataTable({
         ref={parentRef}
         className="max-h-[650px] overflow-auto scrollbar-thin scrollbar-thumb-slate-800"
       >
-        <table className="w-full text-left text-xs text-slate-300 border-collapse">
+        <table className="w-full min-w-[640px] text-left text-xs text-slate-300 border-collapse">
           {/* Table Header */}
           <thead className="sticky top-0 z-10 bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
             <tr className="flex items-center">

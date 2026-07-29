@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   calculateDistribution,
+  calculateTrainedStat,
   calculateTrainingPossibilities,
   getTrainingCapacity,
   isPrimaryTrainingStat,
@@ -38,6 +39,12 @@ describe('crew training calculations', () => {
       remaining: 0,
       overCapacity: 10
     });
+  });
+
+  it('applies training percentages and uses the stat rounding rules', () => {
+    expect(calculateTrainedStat(10, 5, 'hp')).toBe(11);
+    expect(calculateTrainedStat(10, 4, 'hp')).toBe(10);
+    expect(calculateTrainedStat(7.2, 15, 'atk')).toBe(8.3);
   });
 
   it('distributes points using chance weights and variability', () => {

@@ -20,14 +20,16 @@ export function Footer() {
         
         <div className="flex items-center space-x-2 text-slate-200 font-semibold">
           <ShieldCheck className="h-4 w-4 text-indigo-400" />
-          <span>Pixel Starships Reference Library</span>
+          <span>{t('layout.referenceLibrary')}</span>
         </div>
 
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-1 text-slate-400 font-mono">
+        <div className="flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-2 md:w-auto md:justify-end">
+          <div className="flex min-w-0 items-center space-x-1 text-center text-slate-400 font-mono">
             <Database className="h-4 w-4 text-indigo-400" />
             <span>
-              {snapshotMeta ? `Snapshot: ${new Date(snapshotMeta.normalizedAt).toLocaleDateString()}` : 'Snapshot Active'}
+              {snapshotMeta
+                ? t('layout.snapshot', { date: new Date(snapshotMeta.normalizedAt).toLocaleDateString(lang) })
+                : t('layout.snapshotActive')}
             </span>
           </div>
 

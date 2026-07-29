@@ -139,11 +139,11 @@ export function ItemCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Item & Equipment Reference Catalog</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Search items, equipment modules, gear, crafting ingredients, and fair market estimates.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.itemCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.itemCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

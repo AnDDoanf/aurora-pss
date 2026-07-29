@@ -108,11 +108,11 @@ export function MissileCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Missiles & Ammunition Catalog</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Catalog of Pixel Starships missiles, torpedoes, ammunition, system damage values, and costs.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.missileCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.missileCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

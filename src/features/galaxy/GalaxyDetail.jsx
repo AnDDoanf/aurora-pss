@@ -34,14 +34,14 @@ export function GalaxyDetail() {
         <span>Back to Galaxy Catalog</span>
       </Link>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6">
+      <div className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
             <div className="p-4 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400">
               <Globe className="h-10 w-10" />
             </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100">{system.StarSystemName || 'Star System'}</h1>
+            <div className="min-w-0 flex-1">
+              <h1 className="break-words text-xl font-extrabold text-slate-100 sm:text-3xl">{system.StarSystemName || 'Star System'}</h1>
               <p className="text-xs text-slate-400 mt-1">
                 Star System ID: <span className="font-mono text-slate-300">#{system.StarSystemId}</span>
               </p>

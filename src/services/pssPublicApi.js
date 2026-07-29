@@ -3,8 +3,7 @@ import axios from 'axios';
 const PSS_API_BASE = typeof window !== 'undefined' ? '/api-pss' : 'http://api.pixelstarships.com';
 const FALLBACK_DIRECT_URL = 'http://api.pixelstarships.com';
 
-export const getTournamentStatus = () => {
-  const now = new Date();
+export const getTournamentStatus = (now = new Date()) => {
   const year = now.getUTCFullYear();
   const month = now.getUTCMonth();
   const dayOfMonth = now.getUTCDate();
@@ -22,7 +21,7 @@ export const getTournamentStatus = () => {
     Date.UTC(tournamentYear, normalizedTournamentMonth, tournamentEndDay - 6)
   );
   const tournamentEndDate = new Date(
-    Date.UTC(tournamentYear, normalizedTournamentMonth, tournamentEndDay, 23, 59, 59)
+    Date.UTC(tournamentYear, normalizedTournamentMonth, tournamentEndDay, 23, 59, 59, 999)
   );
   const currentDay = isLive
     ? Math.min(7, Math.max(1, dayOfMonth - tournamentStartDay + 1))

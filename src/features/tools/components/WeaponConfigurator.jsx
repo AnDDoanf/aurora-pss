@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Zap, Sword, Crosshair, Sparkles, Package } from 'lucide-react';
 import { calculateWeaponMetrics } from '../utils/capacityCalculations';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 export function WeaponConfigurator({
   weapons = [],
@@ -14,6 +15,7 @@ export function WeaponConfigurator({
   onUpdateWeapon,
   onRemoveWeapon
 }) {
+  const { t } = useTranslation();
   const [showRoomPicker, setShowRoomPicker] = useState(false);
   const [selectedRoomName, setSelectedRoomName] = useState('');
 
@@ -97,10 +99,10 @@ export function WeaponConfigurator({
           </div>
           <div>
             <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
-              Weapon Rooms (Offensive Capacity)
+              {t('pages.capacity.weaponRoomsTitle')}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Each weapon room is a row. Select room design and decide room level directly in the row.
+              {t('pages.capacity.weaponRoomsDescription')}
             </p>
           </div>
         </div>
@@ -110,7 +112,7 @@ export function WeaponConfigurator({
           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all shadow-sm"
         >
           <Plus className="h-3.5 w-3.5" />
-          <span>Add Weapon Room</span>
+          <span>{t('pages.capacity.addWeapon')}</span>
         </button>
       </div>
 
@@ -118,8 +120,8 @@ export function WeaponConfigurator({
       {showRoomPicker && (
         <div className="bg-slate-950/90 border border-indigo-900/50 p-3 rounded-lg space-y-3 shadow-inner">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-indigo-300">Select Weapon Room Design</span>
-            <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">Close</button>
+            <span className="text-xs font-bold text-indigo-300">{t('pages.capacity.selectWeapon')}</span>
+            <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">{t('pages.capacity.close')}</button>
           </div>
 
           <div className="flex items-center gap-2">
@@ -128,7 +130,7 @@ export function WeaponConfigurator({
               onChange={(e) => setSelectedRoomName(e.target.value)}
               className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-sans"
             >
-              <option value="">-- Choose Weapon Room Design --</option>
+              <option value="">{t('pages.capacity.chooseWeapon')}</option>
               {weaponRoomOptions.map(r => (
                 <option key={r.name} value={r.name}>
                   {r.name} ({r.type || 'Weapon'})
@@ -141,7 +143,7 @@ export function WeaponConfigurator({
               onClick={handleAddSelectedRoom}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-xs font-bold text-white rounded-lg transition-all"
             >
-              Add Room
+              {t('pages.capacity.addRoom')}
             </button>
           </div>
         </div>
@@ -150,24 +152,24 @@ export function WeaponConfigurator({
       {/* Weapons Table - Each Room a Row */}
       {weapons.length === 0 ? (
         <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-slate-800 rounded-lg">
-          No weapon rooms configured yet. Click <strong>Add Weapon Room</strong> to add cannons, lasers, missiles, or hangars.
+          {t('pages.capacity.noWeapons')}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/60 scrollbar-thin">
           <table className="w-full text-left text-xs font-mono border-collapse whitespace-nowrap">
             <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
               <tr>
-                <th className="p-3 min-w-[170px]">Room Design</th>
-                <th className="p-3 w-20">Level</th>
-                <th className="p-3 min-w-[130px]">Power (kW)</th>
-                <th className="p-3 w-14">Qty</th>
-                <th className="p-3 w-20 text-rose-400">Weapon %</th>
-                <th className="p-3 w-20 text-amber-400">Haste %</th>
-                <th className="p-3 min-w-[180px]">Ammo / Craft Selection</th>
-                <th className="p-3 min-w-[140px]">Apply Symphony</th>
-                <th className="p-3 min-w-[140px]">API Base Stats</th>
-                <th className="p-3 min-w-[100px]">Shots / sec</th>
-                <th className="p-3 text-right w-12">Del</th>
+                <th className="p-3 min-w-[170px]">{t('pages.capacity.roomDesign')}</th>
+                <th className="p-3 w-20">{t('pages.capacity.level')}</th>
+                <th className="p-3 min-w-[130px]">{t('pages.capacity.power')}</th>
+                <th className="p-3 w-14">{t('pages.capacity.quantity')}</th>
+                <th className="p-3 w-20 text-rose-400">{t('pages.capacity.weaponPercent')}</th>
+                <th className="p-3 w-20 text-amber-400">{t('pages.capacity.hastePercent')}</th>
+                <th className="p-3 min-w-[180px]">{t('pages.capacity.ammoCraft')}</th>
+                <th className="p-3 min-w-[140px]">{t('pages.capacity.symphony')}</th>
+                <th className="p-3 min-w-[140px]">{t('pages.capacity.baseStats')}</th>
+                <th className="p-3 min-w-[100px]">{t('pages.capacity.shotsSecond')}</th>
+                <th className="p-3 text-right w-12">{t('pages.capacity.deleteShort')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80">
@@ -316,7 +318,7 @@ export function WeaponConfigurator({
 
                           {/* Carrier Craft Count */}
                           <div className="flex items-center space-x-1 text-[10px] font-mono">
-                            <span className="text-slate-400">Craft Qty:</span>
+                            <span className="text-slate-400">{t('pages.capacity.craftQuantity')}</span>
                             <input
                               type="number"
                               min="1"
@@ -414,7 +416,7 @@ export function WeaponConfigurator({
                       <button
                         onClick={() => onRemoveWeapon(w.id)}
                         className="p-1 text-slate-400 hover:text-rose-400 transition-colors"
-                        title="Remove weapon"
+                        title={t('pages.capacity.removeWeapon')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

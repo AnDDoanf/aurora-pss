@@ -133,8 +133,14 @@ export function SearchModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-lg bg-slate-900 shadow-2xl overflow-hidden border border-slate-800">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/80 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-sm sm:px-4 sm:pt-16"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-900 shadow-2xl sm:max-h-[calc(100dvh-5rem)]"
+        onClick={(event) => event.stopPropagation()}
+      >
         
         {/* Input header */}
         <div className="flex items-center px-4 border-b border-slate-800/40">
@@ -153,7 +159,7 @@ export function SearchModal({ isOpen, onClose }) {
         </div>
 
         {/* Results list */}
-        <div className="max-h-96 overflow-y-auto p-2 divide-y divide-slate-800/40">
+        <div className="min-h-0 flex-1 overflow-y-auto p-2 divide-y divide-slate-800/40 sm:max-h-96">
           {results.length > 0 ? (
             results.map((hit) => {
               const Icon = getIcon(hit.itemKind);
@@ -161,14 +167,14 @@ export function SearchModal({ isOpen, onClose }) {
                 <button
                   key={hit.id}
                   onClick={() => handleSelectResult(hit.targetPath)}
-                  className="w-full flex items-center justify-between px-3 py-3 rounded-lg text-left text-sm hover:bg-slate-800/70 transition-colors group"
+                  className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-lg px-2 py-3 text-left text-sm transition-colors hover:bg-slate-800/70 sm:px-3"
                 >
-                  <div className="flex items-center space-x-3">
+                  <div className="flex min-w-0 items-center space-x-3">
                     <div className="p-2 rounded-md bg-slate-950 text-indigo-400 group-hover:bg-indigo-950/80">
                       <Icon className="h-4 w-4" />
                     </div>
-                    <div>
-                      <div className="font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
+                    <div className="min-w-0">
+                      <div className="truncate font-bold text-slate-100 transition-colors group-hover:text-indigo-300">
                         {hit.name}
                       </div>
                       <div className="text-xs text-slate-400 space-x-2">

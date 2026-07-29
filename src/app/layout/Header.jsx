@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, Moon, Sun, ChevronDown, Users, LayoutGrid, Rocket, Package, Cpu, Award, Dumbbell } from 'lucide-react';
+import { Globe, Menu, Moon, Sun, Search, ChevronDown, Users, LayoutGrid, Rocket, Package, Cpu, Award, Dumbbell, BarChart3, Target } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { DirectSearchInput } from '../../features/search/DirectSearchInput';
 import { publicUrl } from '../../utils/publicUrl';
 
-export function Header({ onToggleMobileNav, theme, onToggleTheme }) {
+export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }) {
   const { t, lang } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [isToolsOpen, setIsToolsOpen] = useState(false);
 
   const toggleLanguage = () => {
     const nextLang = lang === 'en' ? 'vi' : 'en';
@@ -19,35 +20,56 @@ export function Header({ onToggleMobileNav, theme, onToggleTheme }) {
   };
 
   const catalogItems = [
-    { label: t('nav.crew'), path: `/${lang}/library/crew`, icon: Users, desc: 'Stats, L1-40 scaling, slots' },
-    { label: t('nav.rooms'), path: `/${lang}/library/rooms`, icon: LayoutGrid, desc: 'Level chains, power, stats' },
-    { label: t('nav.ships'), path: `/${lang}/library/ships`, icon: Rocket, desc: 'Grid masks, repair costs' },
-    { label: t('nav.items'), path: `/${lang}/library/items`, icon: Package, desc: 'Enhancements, market data' },
-    { label: lang === 'vi' ? 'Máy bay & Tên lửa' : 'Crafts & Missiles', path: `/${lang}/library/crafts`, icon: Rocket, desc: 'Flight speed, damage' },
-    { label: lang === 'vi' ? 'Cây nghiên cứu' : 'Research Tree', path: `/${lang}/library/research`, icon: Cpu, desc: 'Prerequisites, costs' },
-    { label: lang === 'vi' ? 'Bộ sưu tập & Skins' : 'Collections & Skins', path: `/${lang}/library/collections`, icon: Award, desc: 'Crew rosters, cosmetics' }
+    { label: t('nav.crew'), path: `/${lang}/library/crew`, icon: Users, desc: t('layout.crewDesc') },
+    { label: t('nav.rooms'), path: `/${lang}/library/rooms`, icon: LayoutGrid, desc: t('layout.roomDesc') },
+    { label: t('nav.ships'), path: `/${lang}/library/ships`, icon: Rocket, desc: t('layout.shipDesc') },
+    { label: t('nav.items'), path: `/${lang}/library/items`, icon: Package, desc: t('layout.itemDesc') },
+    { label: t('layout.craftsMissiles'), path: `/${lang}/library/crafts`, icon: Rocket, desc: t('layout.craftDesc') },
+    { label: t('layout.researchTree'), path: `/${lang}/library/research`, icon: Cpu, desc: t('layout.researchDesc') },
+    { label: t('layout.collectionsSkins'), path: `/${lang}/library/collections`, icon: Award, desc: t('layout.collectionDesc') }
+  ];
+  const toolItems = [
+    {
+      label: t('nav.capacity'),
+      path: `/${lang}/tools/capacity`,
+      icon: BarChart3,
+      desc: t('layout.capacityDesc')
+    },
+    {
+      label: t('layout.training'),
+      path: `/${lang}/tools/training`,
+      icon: Dumbbell,
+      desc: t('layout.trainingDesc')
+    },
+    {
+      label: t('layout.targeting'),
+      path: `/${lang}/tools/targeting`,
+      icon: Target,
+      desc: t('layout.targetingDesc')
+    }
   ];
 
   const isLibraryActive = location.pathname.includes('/library/');
+  const isToolsActive = location.pathname.includes('/tools/');
 
   return (
     <header className="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-md text-slate-100 shadow-sm transition-colors">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between gap-2 px-2 sm:px-6 lg:px-8">
         
         {/* Brand Logo */}
-        <div className="flex items-center space-x-3">
+        <div className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-3">
           <button 
             onClick={onToggleMobileNav}
-            className="p-2 text-slate-400 hover:text-white lg:hidden"
-            aria-label="Open Navigation Menu"
+            className="shrink-0 p-2 text-slate-400 hover:text-white lg:hidden"
+            aria-label={t('layout.openMenu')}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
           
-          <Link to={`/${lang}`} className="flex items-center space-x-2.5">
-            <img src={publicUrl('/logo.png')} alt="PSS Library Logo" className="h-8 w-auto object-contain" />
-            <span className="font-black text-lg tracking-wider uppercase text-slate-100">
-              PSS <span className="text-indigo-500 font-extrabold">Library</span>
+          <Link to={`/${lang}`} className="flex min-w-0 items-center gap-1.5 sm:gap-2.5">
+            <img src={publicUrl('/logo.png')} alt="PSS Library Logo" className="h-7 w-auto shrink-0 object-contain sm:h-8" />
+            <span className="hidden whitespace-nowrap text-sm font-black uppercase leading-none tracking-wide text-slate-100 min-[360px]:inline sm:text-lg sm:tracking-wider">
+              PSS <span className="font-extrabold text-indigo-500">Aurōra</span>
             </span>
           </Link>
         </div>
@@ -79,7 +101,7 @@ export function Header({ onToggleMobileNav, theme, onToggleTheme }) {
                   : 'text-slate-300 hover:text-indigo-400 hover:bg-slate-900/60'
               }`}
             >
-              <span>{lang === 'vi' ? 'Thư viện Tra cứu' : 'Catalogs'}</span>
+              <span>{t('layout.catalogs')}</span>
               <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isCatalogOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -127,59 +149,90 @@ export function Header({ onToggleMobileNav, theme, onToggleTheme }) {
             {t('nav.compare')}
           </Link>
 
-          <Link
-            to={`/${lang}/tools/capacity`}
-            className={`px-3 py-2 rounded-lg transition-all ${
-              location.pathname.includes('/tools/capacity')
-                ? 'bg-indigo-600 text-white font-bold shadow-sm' 
-                : 'text-slate-300 hover:text-indigo-400 hover:bg-slate-900/60'
-            }`}
+          {/* Hover Tools Dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setIsToolsOpen(true)}
+            onMouseLeave={() => setIsToolsOpen(false)}
           >
-            {lang === 'vi' ? 'Phân Tích Công/Thủ' : 'Capacity Analytics'}
-          </Link>
-
-          <Link
-            to={`/${lang}/tools/training`}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all ${
-              location.pathname.includes('/tools/training')
+            <button
+              type="button"
+              onClick={() => setIsToolsOpen((open) => !open)}
+              aria-haspopup="menu"
+              aria-expanded={isToolsOpen}
+              className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all ${
+                isToolsActive || isToolsOpen
                 ? 'bg-indigo-600 text-white font-bold shadow-sm'
                 : 'text-slate-300 hover:text-indigo-400 hover:bg-slate-900/60'
-            }`}
-          >
-            <Dumbbell className="h-3.5 w-3.5" />
-            {lang === 'vi' ? 'Huấn luyện' : 'Training'}
-          </Link>
+              }`}
+            >
+              <span>{t('nav.tools')}</span>
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-          <Link
-            to={`/${lang}/tools/targeting`}
-            className={`px-3 py-2 rounded-lg transition-all ${
-              location.pathname.includes('/tools/targeting')
-                ? 'bg-indigo-600 text-white font-bold shadow-sm' 
-                : 'text-slate-300 hover:text-indigo-400 hover:bg-slate-900/60'
-            }`}
-          >
-            {t('nav.tools')}
-          </Link>
+            {isToolsOpen && (
+              <div className="absolute right-0 top-full z-50 w-72 pt-1">
+                <div role="menu" className="grid grid-cols-1 gap-1 rounded-lg border border-slate-800/40 bg-slate-950 p-2 shadow-2xl">
+                  {toolItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname.startsWith(item.path);
+                    return (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        role="menuitem"
+                        onClick={() => setIsToolsOpen(false)}
+                        className={`dropdown-item flex items-start space-x-3 rounded-lg p-2.5 transition-all ${
+                          isActive
+                            ? 'bg-indigo-600 text-white font-bold'
+                            : 'text-slate-300 hover:bg-indigo-600 hover:text-white'
+                        }`}
+                      >
+                        <div className="mt-0.5 shrink-0 rounded-md bg-indigo-950/60 p-2 text-indigo-400">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold">{item.label}</div>
+                          <div className="mt-0.5 text-[10px] opacity-80">{item.desc}</div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
         </nav>
 
         {/* Direct Instant Search Input & Controls */}
-        <div className="flex items-center space-x-2.5">
-          <DirectSearchInput />
+        <div className="flex min-w-0 items-center gap-1 sm:gap-2.5">
+          <div className="hidden sm:block">
+            <DirectSearchInput />
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="rounded-lg bg-slate-900 p-2 text-indigo-400 transition-colors hover:text-white sm:hidden"
+            aria-label={t('nav.searchPlaceholder')}
+          >
+            <Search className="h-4 w-4" />
+          </button>
 
           <button
             onClick={toggleLanguage}
-            className="flex items-center space-x-1.5 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-bold text-slate-200 hover:text-indigo-400 transition-colors"
-            title="Switch Language"
+            className="flex shrink-0 items-center gap-1 rounded-lg bg-slate-900 px-2 py-2 text-xs font-bold text-slate-200 transition-colors hover:text-indigo-400 sm:gap-1.5 sm:px-2.5 sm:py-1.5"
+            title={t('layout.switchLanguage')}
           >
-            <Globe className="h-3.5 w-3.5 text-indigo-400" />
+            <Globe className="hidden h-3.5 w-3.5 text-indigo-400 min-[360px]:block" />
             <span>{lang.toUpperCase()}</span>
           </button>
 
           <button
             onClick={onToggleTheme}
-            className="p-2 text-slate-400 hover:text-indigo-400 transition-colors rounded-lg bg-slate-900"
-            aria-label="Toggle Theme"
+            className="shrink-0 rounded-lg bg-slate-900 p-2 text-slate-400 transition-colors hover:text-indigo-400"
+            aria-label={t('layout.toggleTheme')}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-slate-300" />}
           </button>

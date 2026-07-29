@@ -21,17 +21,14 @@ export function DataFreshness() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-4">
+    <div className="space-y-8">
       
       {/* Header section */}
-      <div className="border-b border-slate-800 pb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-100 flex items-center space-x-3">
-          <Database className="h-7 w-7 text-emerald-400" />
-          <span>{t('nav.aboutData')} & Methodology</span>
-        </h1>
-        <p className="mt-2 text-sm text-slate-400">
-          Transparency report regarding official Pixel Starships API snapshot freshness, entity counts, raw disclosures, and third-party data adapter health.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.data.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.data.description')}</p>
+        </div>
       </div>
 
       {/* Snapshot Active Status Box */}

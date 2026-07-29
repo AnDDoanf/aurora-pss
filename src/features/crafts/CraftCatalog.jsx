@@ -108,11 +108,11 @@ export function CraftCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Deployable Crafts & Drones Catalog</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Reference list of Pixel Starships deployable crafts, interceptors, repair drones, and bombers.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.craftCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.craftCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

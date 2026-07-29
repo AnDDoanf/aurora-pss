@@ -12,7 +12,14 @@ export function useTranslation() {
   /**
    * Lookup key string path, e.g., t('nav.crew')
    */
-  const t = (pathKey, fallback = '') => {
+  const t = (pathKey, fallbackOrParams = '', interpolationParams = {}) => {
+    const fallback = typeof fallbackOrParams === 'string' ? fallbackOrParams : '';
+    const params = typeof fallbackOrParams === 'object' && fallbackOrParams !== null
+      ? fallbackOrParams
+      : interpolationParams;
+    const interpolate = (text) => text.replace(/\{(\w+)\}/g, (match, key) => (
+      Object.prototype.hasOwnProperty.call(params, key) ? String(params[key]) : match
+    ));
     const keys = pathKey.split('.');
     let val = dict;
     for (const key of keys) {
@@ -25,13 +32,13 @@ export function useTranslation() {
           if (fallbackVal && typeof fallbackVal === 'object' && fk in fallbackVal) {
             fallbackVal = fallbackVal[fk];
           } else {
-            return fallback || pathKey;
+            return interpolate(fallback || pathKey);
           }
         }
-        return typeof fallbackVal === 'string' ? fallbackVal : (fallback || pathKey);
+        return interpolate(typeof fallbackVal === 'string' ? fallbackVal : (fallback || pathKey));
       }
     }
-    return typeof val === 'string' ? val : (fallback || pathKey);
+    return interpolate(typeof val === 'string' ? val : (fallback || pathKey));
   };
 
   return { t, lang: currentLang };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Zap, Shield, ShieldAlert, Wind } from 'lucide-react';
 import { calculateDefenseMetrics } from '../utils/capacityCalculations';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 export function DefenseConfigurator({
   defenses = [],
@@ -11,6 +12,7 @@ export function DefenseConfigurator({
   onUpdateDefense,
   onRemoveDefense
 }) {
+  const { t } = useTranslation();
   const [showRoomPicker, setShowRoomPicker] = useState(false);
   const [selectedRoomName, setSelectedRoomName] = useState('');
 
@@ -89,10 +91,10 @@ export function DefenseConfigurator({
           </div>
           <div>
             <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
-              Defense Rooms (Defensive Capacity)
+              {t('pages.capacity.defenseRoomsTitle')}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Configure initial buffer and regeneration values for Shield Generators and Engine rooms.
+              {t('pages.capacity.defenseRoomsDescription')}
             </p>
           </div>
         </div>
@@ -102,7 +104,7 @@ export function DefenseConfigurator({
           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-semibold text-white transition-all shadow-sm"
         >
           <Plus className="h-3.5 w-3.5" />
-          <span>Add Defense Room</span>
+          <span>{t('pages.capacity.addDefense')}</span>
         </button>
       </div>
 
@@ -110,8 +112,8 @@ export function DefenseConfigurator({
       {showRoomPicker && (
         <div className="bg-slate-950/90 border border-sky-900/50 p-3 rounded-lg space-y-3 shadow-inner">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-sky-300">Select Defense Room Design</span>
-            <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">Close</button>
+            <span className="text-xs font-bold text-sky-300">{t('pages.capacity.selectDefense')}</span>
+            <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">{t('pages.capacity.close')}</button>
           </div>
 
           <div className="flex items-center gap-2">
@@ -120,7 +122,7 @@ export function DefenseConfigurator({
               onChange={(e) => setSelectedRoomName(e.target.value)}
               className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-sans"
             >
-              <option value="">-- Choose Defense Room Design --</option>
+              <option value="">{t('pages.capacity.chooseDefense')}</option>
               {defenseRoomOptions.map(r => (
                 <option key={r.name} value={r.name}>
                   {r.name} ({r.type || 'Defense'})
@@ -133,7 +135,7 @@ export function DefenseConfigurator({
               onClick={handleAddSelectedRoom}
               className="px-4 py-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-xs font-bold text-white rounded-lg transition-all"
             >
-              Add Room
+              {t('pages.capacity.addRoom')}
             </button>
           </div>
         </div>
@@ -142,23 +144,23 @@ export function DefenseConfigurator({
       {/* Defenses Table */}
       {defenses.length === 0 ? (
         <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-slate-800 rounded-lg">
-          No defense rooms configured yet. Click <strong>Add Defense Room</strong> to add Shield Generators or Engines.
+          {t('pages.capacity.noDefenses')}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/60 scrollbar-thin">
           <table className="w-full text-left text-xs font-mono border-collapse whitespace-nowrap">
             <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
               <tr>
-                <th className="p-3 min-w-[160px]">Room Design</th>
-                <th className="p-3 w-20">Level</th>
-                <th className="p-3 min-w-[130px]">Power (kW)</th>
-                <th className="p-3 w-14">Qty</th>
-                <th className="p-3 w-24 text-sky-400">Init Value</th>
-                <th className="p-3 w-24 text-amber-400">Regen / Cycle</th>
-                <th className="p-3 w-20 text-sky-400">Stat Bonus %</th>
-                <th className="p-3 w-20 text-amber-400">Haste %</th>
-                <th className="p-3 min-w-[160px]">Defensive Output</th>
-                <th className="p-3 text-right w-12">Del</th>
+                <th className="p-3 min-w-[160px]">{t('pages.capacity.roomDesign')}</th>
+                <th className="p-3 w-20">{t('pages.capacity.level')}</th>
+                <th className="p-3 min-w-[130px]">{t('pages.capacity.power')}</th>
+                <th className="p-3 w-14">{t('pages.capacity.quantity')}</th>
+                <th className="p-3 w-24 text-sky-400">{t('pages.capacity.initialValue')}</th>
+                <th className="p-3 w-24 text-amber-400">{t('pages.capacity.regenCycle')}</th>
+                <th className="p-3 w-20 text-sky-400">{t('pages.capacity.statBonus')}</th>
+                <th className="p-3 w-20 text-amber-400">{t('pages.capacity.hastePercent')}</th>
+                <th className="p-3 min-w-[160px]">{t('pages.capacity.defensiveOutput')}</th>
+                <th className="p-3 text-right w-12">{t('pages.capacity.deleteShort')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80">
@@ -347,7 +349,7 @@ export function DefenseConfigurator({
                       <button
                         onClick={() => onRemoveDefense(d.id)}
                         className="p-1.5 text-slate-400 hover:text-rose-400 transition-colors"
-                        title="Remove defense room"
+                        title={t('pages.capacity.removeDefense')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

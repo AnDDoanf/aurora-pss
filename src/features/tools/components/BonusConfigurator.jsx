@@ -1,10 +1,12 @@
 import React from 'react';
 import { Sliders, Sparkles } from 'lucide-react';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 export function BonusConfigurator({
   bonusStats = {},
   onUpdateBonusStats
 }) {
+  const { t } = useTranslation();
   const weaponBonus = bonusStats.weaponBonus || 0;
   const scienceBonus = bonusStats.scienceBonus || 0;
   const engineBonus = bonusStats.engineBonus || 0;
@@ -19,10 +21,10 @@ export function BonusConfigurator({
           </div>
           <div>
             <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
-              Total Bonus Stats
+              {t('pages.capacity.bonusTitle')}
             </h3>
             <p className="text-[11px] text-slate-400">
-              Apply total ship/crew stat bonuses (Weapon, Science, Engine, and Haste)
+              {t('pages.capacity.bonusDescription')}
             </p>
           </div>
         </div>
@@ -32,7 +34,7 @@ export function BonusConfigurator({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3 rounded-lg border border-slate-800/60">
         <div>
           <label className="text-[11px] font-semibold text-rose-400 block mb-1">
-            Weapon Stat Bonus (%)
+            {t('pages.capacity.weaponBonus')}
           </label>
           <input
             type="number"
@@ -45,7 +47,7 @@ export function BonusConfigurator({
 
         <div>
           <label className="text-[11px] font-semibold text-sky-400 block mb-1">
-            Science Stat Bonus (%)
+            {t('pages.capacity.scienceBonus')}
           </label>
           <input
             type="number"
@@ -58,7 +60,7 @@ export function BonusConfigurator({
 
         <div>
           <label className="text-[11px] font-semibold text-emerald-400 block mb-1">
-            Engine Stat Bonus (%)
+            {t('pages.capacity.engineBonus')}
           </label>
           <input
             type="number"
@@ -71,7 +73,7 @@ export function BonusConfigurator({
 
         <div>
           <label className="text-[11px] font-semibold text-amber-400 block mb-1">
-            Crew Haste Boost (%)
+            {t('pages.capacity.hasteBonus')}
           </label>
           <input
             type="number"

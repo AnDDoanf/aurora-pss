@@ -35,6 +35,17 @@ export function clampTrainingValue(value, capacity) {
   return Math.min(Math.max(Math.round(parsed), 0), Math.max(capacity, 0));
 }
 
+export function calculateTrainedStat(baseStat, trainingPoints, statKey) {
+  const base = Number(baseStat);
+  const points = Number(trainingPoints);
+  if (!Number.isFinite(base) || !Number.isFinite(points)) return null;
+
+  const trained = base * (1 + Math.max(points, 0) / 100);
+  return statKey === 'hp'
+    ? Math.round(trained)
+    : Math.round((trained + Number.EPSILON) * 10) / 10;
+}
+
 export function summarizeTraining(training, capacity) {
   const spent = TRAINING_STATS.reduce((sum, stat) => sum + clampTrainingValue(training?.[stat.key], capacity), 0);
   return {

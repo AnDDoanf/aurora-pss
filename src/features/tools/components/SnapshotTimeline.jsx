@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Copy, Trash2, Clock, Infinity, Layers } from 'lucide-react';
+import { useTranslation } from '../../../i18n/useTranslation';
 
 export function SnapshotTimeline({
   snapshots,
@@ -11,6 +12,7 @@ export function SnapshotTimeline({
   onUpdateDuration,
   onUpdateName
 }) {
+  const { t } = useTranslation();
   const [copySourceId, setCopySourceId] = useState('');
   const [showCopyModal, setShowCopyModal] = useState(false);
 
@@ -30,10 +32,10 @@ export function SnapshotTimeline({
         <div className="flex items-center space-x-2">
           <Layers className="h-5 w-5 text-indigo-400" />
           <h2 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
-            Combat Snapshots & Timeline
+            {t('pages.capacity.snapshots')}
           </h2>
           <span className="text-xs px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 font-mono border border-indigo-800/50">
-            {snapshots.length} Snapshots
+            {t('pages.capacity.snapshotCount', { count: snapshots.length })}
           </span>
         </div>
 
@@ -41,10 +43,10 @@ export function SnapshotTimeline({
           <button
             onClick={() => setShowCopyModal(true)}
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all border border-slate-700/60"
-            title="Copy layout & bonuses from another snapshot"
+            title={t('pages.capacity.copyHint')}
           >
             <Copy className="h-3.5 w-3.5 text-indigo-400" />
-            <span>Copy Layout</span>
+            <span>{t('pages.capacity.copyLayout')}</span>
           </button>
 
           <button
@@ -52,7 +54,7 @@ export function SnapshotTimeline({
             className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition-all shadow-sm"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add Snapshot</span>
+            <span>{t('pages.capacity.addSnapshot')}</span>
           </button>
         </div>
       </div>
@@ -75,7 +77,7 @@ export function SnapshotTimeline({
               <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${isActive ? 'bg-indigo-950/60 text-indigo-200' : 'bg-slate-800 text-slate-400'}`}>
                 #{index + 1}
               </span>
-              <span className="text-xs font-semibold whitespace-nowrap">{snap.name || `Snapshot ${index + 1}`}</span>
+              <span className="text-xs font-semibold whitespace-nowrap">{snap.name || t('pages.capacity.snapshotName', { number: index + 1 })}</span>
 
               <div className="flex items-center space-x-1 text-[11px] opacity-80 pl-1 border-l border-current/20">
                 <Clock className="h-3 w-3 shrink-0" />
@@ -93,19 +95,19 @@ export function SnapshotTimeline({
       {/* Active Snapshot Settings & Controls Bar */}
       {activeSnapshot && (
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-950/60 p-3 rounded-lg border border-slate-800/60">
-          <div className="sm:col-span-5 flex items-center space-x-2">
-            <label className="text-xs font-medium text-slate-400 shrink-0">Name:</label>
+          <div className="flex flex-col items-stretch gap-1.5 sm:col-span-5 sm:flex-row sm:items-center sm:space-x-2 sm:gap-0">
+            <label className="text-xs font-medium text-slate-400 shrink-0">{t('pages.capacity.name')}</label>
             <input
               type="text"
               value={activeSnapshot.name}
               onChange={(e) => onUpdateName(activeSnapshot.id, e.target.value)}
-              placeholder="e.g. Phase 1 - Rush"
+              placeholder={t('pages.capacity.namePlaceholder')}
               className="w-full bg-slate-900 border border-slate-700/80 rounded-md px-2.5 py-1 text-xs text-slate-100 font-semibold focus:outline-none focus:border-indigo-500"
             />
           </div>
 
-          <div className="sm:col-span-5 flex items-center space-x-2">
-            <label className="text-xs font-medium text-slate-400 shrink-0">Duration (sec):</label>
+          <div className="flex flex-col items-stretch gap-1.5 sm:col-span-5 sm:flex-row sm:items-center sm:space-x-2 sm:gap-0">
+            <label className="text-xs font-medium text-slate-400 shrink-0">{t('pages.capacity.duration')}</label>
             <input
               type="number"
               min="1"
@@ -114,26 +116,26 @@ export function SnapshotTimeline({
                 const val = e.target.value;
                 onUpdateDuration(activeSnapshot.id, val === '' ? null : Math.max(1, Number(val)));
               }}
-              placeholder="Empty = Infinite ∞"
+              placeholder={t('pages.capacity.durationPlaceholder')}
               className="w-full bg-slate-900 border border-slate-700/80 rounded-md px-2.5 py-1 text-xs text-slate-100 font-mono focus:outline-none focus:border-indigo-500"
             />
             {activeSnapshot.duration === null || activeSnapshot.duration === undefined || activeSnapshot.duration === '' ? (
-              <span className="text-xs text-amber-400 flex items-center space-x-1 shrink-0 font-medium" title="Infinite duration — steady state rate evaluation">
+              <span className="text-xs text-amber-400 flex items-center space-x-1 shrink-0 font-medium" title={t('pages.capacity.infiniteHint')}>
                 <Infinity className="h-4 w-4" />
-                <span>Infinite</span>
+                <span>{t('pages.capacity.infinite')}</span>
               </span>
             ) : null}
           </div>
 
-          <div className="sm:col-span-2 flex justify-end">
+          <div className="flex sm:col-span-2 sm:justify-end">
             {snapshots.length > 1 && (
               <button
                 onClick={() => onDeleteSnapshot(activeSnapshot.id)}
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs transition-colors border border-rose-800/50"
-                title="Delete current snapshot"
+                className="flex min-h-10 w-full items-center justify-center space-x-1 rounded border border-rose-800/50 bg-rose-950/60 px-2.5 py-1.5 text-xs text-rose-300 transition-colors hover:bg-rose-900 sm:w-auto"
+                title={t('pages.capacity.deleteHint')}
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                <span>Delete</span>
+                <span>{t('pages.capacity.delete')}</span>
               </button>
             )}
           </div>
@@ -142,47 +144,47 @@ export function SnapshotTimeline({
 
       {/* Copy Layout Modal */}
       {showCopyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 max-w-md w-full space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-4">
+          <div className="max-h-[calc(100dvh-1.5rem)] w-full max-w-md space-y-4 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-2xl sm:p-5">
             <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center space-x-2">
               <Copy className="h-4 w-4 text-indigo-400" />
-              <span>Copy Snapshot Layout</span>
+              <span>{t('pages.capacity.copyTitle')}</span>
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Copy all room configurations, assigned power, ammo selections, and bonus stats from another snapshot into <strong className="text-indigo-400">{activeSnapshot?.name}</strong>.
+              {t('pages.capacity.copyDescription', { name: activeSnapshot?.name })}
             </p>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-400">Select Source Snapshot:</label>
+              <label className="text-xs font-semibold text-slate-400">{t('pages.capacity.sourceSnapshot')}</label>
               <select
                 value={copySourceId}
                 onChange={(e) => setCopySourceId(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
               >
-                <option value="">-- Choose source snapshot --</option>
+                <option value="">{t('pages.capacity.chooseSource')}</option>
                 {snapshots
                   .filter(s => s.id !== activeSnapshotId)
                   .map(s => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.duration ? `${s.duration}s` : 'Infinite'})
+                      {s.name} ({s.duration ? `${s.duration}s` : t('pages.capacity.infinite')})
                     </option>
                   ))}
               </select>
             </div>
 
-            <div className="flex items-center justify-end space-x-2 pt-2">
+            <div className="grid grid-cols-2 gap-2 pt-2 sm:flex sm:items-center sm:justify-end">
               <button
                 onClick={() => setShowCopyModal(false)}
                 className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300"
               >
-                Cancel
+                {t('pages.capacity.cancel')}
               </button>
               <button
                 disabled={!copySourceId}
                 onClick={handleCopy}
                 className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-xs font-bold text-white transition-all shadow-sm"
               >
-                Apply Copy Layout
+                {t('pages.capacity.applyCopy')}
               </button>
             </div>
           </div>

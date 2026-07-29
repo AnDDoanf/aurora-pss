@@ -69,13 +69,13 @@ export function ItemDetail() {
         <span>Back to Item Catalog</span>
       </Link>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6">
+      <div className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
             <SpriteFrame spriteId={item.imageSpriteId} alt={item.name} size="xl" />
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100">{item.name}</h1>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="break-words text-xl font-extrabold text-slate-100 sm:text-3xl">{item.name}</h1>
                 <RarityBadge rarity={item.rarity} />
               </div>
               <p className="text-xs text-slate-400 mt-1">

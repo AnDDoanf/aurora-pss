@@ -228,9 +228,9 @@ export function CrewDetail() {
       )}
 
       {/* Hero detail card */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6">
+      <div className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
             <div className="flex-shrink-0 w-24 h-24 sm:w-32 sm:h-32 bg-slate-950/40 rounded-xl border border-slate-800 flex items-center justify-center p-2">
               {headSpriteId || bodySpriteId || legSpriteId ? (
                 <div className="flex flex-col items-center justify-center -space-y-1.5 select-none pointer-events-none scale-125">
@@ -248,9 +248,9 @@ export function CrewDetail() {
                 <SpriteFrame spriteId={crew.profileSpriteId} alt={crew.name} size="full" className="max-w-full max-h-full" />
               )}
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100">{crew.name}</h1>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="break-words text-xl font-extrabold text-slate-100 sm:text-3xl">{crew.name}</h1>
                 <RarityBadge rarity={crew.rarity} />
               </div>
               <p className="text-xs text-slate-400 mt-1">

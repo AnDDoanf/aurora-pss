@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { Plus, Check, ArrowRight } from 'lucide-react';
 import { SpriteFrame } from './SpriteFrame';
 import { RarityBadge } from './RarityBadge';
+import { useTranslation } from '../../i18n/useTranslation';
 import { CategoryBadge } from './CategoryBadge';
 
-export function EntityCard({ 
+export function EntityCard({
   id, 
   name, 
   subtitle, 
@@ -18,6 +19,7 @@ export function EntityCard({
   onToggleCompare,
   onClick
 }) {
+  const { t } = useTranslation();
   const handleLinkClick = (e) => {
     if (onClick) {
       e.preventDefault();
@@ -98,7 +100,7 @@ export function EntityCard({
             }`}
           >
             {isCompared ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-            <span>{isCompared ? 'Compared' : 'Compare'}</span>
+            <span>{isCompared ? t('common.compared') : t('common.compare')}</span>
           </button>
         )}
 
@@ -107,7 +109,7 @@ export function EntityCard({
           onClick={handleLinkClick}
           className="ml-auto flex items-center space-x-1 text-xs text-indigo-400 font-bold hover:underline group-hover:translate-x-0.5 transition-transform"
         >
-          <span>Details</span>
+          <span>{t('common.details')}</span>
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>

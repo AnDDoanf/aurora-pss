@@ -25,11 +25,11 @@ export function SkinCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Skins & Cosmetic Sets Catalog</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Catalog of ship, room, and crew cosmetic skins and skin set relationships.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.skinCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.skinCatalog.description')}</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

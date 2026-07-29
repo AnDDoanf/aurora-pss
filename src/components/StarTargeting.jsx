@@ -1,9 +1,49 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { getRunningCollectionId, getAllianceDataFromCollection, getUserHistory } from '../services/fleetDataApi';
-import { getDivisionAlliances } from '../services/pssPublicApi';
+import { getRunningCollectionId, getAllianceDataFromCollection, getLatestAllianceData, getUserHistory, getAllianceTournamentProgression } from '../services/fleetDataApi';
+import { getDivisionAlliances, getTournamentStatus } from '../services/pssPublicApi';
 import { getTargetStatuses, setTargetStatus, exportToCSV } from '../services/storageService';
-import { Search, Download, RefreshCw, CheckCircle, XCircle, HelpCircle, Copy, History, X, Trophy, LineChart, List, Tag, Shield } from 'lucide-react';
+import { Search, Download, RefreshCw, CheckCircle, XCircle, HelpCircle, Copy, History, X, Trophy, LineChart, List, Tag, Shield, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { useTranslation } from '../i18n/useTranslation';
+
+const HOURLY_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
+
+const millisecondsUntilNextHourlyRefresh = () => {
+  const now = new Date();
+  const nextRefresh = new Date(now);
+  nextRefresh.setUTCMinutes(2, 0, 0);
+  if (nextRefresh <= now) {
+    nextRefresh.setUTCHours(nextRefresh.getUTCHours() + 1);
+  }
+  return nextRefresh.getTime() - now.getTime();
+};
+
+const SortableHeader = ({ label, sortKey, sortConfig, onSort, title }) => {
+  const isActive = sortConfig.key === sortKey;
+  const SortIcon = !isActive
+    ? ChevronsUpDown
+    : sortConfig.direction === 'asc'
+      ? ChevronUp
+      : ChevronDown;
+
+  return (
+    <th
+      className="p-4"
+      aria-sort={isActive ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(sortKey)}
+        className={`inline-flex items-center gap-1.5 text-left transition-colors hover:text-slate-100 ${
+          isActive ? 'text-indigo-300' : ''
+        }`}
+        title={title}
+      >
+        <span>{label}</span>
+        <SortIcon className={`h-3.5 w-3.5 shrink-0 ${isActive ? 'text-indigo-400' : 'text-slate-600'}`} />
+      </button>
+    </th>
+  );
+};
 
 const HistoryLineChart = ({ data }) => {
   const scrollRef = useRef(null);
@@ -102,7 +142,7 @@ const HistoryLineChart = ({ data }) => {
 };
 
 const StarTargeting = () => {
-  const { lang } = useTranslation();
+  const { t, lang } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [alliances, setAlliances] = useState([]);
@@ -119,6 +159,14 @@ const StarTargeting = () => {
   const [pastNames, setPastNames] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [viewMode, setViewMode] = useState('chart');
+  const [tournamentStatus, setTournamentStatus] = useState(() => getTournamentStatus());
+  const [dailyStarData, setDailyStarData] = useState(null);
+  const [dailyStarsLoading, setDailyStarsLoading] = useState(false);
+  const [lastFetchedAt, setLastFetchedAt] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: 'totalStars',
+    direction: 'desc'
+  });
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -128,15 +176,41 @@ const StarTargeting = () => {
   const loadStarData = async () => {
     setLoading(true);
     try {
-      const collectionId = await getRunningCollectionId();
+      const currentTournamentStatus = getTournamentStatus();
+      setTournamentStatus(currentTournamentStatus);
       const divAlliances = await getDivisionAlliances(0, 6);
       setAlliances(divAlliances);
 
       let allPlayers = [];
-      if (collectionId && divAlliances.length > 0) {
-        for (const alliance of divAlliances) {
-          const players = await getAllianceDataFromCollection(collectionId, alliance.alliance_id, alliance.alliance_name);
-          allPlayers = [...allPlayers, ...players];
+      let sourceTimestamp = null;
+      if (currentTournamentStatus.isLive && divAlliances.length > 0) {
+        const snapshots = await Promise.all(
+          divAlliances.map((alliance) =>
+            getLatestAllianceData(alliance.alliance_id, alliance.alliance_name)
+          )
+        );
+        allPlayers = snapshots.flatMap((snapshot) => snapshot.players);
+        const sourceTimes = snapshots
+          .map((snapshot) => snapshot.timestamp)
+          .filter(Boolean)
+          .map((timestamp) => new Date(timestamp))
+          .filter((timestamp) => !Number.isNaN(timestamp.getTime()));
+        sourceTimestamp = sourceTimes.length > 0
+          ? new Date(Math.max(...sourceTimes))
+          : null;
+      } else if (divAlliances.length > 0) {
+        const collectionId = await getRunningCollectionId();
+        if (collectionId) {
+          const playerGroups = await Promise.all(
+            divAlliances.map((alliance) =>
+              getAllianceDataFromCollection(
+                collectionId,
+                alliance.alliance_id,
+                alliance.alliance_name
+              )
+            )
+          );
+          allPlayers = playerGroups.flat();
         }
       }
 
@@ -150,6 +224,7 @@ const StarTargeting = () => {
       }
 
       setData(allPlayers);
+      setLastFetchedAt(sourceTimestamp || new Date());
     } catch (err) {
       console.error("Failed to load star data:", err);
     } finally {
@@ -159,6 +234,19 @@ const StarTargeting = () => {
 
   useEffect(() => {
     loadStarData();
+
+    let hourlyRefresh;
+    const firstRefresh = window.setTimeout(() => {
+      loadStarData();
+      hourlyRefresh = window.setInterval(loadStarData, HOURLY_REFRESH_INTERVAL_MS);
+    }, millisecondsUntilNextHourlyRefresh());
+
+    return () => {
+      window.clearTimeout(firstRefresh);
+      if (hourlyRefresh) {
+        window.clearInterval(hourlyRefresh);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -194,18 +282,48 @@ const StarTargeting = () => {
   const handleRowClick = async (player) => {
     setSelectedRowId(player.id);
     setActiveHistoryPlayer(player);
+    setViewMode('chart');
+    setDailyStarData(null);
     setHistoryLoading(true);
-    try {
-      const res = await getUserHistory(player.id);
+    const shouldLoadDailyStars = tournamentStatus.isLive && Boolean(player.fleetId);
+    setDailyStarsLoading(shouldLoadDailyStars);
+
+    const historyRequest = getUserHistory(player.id);
+    const progressionRequest = shouldLoadDailyStars
+      ? getAllianceTournamentProgression(player.fleetId, player.fleet, tournamentStatus)
+      : Promise.resolve(null);
+    const [historyResult, progressionResult] = await Promise.allSettled([
+      historyRequest,
+      progressionRequest
+    ]);
+
+    if (historyResult.status === 'fulfilled') {
+      const res = historyResult.value;
       setHistoryData(res.historyList || []);
       setPastNames(res.pastNames || [player.name]);
-    } catch (err) {
-      console.error("Failed to fetch user history:", err);
+    } else {
+      console.error("Failed to fetch user history:", historyResult.reason);
       setHistoryData([]);
       setPastNames([player.name]);
-    } finally {
-      setHistoryLoading(false);
     }
+
+    if (progressionResult.status === 'fulfilled' && progressionResult.value) {
+      const progression = progressionResult.value;
+      const member = progression.members.find(
+        (candidate) => String(candidate.id) === String(player.id)
+      );
+      setDailyStarData(member ? {
+        days: progression.days,
+        dailyStars: member.dailyStars,
+        tournamentStars: member.tournamentStars
+      } : null);
+    } else if (progressionResult.status === 'rejected') {
+      console.error("Failed to fetch tournament star progression:", progressionResult.reason);
+      setDailyStarData(null);
+    }
+
+    setHistoryLoading(false);
+    setDailyStarsLoading(false);
   };
 
   const filteredData = useMemo(() => {
@@ -217,6 +335,38 @@ const StarTargeting = () => {
     });
   }, [data, searchName, selectedFleet, minTrophy, maxTrophy]);
 
+  const sortedData = useMemo(() => {
+    const direction = sortConfig.direction === 'asc' ? 1 : -1;
+
+    return [...filteredData].sort((a, b) => {
+      const aValue = sortConfig.key === 'status'
+        ? statuses[a.id]?.status || ''
+        : a[sortConfig.key];
+      const bValue = sortConfig.key === 'status'
+        ? statuses[b.id]?.status || ''
+        : b[sortConfig.key];
+
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return (aValue - bValue) * direction;
+      }
+
+      return String(aValue ?? '').localeCompare(
+        String(bValue ?? ''),
+        lang,
+        { numeric: true, sensitivity: 'base' }
+      ) * direction;
+    });
+  }, [filteredData, lang, sortConfig, statuses]);
+
+  const handleSort = (key) => {
+    setSortConfig((current) => ({
+      key,
+      direction: current.key === key
+        ? (current.direction === 'asc' ? 'desc' : 'asc')
+        : (['trophy', 'maxTrophy', 'starValue', 'totalStars'].includes(key) ? 'desc' : 'asc')
+    }));
+  };
+
   const fleetOptions = useMemo(() => {
     const unique = Array.from(new Set(data.map(d => d.fleet)));
     return ['ALL', ...unique];
@@ -225,39 +375,57 @@ const StarTargeting = () => {
   return (
     <div className="space-y-6 pb-20 max-w-7xl mx-auto">
       {toastMsg && (
-        <div className="fixed bottom-6 right-6 z-50 bg-indigo-600 text-white font-bold px-4 py-2.5 rounded-lg shadow-xl text-xs animate-bounce">
+        <div className="fixed bottom-3 left-3 right-3 z-50 rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-xs font-bold text-white shadow-xl sm:bottom-6 sm:left-auto sm:right-6 sm:text-left">
           {toastMsg}
         </div>
       )}
 
-      {/* Header Card - Borders removed */}
-      <div className="rounded-lg bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-100">
-              {lang === 'vi' ? 'Công Cụ Tính Toán Star Targeting' : 'Star Targeting Tracker'}
+      <div className="page-header">
+        <div>
+            <h1 className="page-title">
+              {t('pages.targeting.title')}
             </h1>
-          </div>
-
-          <div className="flex items-center space-x-3">
+            <p className="mt-1 text-xs text-slate-400">
+              {t('pages.targeting.description')}
+            </p>
+            <p className="mt-1 flex flex-wrap items-center gap-x-2 text-[10px] font-mono text-cyan-400/80">
+              <span>{t('pages.targeting.dataCadence')}</span>
+              {lastFetchedAt && (
+                <span>
+                  • {t('pages.targeting.lastFetched', {
+                    time: lastFetchedAt.toLocaleString(lang, {
+                      timeZone: 'UTC',
+                      year: 'numeric',
+                      month: 'short',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  })}
+                </span>
+              )}
+            </p>
+        </div>
+        <div className="grid w-full grid-cols-2 gap-2 md:flex md:w-auto md:items-center">
             <button
               onClick={loadStarData}
               disabled={loading}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md disabled:opacity-50"
+              className="flex min-h-10 items-center justify-center space-x-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white shadow-md transition-all hover:bg-indigo-500 disabled:opacity-50 sm:px-4"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              <span>{lang === 'vi' ? 'Cập Nhật Dữ Liệu' : 'Refresh Data'}</span>
+              <span>{t('common.refreshData')}</span>
             </button>
             <button
               onClick={() => exportToCSV(filteredData.map(d => ({ ...d, status: statuses[d.id]?.status })))}
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-bold transition-all"
+              className="flex min-h-10 items-center justify-center space-x-2 rounded-lg bg-slate-800 px-3 py-2 text-xs font-bold text-slate-100 transition-all hover:bg-slate-700 sm:px-4"
             >
               <Download className="h-4 w-4 text-indigo-400" />
-              <span>{lang === 'vi' ? 'Xuất Báo Cáo CSV' : 'Export CSV'}</span>
+              <span>{t('common.exportCsv')}</span>
             </button>
-          </div>
         </div>
+      </div>
 
+      <div className="space-y-6 rounded-lg bg-slate-900 p-4 shadow-sm sm:p-8">
         {/* Filter Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
           <div className="space-y-1">
@@ -326,29 +494,42 @@ const StarTargeting = () => {
       {/* Target Table Card */}
       <div className="rounded-lg bg-slate-900 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[980px] text-left text-xs">
             <thead>
               <tr className="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider">
-                <th className="p-4">Hạm Đội (Fleet)</th>
-                <th className="p-4">ID Thuyền Trưởng</th>
-                <th className="p-4">Tên Thuyền Trưởng</th>
-                <th className="p-4">Số Cúp (Trophies)</th>
-                <th className="p-4">Cúp Cao Nhất</th>
-                <th className="p-4">Giá Trị Sao</th>
-                <th className="p-4">Tổng Sao tích lũy</th>
-                <th className="p-4">Trạng Thái Kết Quả</th>
-                <th className="p-4">Thao Tác Fast Tag</th>
+                {[
+                  ['fleet', 'fleet'],
+                  ['id', 'playerId'],
+                  ['name', 'playerName'],
+                  ['trophy', 'trophies'],
+                  ['maxTrophy', 'highestTrophies'],
+                  ['starValue', 'starValue'],
+                  ['totalStars', 'totalStars'],
+                  ['status', 'resultStatus']
+                ].map(([sortKey, labelKey]) => (
+                  <SortableHeader
+                    key={sortKey}
+                    label={t(`pages.targeting.columns.${labelKey}`)}
+                    sortKey={sortKey}
+                    sortConfig={sortConfig}
+                    onSort={handleSort}
+                    title={t(
+                      `pages.targeting.${sortConfig.key === sortKey && sortConfig.direction === 'asc' ? 'sortDescending' : 'sortAscending'}`
+                    )}
+                  />
+                ))}
+                <th className="p-4">{t('pages.targeting.columns.quickTag')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/40 font-medium">
-              {filteredData.length === 0 ? (
+              {sortedData.length === 0 ? (
                 <tr>
                   <td colSpan="9" className="text-center py-12 text-slate-500 font-mono">
                     {loading ? 'Đang tải dữ liệu trực tiếp từ máy chủ FleetData archive...' : 'Không tìm thấy kết quả phù hợp với bộ lọc.'}
                   </td>
                 </tr>
               ) : (
-                filteredData.map((item) => {
+                sortedData.map((item) => {
                   const currentStatus = statuses[item.id]?.status;
                   const isSelected = selectedRowId === item.id;
 
@@ -427,40 +608,55 @@ const StarTargeting = () => {
 
       {/* Floating Player History Info Modal Overlay */}
       {activeHistoryPlayer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md" onClick={() => setActiveHistoryPlayer(null)}>
-          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-slate-900 p-6 sm:p-8 space-y-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div>
-                <h3 className="text-xl font-black text-slate-100">
-                  {activeHistoryPlayer.name} — Lịch Sử Thi Đấu & Thông Tin
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-md sm:p-4" onClick={() => setActiveHistoryPlayer(null)}>
+          <div className="max-h-[calc(100dvh-1rem)] w-full max-w-4xl space-y-4 overflow-y-auto rounded-lg bg-slate-900 p-4 shadow-2xl sm:max-h-[90vh] sm:space-y-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-col gap-3 border-b border-slate-800 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <h3 className="break-words text-lg font-black text-slate-100 sm:text-xl">
+                  {t('pages.targeting.historyTitle', { name: activeHistoryPlayer.name })}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Player ID: <code className="text-slate-200">#{activeHistoryPlayer.id}</code> • Hạm Đội Active: <strong className="text-indigo-400">{activeHistoryPlayer.fleet}</strong>
+                  {t('pages.targeting.playerMeta', {
+                    id: activeHistoryPlayer.id,
+                    fleet: activeHistoryPlayer.fleet
+                  })}
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 sm:w-auto sm:pb-0">
                 <button
                   onClick={() => setViewMode('chart')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-colors ${
+                  className={`flex min-h-9 shrink-0 items-center space-x-1 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${
                     viewMode === 'chart' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'
                   }`}
                 >
                   <LineChart className="w-3.5 h-3.5" />
-                  <span>Biểu Đồ</span>
+                  <span>{t('pages.targeting.chart')}</span>
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center space-x-1 transition-colors ${
+                  className={`flex min-h-9 shrink-0 items-center space-x-1 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${
                     viewMode === 'list' ? 'bg-indigo-600 text-white' : 'bg-slate-950 text-slate-400'
                   }`}
                 >
                   <List className="w-3.5 h-3.5" />
-                  <span>Danh Sách</span>
+                  <span>{t('pages.targeting.list')}</span>
                 </button>
+                {tournamentStatus.isLive && (
+                  <button
+                    onClick={() => setViewMode('daily')}
+                    className={`flex min-h-9 shrink-0 items-center space-x-1 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${
+                      viewMode === 'daily' ? 'bg-emerald-600 text-white' : 'bg-slate-950 text-slate-400'
+                    }`}
+                    title={t('pages.targeting.liveOnly')}
+                  >
+                    <Trophy className="w-3.5 h-3.5" />
+                    <span>{t('pages.targeting.dailyStars')}</span>
+                  </button>
+                )}
                 <button
                   onClick={() => setActiveHistoryPlayer(null)}
-                  className="p-1.5 rounded-lg bg-slate-950 text-slate-400 hover:text-white"
+                  className="ml-auto shrink-0 rounded-lg bg-slate-950 p-2 text-slate-400 hover:text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -482,17 +678,73 @@ const StarTargeting = () => {
             </div>
 
             {/* History Content */}
-            {historyLoading ? (
+            {viewMode !== 'daily' && historyLoading ? (
               <div className="text-center py-12 text-slate-400 font-mono">
                 Đang truy xuất lịch sử giải đấu từ lưu trữ FleetData...
               </div>
-            ) : historyData.length === 0 ? (
+            ) : viewMode !== 'daily' && historyData.length === 0 ? (
               <div className="text-center py-10 text-slate-500 font-mono bg-slate-950 rounded-lg">
                 Không tìm thấy bản ghi giải đấu cũ cho thuyền trưởng #{activeHistoryPlayer.id}.
               </div>
             ) : (
               <div>
-                {viewMode === 'chart' ? (
+                {viewMode === 'daily' ? (
+                  <div className="space-y-4 rounded-lg bg-slate-950 p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-800 pb-3">
+                      <div>
+                        <h4 className="flex items-center gap-2 text-sm font-black text-slate-100">
+                          <Trophy className="h-4 w-4 text-amber-400" />
+                          {t('pages.targeting.dailyTitle')}
+                        </h4>
+                        <p className="mt-1 text-xs text-slate-400">
+                          {t('pages.targeting.dailyDescription', { day: tournamentStatus.currentDay })}
+                        </p>
+                        <p className="mt-1 text-[10px] font-mono text-cyan-400/80">
+                          {t('pages.targeting.gameDayReset')}
+                        </p>
+                      </div>
+                      {dailyStarData && (
+                        <div className="rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-2 text-right">
+                          <div className="text-[9px] font-bold uppercase tracking-wider text-emerald-400">
+                            {t('pages.targeting.tournamentTotal')}
+                          </div>
+                          <div className="font-mono text-lg font-black text-emerald-300">
+                            ★ {dailyStarData.tournamentStars.toLocaleString()}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {dailyStarsLoading ? (
+                      <div className="py-12 text-center font-mono text-xs text-slate-400">
+                        {t('pages.targeting.dailyLoading')}
+                      </div>
+                    ) : !dailyStarData ? (
+                      <div className="rounded-lg border border-dashed border-slate-800 py-10 text-center text-xs text-slate-500">
+                        {t('pages.targeting.dailyEmpty')}
+                      </div>
+                    ) : (
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                        {dailyStarData.dailyStars.map(({ day, date, earned }) => (
+                          <div key={day} className="rounded-lg border border-slate-800 bg-slate-900 p-3">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-black text-slate-200">
+                                {t('pages.targeting.day', { day })}
+                              </span>
+                              <span className="font-mono text-[9px] text-slate-500">{date}</span>
+                            </div>
+                            <div className={`mt-2 font-mono text-2xl font-black ${earned > 0 ? 'text-emerald-400' : 'text-slate-600'}`}>
+                              +{earned.toLocaleString()} ★
+                            </div>
+                            <div className="mt-1 text-[9px] uppercase tracking-wider text-slate-500">
+                              {t('pages.targeting.earned')}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : viewMode === 'chart' ? (
                   <HistoryLineChart data={historyData} />
                 ) : (
                   <div className="overflow-x-auto">

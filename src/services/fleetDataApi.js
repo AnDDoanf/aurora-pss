@@ -45,6 +45,32 @@ const earnedSincePreviousSnapshot = (currentScore, previousScore) =>
     ? currentScore - previousScore
     : currentScore;
 
+const memberId = (member) => Array.isArray(member) ? member[0] : member?.id;
+const memberAllianceScore = (member) => {
+  const score = Array.isArray(member) ? member[4] : member?.alliance_score;
+  return typeof score === 'number' ? score : 0;
+};
+
+const mapAllianceMembers = (users, fleetId, fleetName) =>
+  users.map((member) => {
+    const parsed = parseMember(member, fleetName);
+    const starValue = Math.max(
+      Math.floor(parsed.allianceScore * 0.15),
+      Math.floor(parsed.trophy / 1000)
+    );
+
+    return {
+      fleet: fleetName,
+      fleetId,
+      id: parsed.id,
+      name: parsed.name,
+      trophy: parsed.trophy,
+      maxTrophy: parsed.maxTrophy,
+      starValue,
+      totalStars: parsed.allianceScore
+    };
+  });
+
 export const getRunningCollectionId = async () => {
   try {
     // 1. Try querying recent tournament collection via proxy or direct endpoint
@@ -69,6 +95,35 @@ export const getRunningCollectionId = async () => {
   } catch (err) {
     console.error("Failed to fetch collection ID from FleetData API:", err);
     return 36823;
+  }
+};
+
+export const getLatestAllianceData = async (fleetId, fleetName) => {
+  try {
+    const response = await requestFleetData(
+      `/allianceHistory/${fleetId}`,
+      {
+        params: {
+          interval: 'hour',
+          desc: true,
+          take: 1,
+          onMissing: 'last'
+        }
+      }
+    );
+    const snapshot = Array.isArray(response.data) ? response.data[0] : null;
+
+    if (!snapshot || !Array.isArray(snapshot.users)) {
+      return { players: [], timestamp: null };
+    }
+
+    return {
+      players: mapAllianceMembers(snapshot.users, fleetId, fleetName),
+      timestamp: snapshot.collection?.timestamp || null
+    };
+  } catch (error) {
+    console.error(`Failed to fetch latest alliance data for ${fleetName} (${fleetId}):`, error);
+    return { players: [], timestamp: null };
   }
 };
 
@@ -104,8 +159,8 @@ export const getAllianceTournamentProgression = async (
     ? [...dailyResponse.data]
     : [];
 
-  // Daily history only contains completed UTC days. Add the latest snapshot
-  // for today's partial day while a tournament is active.
+  // A PSS game day resets at 00:00 UTC. Daily history contains completed UTC
+  // days; add the latest hourly snapshot for the active partial UTC day.
   if (tournamentStatus.isLive) {
     const currentDayStart = new Date();
     currentDayStart.setUTCHours(0, 0, 0, 0);
@@ -175,8 +230,8 @@ export const getAllianceTournamentProgression = async (
 
   const baselineScores = new Map(
     (baselineSnapshot?.users || []).map((member) => [
-      member[0],
-      typeof member[4] === 'number' ? member[4] : 0
+      memberId(member),
+      memberAllianceScore(member)
     ])
   );
   const members = (latestSnapshot.users || []).map((rawMember) => {
@@ -185,10 +240,10 @@ export const getAllianceTournamentProgression = async (
 
     const dailyStars = daySnapshots.map(({ day, date, snapshot }) => {
       const rawSnapshotMember = (snapshot?.users || []).find(
-        (candidate) => candidate[0] === member.id
+        (candidate) => String(memberId(candidate)) === String(member.id)
       );
       const currentScore = rawSnapshotMember
-        ? (typeof rawSnapshotMember[4] === 'number' ? rawSnapshotMember[4] : 0)
+        ? memberAllianceScore(rawSnapshotMember)
         : previousScore;
       const earned = earnedSincePreviousSnapshot(currentScore, previousScore);
       previousScore = currentScore;
@@ -224,43 +279,7 @@ export const getAllianceDataFromCollection = async (collectionId, fleetId, fleet
     const alliance = response.data;
     
     if (alliance && Array.isArray(alliance.users)) {
-      return alliance.users.map(member => {
-        let id, name, trophy, maxTrophy, allianceScore;
-
-        if (Array.isArray(member)) {
-          // Member format returned by FleetData API is a tuple/array:
-          // [0: id, 1: name, 2: alliance_id, 3: trophy, 4: alliance_score, ..., 18: highest_trophy]
-          id = member[0];
-          name = member[1] || `Captain #${id}`;
-          trophy = typeof member[3] === 'number' ? member[3] : 0;
-          allianceScore = typeof member[4] === 'number' ? member[4] : 0;
-          maxTrophy = typeof member[18] === 'number' ? member[18] : trophy;
-        } else {
-          // Fallback object format if API structure changes
-          id = member.id;
-          name = member.name || `Captain #${id}`;
-          trophy = member.trophy || 0;
-          allianceScore = member.alliance_score || 0;
-          maxTrophy = member.highest_trophy || trophy;
-        }
-
-        // Star calculation formula matching app_star_checker/main.py:
-        // stars = max(floor(alliance_score * 0.15), floor(trophy / 1000))
-        const starValue = Math.max(
-          Math.floor(allianceScore * 0.15),
-          Math.floor(trophy / 1000)
-        );
-
-        return {
-          fleet: fleetName,
-          id: id,
-          name: name,
-          trophy: trophy,
-          maxTrophy: maxTrophy,
-          starValue: starValue,
-          totalStars: allianceScore
-        };
-      });
+      return mapAllianceMembers(alliance.users, fleetId, fleetName);
     }
     return [];
   } catch (err) {

@@ -143,13 +143,13 @@ export default function Guide() {
     <div className="space-y-8 pb-20 w-full">
       
       {/* Header Banner */}
-      <div className="border-b border-slate-800/40 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="page-header">
         <div>
-          <h1 className="text-2xl sm:text-4xl font-black text-slate-100 tracking-tight">
+          <h1 className="page-title">
             {guide.title}
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Original strategy guide content by Kafka (2023) & Aurora (2026). Integrated into stable URL document routes.
+            {t('pages.guide.description')}
           </p>
         </div>
 

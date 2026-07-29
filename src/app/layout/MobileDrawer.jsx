@@ -16,8 +16,8 @@ export function MobileDrawer({ isOpen, onClose }) {
     { label: t('nav.ships'), path: `/${lang}/library/ships`, icon: Rocket },
     { label: t('nav.items'), path: `/${lang}/library/items`, icon: Package },
     { label: t('nav.compare'), path: `/${lang}/compare/crew`, icon: ArrowLeftRight },
-    { label: lang === 'vi' ? 'Phân Tích Công/Thủ' : 'Capacity Analytics', path: `/${lang}/tools/capacity`, icon: Wrench },
-    { label: lang === 'vi' ? 'Huấn luyện Crew' : 'Crew Training', path: `/${lang}/tools/training`, icon: Dumbbell },
+    { label: t('nav.capacity'), path: `/${lang}/tools/capacity`, icon: Wrench },
+    { label: t('layout.training'), path: `/${lang}/tools/training`, icon: Dumbbell },
     { label: t('nav.tools'), path: `/${lang}/tools/targeting`, icon: Wrench },
     { label: t('nav.aboutData'), path: `/${lang}/about/data`, icon: Database }
   ];
@@ -26,15 +26,15 @@ export function MobileDrawer({ isOpen, onClose }) {
     <div className="fixed inset-0 z-50 flex lg:hidden">
       <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-slate-900 border-r border-slate-800 p-6">
+      <div className="relative flex h-[100dvh] w-[86%] max-w-xs flex-1 flex-col overflow-y-auto border-r border-slate-800 bg-slate-900 p-4 sm:p-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <span className="font-bold text-lg text-emerald-400 uppercase tracking-wider">PSS Library Menu</span>
+          <span className="font-bold text-lg text-emerald-400 uppercase tracking-wider">{t('layout.libraryMenu')}</span>
           <button onClick={onClose} className="p-2 text-slate-400 hover:text-white">
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="mt-6 flex flex-col space-y-2">
+        <nav className="mt-4 flex flex-col space-y-1.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:mt-6 sm:space-y-2">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = location.pathname.startsWith(link.path);

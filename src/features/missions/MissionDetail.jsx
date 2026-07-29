@@ -33,11 +33,11 @@ export function MissionDetail() {
         <span>Back to Mission Catalog</span>
       </Link>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 space-y-6">
+      <div className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100">{mission.MissionTitle || 'Story Mission'}</h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="break-words text-xl font-extrabold text-slate-100 sm:text-3xl">{mission.MissionTitle || 'Story Mission'}</h1>
               <CategoryBadge category={mission.MissionType || 'Campaign'} />
             </div>
             <p className="text-xs text-slate-400 mt-1">
@@ -47,7 +47,7 @@ export function MissionDetail() {
 
           <button
             onClick={() => setShowSpoilers(p => !p)}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+            className={`flex min-h-10 w-full items-center justify-center space-x-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors sm:w-auto ${
               showSpoilers ? 'bg-amber-950/60 border-amber-800 text-amber-300' : 'bg-slate-950 border-slate-800 text-slate-400'
             }`}
           >

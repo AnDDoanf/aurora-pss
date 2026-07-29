@@ -66,11 +66,11 @@ export function MissionCatalog() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-100">Mission & Story Campaign Reference</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Explore campaign missions, enemy fleets, story chapters, dialogue text, and victory rewards.
-        </p>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{t('pages.missionCatalog.title')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('pages.missionCatalog.description')}</p>
+        </div>
       </div>
 
       <FilterDrawer

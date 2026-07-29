@@ -56,6 +56,69 @@ body {
   overflow-x: hidden;
 }
 
+/* Shared alignment and typography for primary routed-page headings. */
+.page-title {
+  margin: 0;
+  color: #f1f5f9;
+  overflow-wrap: anywhere;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.75rem;
+  letter-spacing: -0.025em;
+  text-align: left;
+}
+
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.4);
+  min-width: 0;
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .page-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .page-header {
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-header > :nth-child(2) {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .page-header > :nth-child(2) > button,
+  .page-header > :nth-child(2) > a {
+    min-height: 2.5rem;
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
+/* Training uses its own larger −/+ controls; hide the browser's tiny spinner. */
+.training-number-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.training-number-input::-webkit-inner-spin-button,
+.training-number-input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
 /* Reduced Border Radius App-Wide */
 .rounded-3xl,
 .rounded-2xl,

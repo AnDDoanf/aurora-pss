@@ -259,40 +259,23 @@ export function ShipCapacityAnalytics() {
     }));
   };
 
-  const pageTitle = lang === 'vi' 
-    ? 'Phân Tích Sức Mạnh Tấn Công & Phòng Thủ Tàu | Pixel Starships' 
-    : 'Ship Offensive & Defensive Capacity Analytics | Pixel Starships';
-
-  const pageDesc = lang === 'vi'
-    ? 'Công cụ phân tích sát thương (Crew, System, Shield, Hull, AP) và tốc độ hồi Shield, né tránh Evasion theo từng giai đoạn snapshot.'
-    : 'Analytical calculator for PSS ship damage output (Crew, System, Shield, Hull, AP) and defensive shield/evasion rates grouped by combat snapshots.';
+  const pageTitle = `${t('pages.capacity.title')} | Pixel Starships`;
+  const pageDesc = t('pages.capacity.description');
 
   return (
     <div className="space-y-6 pb-12 max-w-[1600px] mx-auto">
       <SEOHead title={pageTitle} description={pageDesc} />
 
-      {/* Page Banner Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <div className="p-2 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
-                <BarChart3 className="h-6 w-6" />
-              </div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
-                {lang === 'vi' ? 'Phân Tích Sức Mạnh Tấn Công & Phòng Thủ Tàu' : 'Ship Offensive & Defensive Capacity Analytics'}
-              </h1>
-            </div>
-            <p className="text-xs text-slate-300 max-w-3xl leading-relaxed">
-              {lang === 'vi'
-                ? 'Thiết lập các phòng vũ khí, phòng phòng thủ, phân bổ năng lượng (kW), đạn dược và các kỹ năng Symphony (3-5 phát đầu +25% công). Đánh giá lượng sát thương DPS thực tế và khả năng tạo Shield, né tránh theo snapshot.'
-                : 'Configure weapon and defense rooms, power allocation, ammunition, and Symphony perk (+25% power on first 3-5 shots). Calculate exact DPS breakdown and defensive rates across custom combat timeline snapshots.'}
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">
+            {t('pages.capacity.title')}
+          </h1>
+            <p className="mt-1 max-w-3xl text-xs text-slate-400">
+              {t('pages.capacity.description')}
             </p>
-          </div>
-
-          <div className="flex items-center space-x-2">
+        </div>
+        <div className="flex w-full items-center md:w-auto">
             <button
               onClick={() => {
                 const defaultSnaps = [
@@ -306,18 +289,17 @@ export function ShipCapacityAnalytics() {
                   localStorage.removeItem(STORAGE_KEY_ACTIVE_ID);
                 } catch (e) {}
               }}
-              className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition-all border border-slate-700/60"
+              className="flex min-h-10 w-full items-center justify-center space-x-1.5 rounded-lg border border-slate-700/60 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-700 md:w-auto"
             >
               <RotateCcw className="h-3.5 w-3.5" />
-              <span>{lang === 'vi' ? 'Đặt lại' : 'Reset All'}</span>
+              <span>{t('pages.capacity.reset')}</span>
             </button>
-          </div>
         </div>
       </div>
 
       {isLoading ? (
         <div className="text-center py-12 text-xs text-slate-400 font-mono animate-pulse">
-          Loading ship room, missile, and craft catalogs...
+          {t('pages.capacity.loading')}
         </div>
       ) : (
         <div className="space-y-6">

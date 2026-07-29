@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { MobileDrawer } from './MobileDrawer';
 import { Footer } from './Footer';
@@ -7,6 +7,7 @@ import { SearchModal } from '../../features/search/SearchModal';
 import { SEOHead } from '../../components/SEOHead';
 
 export function AppLayout() {
+  const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('pss_theme') || 'dark');
@@ -42,6 +43,7 @@ export function AppLayout() {
   };
 
   const isEmbedded = new URLSearchParams(window.location.search).get('embed') === 'true';
+  const isTrainingTool = location.pathname.includes('/tools/training');
 
   if (isEmbedded) {
     return (
@@ -72,7 +74,9 @@ export function AppLayout() {
         onClose={() => setIsMobileNavOpen(false)}
       />
 
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className={`flex-1 max-w-[1600px] w-full min-w-0 mx-auto px-3 sm:px-6 lg:px-8 ${
+        isTrainingTool ? 'py-4 sm:py-6 xl:h-[calc(100dvh-7.75rem)] xl:flex-none xl:overflow-hidden' : 'py-4 sm:py-6'
+      }`}>
         <Outlet />
       </main>
 
