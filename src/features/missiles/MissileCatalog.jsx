@@ -49,13 +49,12 @@ export function MissileCatalog() {
     const topLevel = g.levels[g.levels.length - 1];
     const rootLevel = g.levels[0];
     
-    // Extract base name, e.g. "Rocket Lv2" -> "Rocket"
     const baseName = (rootLevel.MissileName || '').replace(/\s+Lv\d+/i, '').trim();
 
     return {
       id: rootLevel.MissileDesignId,
       name: baseName || topLevel.MissileName || 'Ammunition',
-      spriteId: topLevel.SpriteId,
+      spriteId: topLevel.SpriteId || rootLevel.SpriteId,
       maxSystemDamage: topLevel.SystemDamage || 0,
       maxShieldDamage: topLevel.ShieldDamage || 0,
       maxCharacterDamage: topLevel.CharacterDamage || 0,
@@ -99,9 +98,9 @@ export function MissileCatalog() {
         </div>
       )
     },
-    { key: 'SystemDamage', header: 'Max Sys Damage', cell: (m) => m.maxSystemDamage || 0 },
-    { key: 'ShieldDamage', header: 'Max Shield Damage', cell: (m) => m.maxShieldDamage || 0 },
-    { key: 'CharacterDamage', header: 'Max Crew Damage', cell: (m) => m.maxCharacterDamage || 0 }
+    { key: 'SystemDamage', header: 'Sys Dmg', cell: (m) => m.maxSystemDamage || 0 },
+    { key: 'ShieldDamage', header: 'Shd Dmg', cell: (m) => m.maxShieldDamage || 0 },
+    { key: 'CharacterDamage', header: 'Crew Dmg', cell: (m) => m.maxCharacterDamage || 0 }
   ];
 
   if (loading) return <div className="p-8 text-center text-slate-400">{t('common.loading')}</div>;
@@ -126,19 +125,20 @@ export function MissileCatalog() {
       />
 
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedGroups.map(m => (
             <EntityCard
               key={m.id}
               id={m.id}
               name={m.name}
-              subtitle={`${m.levels.length} Levels Available`}
+              category={m.levels.length > 1 ? `${m.levels.length} Levels` : '1 Level'}
+              subtitle="Missile"
               spriteId={m.spriteId}
               targetPath={`/${lang}/library/missiles/${m.id}`}
               stats={[
-                { label: 'Max Sys Dmg', value: m.maxSystemDamage || 0 },
-                { label: 'Max Shield', value: m.maxShieldDamage || 0 },
-                { label: 'Max Crew Dmg', value: m.maxCharacterDamage || 0 }
+                { label: 'Sys Dmg', value: m.maxSystemDamage || 0 },
+                { label: 'Shd Dmg', value: m.maxShieldDamage || 0 },
+                { label: 'Crew Dmg', value: m.maxCharacterDamage || 0 }
               ]}
             />
           ))}

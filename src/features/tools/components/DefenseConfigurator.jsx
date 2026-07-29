@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Zap, Shield, ShieldAlert, Wind } from 'lucide-react';
 import { calculateDefenseMetrics } from '../utils/capacityCalculations';
 import { useTranslation } from '../../../i18n/useTranslation';
+import { SpriteFrame } from '../../../components/ui/SpriteFrame';
 
 export function DefenseConfigurator({
   defenses = [],
@@ -82,11 +83,11 @@ export function DefenseConfigurator({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
+    <div className="bg-slate-900/90 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
       {/* Section Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+      <div className="flex items-center justify-between pb-3 border-b border-slate-800/20">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-md bg-sky-950/80 text-sky-400 border border-sky-800/40">
+          <div className="p-1.5 rounded-md bg-sky-950/80 text-sky-400">
             <Shield className="h-4 w-4" />
           </div>
           <div>
@@ -110,7 +111,7 @@ export function DefenseConfigurator({
 
       {/* Room Picker Drawer */}
       {showRoomPicker && (
-        <div className="bg-slate-950/90 border border-sky-900/50 p-3 rounded-lg space-y-3 shadow-inner">
+        <div className="bg-slate-950/90 p-3 rounded-lg space-y-3 shadow-inner">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-sky-300">{t('pages.capacity.selectDefense')}</span>
             <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">{t('pages.capacity.close')}</button>
@@ -120,7 +121,7 @@ export function DefenseConfigurator({
             <select
               value={selectedRoomName}
               onChange={(e) => setSelectedRoomName(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500 font-sans"
+              className="flex-1 bg-slate-900 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 font-sans"
             >
               <option value="">{t('pages.capacity.chooseDefense')}</option>
               {defenseRoomOptions.map(r => (
@@ -143,13 +144,13 @@ export function DefenseConfigurator({
 
       {/* Defenses Table */}
       {defenses.length === 0 ? (
-        <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-slate-800 rounded-lg">
+        <div className="text-center py-8 text-xs text-slate-500 rounded-lg bg-slate-950/40">
           {t('pages.capacity.noDefenses')}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/60 scrollbar-thin">
+        <div className="overflow-x-auto rounded-lg bg-slate-950/60 scrollbar-thin">
           <table className="w-full text-left text-xs font-mono border-collapse whitespace-nowrap">
-            <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
+            <thead className="bg-slate-950 text-slate-400 text-[10px] uppercase border-b border-slate-800/30">
               <tr>
                 <th className="p-3 min-w-[160px]">{t('pages.capacity.roomDesign')}</th>
                 <th className="p-3 w-20">{t('pages.capacity.level')}</th>
@@ -163,7 +164,7 @@ export function DefenseConfigurator({
                 <th className="p-3 text-right w-12">{t('pages.capacity.deleteShort')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-800/20">
               {defenses.map((d, idx) => {
                 const metrics = calculateDefenseMetrics(d, bonusStats, duration);
                 const matchedRoom = allRooms.find(r => r.name === d.roomName) || allRooms.find(r => r.rootId === d.roomId) || allRooms[0];
@@ -181,13 +182,18 @@ export function DefenseConfigurator({
                 const isShield = d.type?.toLowerCase().includes('shield') || d.baseStats?.RoomType === 'Shield';
                 const isEngine = d.type?.toLowerCase().includes('engine') || d.baseStats?.RoomType === 'Engine';
 
+                const targetLvlObj = uniqueLevels.find(l => l.level === d.level) || uniqueLevels[uniqueLevels.length - 1] || uniqueLevels[0];
+                const roomSpriteId = targetLvlObj?.imageSpriteId || targetLvlObj?.raw?.ImageSpriteId || matchedRoom?.raw?.ImageSpriteId || matchedRoom?.imageSpriteId;
+
                 return (
                   <tr key={d.id || idx} className="hover:bg-slate-900/60 transition-colors">
                     {/* Room Design */}
                     <td className="p-3 font-sans">
                       <div className="flex items-center space-x-2.5">
-                        <div className="w-7 h-7 rounded bg-slate-900 flex items-center justify-center border border-slate-800 shrink-0">
-                          {isShield ? (
+                        <div className="w-8 h-8 rounded bg-slate-900/80 flex items-center justify-center shrink-0 relative overflow-hidden">
+                          {roomSpriteId ? (
+                            <SpriteFrame spriteId={roomSpriteId} alt={d.roomName} size="xs" borderless className="h-7 w-7 object-contain bg-transparent shrink-0" />
+                          ) : isShield ? (
                             <ShieldAlert className="h-3.5 w-3.5 text-sky-400" />
                           ) : isEngine ? (
                             <Wind className="h-3.5 w-3.5 text-emerald-400" />
@@ -234,7 +240,7 @@ export function DefenseConfigurator({
                               }
                             });
                           }}
-                          className="bg-slate-900 border border-slate-700 text-sky-300 font-bold rounded px-1.5 py-1 text-xs focus:outline-none focus:border-sky-500 font-mono"
+                          className="bg-slate-900 text-sky-300 font-bold rounded px-1.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
                         >
                           {uniqueLevels.map(l => (
                             <option key={l.level} value={l.level}>Lv {l.level}</option>
@@ -269,7 +275,7 @@ export function DefenseConfigurator({
                         max="10"
                         value={d.count}
                         onChange={(e) => onUpdateDefense(d.id, { count: Math.max(1, Number(e.target.value)) })}
-                        className="w-10 bg-slate-900 border border-slate-700 text-slate-200 text-center rounded py-0.5 text-xs focus:outline-none font-mono"
+                        className="w-10 bg-slate-900 text-slate-200 text-center rounded py-0.5 text-xs focus:outline-none font-mono"
                       />
                     </td>
 
@@ -282,7 +288,7 @@ export function DefenseConfigurator({
                           placeholder={isShield ? '12' : '4.0'}
                           value={d.initValue ?? ''}
                           onChange={(e) => onUpdateDefense(d.id, { initValue: e.target.value })}
-                          className="w-14 bg-slate-950 border border-sky-600/60 text-sky-300 font-bold rounded px-1 py-0.5 text-center focus:outline-none"
+                          className="w-14 bg-slate-950 text-sky-300 font-bold rounded px-1 py-0.5 text-center focus:outline-none focus:ring-2 focus:ring-sky-500"
                         />
                         <span className="text-[10px] text-slate-400">{isShield ? 'HP' : '%'}</span>
                       </div>
@@ -297,7 +303,7 @@ export function DefenseConfigurator({
                           placeholder="1"
                           value={d.regenValue ?? ''}
                           onChange={(e) => onUpdateDefense(d.id, { regenValue: e.target.value })}
-                          className="w-14 bg-slate-950 border border-amber-600/60 text-amber-300 font-bold rounded px-1 py-0.5 text-center focus:outline-none"
+                          className="w-14 bg-slate-950 text-amber-300 font-bold rounded px-1 py-0.5 text-center focus:outline-none focus:ring-2 focus:ring-amber-500"
                         />
                         <span className="text-[10px] text-slate-400">{isShield ? 'HP' : '%'}</span>
                       </div>

@@ -49,13 +49,12 @@ export function CraftCatalog() {
     const topLevel = g.levels[g.levels.length - 1];
     const rootLevel = g.levels[0];
     
-    // Extract a base name, e.g. "Interceptor Lv1" -> "Interceptor"
     const baseName = (rootLevel.CraftName || '').replace(/\s+Lv\d+/i, '').trim();
 
     return {
       id: rootLevel.CraftDesignId,
       name: baseName || topLevel.CraftName || 'Deployable Craft',
-      spriteId: topLevel.SpriteId,
+      spriteId: topLevel.SpriteId || rootLevel.SpriteId,
       maxSpeed: topLevel.FlightSpeed || 0,
       maxHp: topLevel.Hp || 0,
       reloadTime: topLevel.ReloadTime || topLevel.Reload || 0,
@@ -126,19 +125,20 @@ export function CraftCatalog() {
       />
 
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedGroups.map(c => (
             <EntityCard
               key={c.id}
               id={c.id}
               name={c.name}
-              subtitle={`${c.levels.length} Levels Available`}
+              category={c.levels.length > 1 ? `${c.levels.length} Levels` : '1 Level'}
+              subtitle="Craft"
               spriteId={c.spriteId}
               targetPath={`/${lang}/library/crafts/${c.id}`}
               stats={[
                 { label: 'Max HP', value: c.maxHp || 0 },
                 { label: 'Max Speed', value: c.maxSpeed || 0 },
-                { label: 'Max Reload', value: `${c.reloadTime || 0}s` }
+                { label: 'Max Reload', value: `${(c.reloadTime / 40).toFixed(1)}s` }
               ]}
             />
           ))}

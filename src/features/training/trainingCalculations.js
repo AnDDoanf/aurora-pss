@@ -99,6 +99,8 @@ export function calculateTrainingPossibilities(program, capacity, training, fati
   const fatigueMultiplier = fatigueValue === 0 ? 1 : fatigueValue <= 50 ? 0.5 : fatigueValue < 100 ? 1 / 3 : 0;
   const remainingTotalFactor = safeCapacity > 0 ? Math.max(1 - summary.spent / safeCapacity, 0) : 0;
   const guarantee = Math.max(Number(program?.minGuarantee) || 0, 0);
+  const variability = Math.max(Number(program?.variableChance) ?? 0.25, 0);
+  const isConsumable = Number(program?.rank) === 100;
 
   const rows = TRAINING_STATS.map((stat) => {
     const current = clampTrainingValue(training?.[stat.key], safeCapacity);
@@ -111,23 +113,45 @@ export function calculateTrainingPossibilities(program, capacity, training, fati
     const roundGain = (value) => stat.key === 'sta' ? Math.ceil(value) : Math.floor(value);
 
     let max = 0;
-    if (isMainStat && fatigueValue === 100) {
-      max = guarantee;
-    } else if (fatigueValue >= 1 && fatigueValue <= 50 && requiredEffect > 0 && effect / requiredEffect > 1.5) {
-      max = roundGain(gainFactor);
-    } else if (isMainStat && guarantee > 0) {
-      max = Math.max(roundGain(fatigueMultiplier * gainFactor), guarantee);
-    } else if (effect >= requiredEffect) {
-      max = roundGain(fatigueMultiplier * gainFactor);
+    let min = 0;
+
+    if (isConsumable) {
+      if (effect > 0) {
+        const baseGain = isMainStat && guarantee > 0
+          ? Math.max(guarantee * 1.5, guarantee + 2)
+          : Math.max(1, Math.round(effect / 16));
+        const calcMin = isMainStat && guarantee > 0 ? guarantee : Math.floor(baseGain * (1 - variability));
+        const calcMax = Math.ceil(baseGain * (1 + variability));
+        min = Math.max(isMainStat && guarantee > 0 ? guarantee : 0, calcMin);
+        max = Math.max(min, calcMax);
+      }
+    } else {
+      if (isMainStat && fatigueValue === 100) {
+        max = guarantee;
+      } else if (fatigueValue >= 1 && fatigueValue <= 50 && requiredEffect > 0 && effect / requiredEffect > 1.5) {
+        max = roundGain(gainFactor);
+      } else if (isMainStat && guarantee > 0) {
+        max = Math.max(roundGain(fatigueMultiplier * gainFactor), guarantee);
+      } else if (effect >= requiredEffect) {
+        max = roundGain(fatigueMultiplier * gainFactor);
+      } else {
+        max = effect > 0 ? Math.max(1, roundGain(effect * fatigueMultiplier)) : 0;
+      }
+
+      const calculatedMin = max > 0 ? Math.floor(max * (1 - variability)) : 0;
+      min = isMainStat && guarantee > 0 ? Math.max(guarantee, calculatedMin) : Math.min(calculatedMin, max);
     }
 
-    const min = isMainStat && guarantee > 0 ? guarantee : 0;
+    const remainingForStat = Math.max(0, safeCapacity - summary.spent);
+    const finalMin = Math.min(min, remainingForStat);
+    const finalMax = Math.min(Math.max(max, finalMin), remainingForStat);
+
     return {
       ...stat,
       weight: effect,
-      min: Math.min(min, safeCapacity),
-      max: Math.min(Math.max(max, min), safeCapacity),
-      expected: (Math.min(min, safeCapacity) + Math.min(Math.max(max, min), safeCapacity)) / 2
+      min: finalMin,
+      max: finalMax,
+      expected: (finalMin + finalMax) / 2
     };
   });
 

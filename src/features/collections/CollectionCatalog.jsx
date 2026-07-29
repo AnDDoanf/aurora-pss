@@ -99,8 +99,8 @@ export function CollectionCatalog() {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {collections.map(col => (
-          <div key={col.id} className="rounded-xl border border-slate-800 bg-slate-900 p-5 space-y-4 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div key={col.id} className="rounded-xl bg-slate-900/90 p-5 space-y-4 shadow-lg backdrop-blur-sm">
+            <div className="flex items-center justify-between border-b border-slate-800/20 pb-3">
               <div className="flex items-center space-x-3">
                 <SpriteFrame spriteId={col.iconSpriteId} alt={col.name} size="sm" borderless className="shrink-0" />
                 <div>
@@ -108,11 +108,11 @@ export function CollectionCatalog() {
                   <div className="text-[10px] text-slate-500 font-mono">Collection ID: #{col.id}</div>
                 </div>
               </div>
-              <span className="text-xs text-slate-400 font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-850">{col.members.length} Members</span>
+              <span className="text-xs text-slate-400 font-mono bg-slate-950/80 px-2.5 py-1 rounded">{col.members.length} Members</span>
             </div>
 
             <div className="space-y-2 text-xs">
-              <div className="flex items-start space-x-2 bg-indigo-950/40 p-2.5 rounded-lg border border-indigo-900/40">
+              <div className="flex items-start space-x-2 bg-indigo-950/40 p-3 rounded-lg">
                 {col.abilityIconSpriteId && (
                   <SpriteFrame spriteId={col.abilityIconSpriteId} alt={col.abilityName} size="sm" borderless className="shrink-0 mt-0.5" />
                 )}
@@ -150,7 +150,7 @@ export function CollectionCatalog() {
                   const chanceText = chance < 100 ? `${chance}% chance` : '100% chance';
                   
                   return (
-                    <div key={combo} className="flex justify-between items-center p-2 rounded bg-slate-950/60 border border-slate-850/60">
+                    <div key={combo} className="flex justify-between items-center p-2 rounded bg-slate-950/60">
                       <span className="text-slate-400 font-bold">{combo} Crew:</span>
                       <span className="text-emerald-400 text-right">
                         {chanceText} {bonusText && `(${bonusText.trim()})`}
@@ -169,9 +169,9 @@ export function CollectionCatalog() {
                   <div 
                     key={m.id} 
                     onClick={() => navigate(`/${lang}/library/crew/${m.id}`)}
-                    className="flex items-center space-x-2 p-2 rounded-lg bg-slate-950 hover:bg-slate-900 border border-slate-800/80 text-xs cursor-pointer transition-all hover:scale-[1.01] group min-w-0"
+                    className="flex items-center space-x-2 p-2 rounded-lg bg-slate-950 hover:bg-slate-950/80 text-xs cursor-pointer transition-all hover:scale-[1.01] group min-w-0"
                   >
-                    <SpriteFrame spriteId={m.profileSpriteId} alt={m.name} size="sm" className="bg-slate-900 border-slate-800 shrink-0" />
+                    <SpriteFrame spriteId={m.profileSpriteId} alt={m.name} size="sm" borderless className="bg-slate-900 shrink-0" />
                     <div className="min-w-0">
                       <div className="font-bold text-slate-200 group-hover:text-indigo-400 transition-colors truncate">{m.name}</div>
                       <div className="text-[10px] text-slate-500 font-mono truncate">{m.rarity}</div>

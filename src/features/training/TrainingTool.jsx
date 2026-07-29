@@ -13,8 +13,8 @@ import {
   isPrimaryTrainingStat, recommendPrograms, summarizeTraining
 } from './trainingCalculations';
 
-const panel = 'rounded-xl border border-slate-800 bg-slate-900 shadow-sm';
-const input = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20';
+const panel = 'rounded-xl bg-slate-900 shadow-sm';
+const input = 'w-full rounded-lg bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none transition focus:ring-2 focus:ring-indigo-500/20';
 const number = (value, digits = 1) => new Intl.NumberFormat(undefined, { maximumFractionDigits: digits }).format(value || 0);
 const FATIGUE_EXPRESSION_SPRITES = [9970, 9730, 9731, 9732, 9733, 9734, 9735, 9736, 9737, 9738, 9739];
 
@@ -60,7 +60,7 @@ function InfoTooltip({ text }) {
       </span>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-[80] mb-2 w-64 -translate-x-1/2 rounded-md border border-cyan-500/30 bg-slate-950 px-3 py-2 text-left text-[10px] font-medium normal-case leading-relaxed tracking-normal text-slate-200 opacity-0 shadow-2xl transition-opacity group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-[80] mb-2 w-64 -translate-x-1/2 rounded-md bg-slate-950 px-3 py-2 text-left text-[10px] font-medium normal-case leading-relaxed tracking-normal text-slate-200 opacity-0 shadow-2xl transition-opacity group-hover/tooltip:opacity-100 group-focus-within/tooltip:opacity-100"
       >
         {text}
       </span>
@@ -126,11 +126,11 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
 
   return (
     <section className={`${panel} flex min-h-[540px] flex-col overflow-hidden xl:h-full xl:min-h-0`}>
-      <div className="border-b border-cyan-500/30 bg-[#073b63] px-4 py-2.5">
+      <div className="bg-[#073b63] px-4 py-2.5">
         <div className="block">
           <span className="mb-1.5 block text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">{t('training.crewDetails')}</span>
           <div className="relative">
-            <select disabled={loading} value={crewId} onChange={(event) => onCrewChange(event.target.value)} title={t('training.crewChangeHint')} className={`${input} appearance-none border-cyan-500/30 bg-[#082f4d] pr-9 font-bold`}>
+            <select disabled={loading} value={crewId} onChange={(event) => onCrewChange(event.target.value)} title={t('training.crewChangeHint')} className={`${input} appearance-none bg-[#082f4d] pr-9 font-bold`}>
               {loading && <option>{t('common.loadingShort')}</option>}
               {crew.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.rarity}</option>)}
             </select>
@@ -141,7 +141,7 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
 
       <div className={`relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-hidden bg-gradient-to-b ${state.glow} via-[#082f4d] to-[#061f35] px-5 py-4`}>
         <div className="absolute inset-x-8 top-1/2 h-px bg-cyan-300/25" />
-        <div className="absolute right-4 top-4 flex items-center gap-2 rounded-lg border border-white/10 bg-slate-950/60 px-2.5 py-1.5 backdrop-blur">
+        <div className="absolute right-4 top-4 flex items-center gap-2 rounded-lg bg-slate-950/60 px-2.5 py-1.5 backdrop-blur">
           <FatigueSprite fatigue={fatigue} size={28} />
           <div className="text-[9px] font-bold text-slate-400">{fatigue}/100</div>
         </div>
@@ -162,13 +162,13 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
         </>}
       </div>
 
-      <div className="space-y-3 border-t border-cyan-500/30 bg-[#073b63] p-3.5">
+      <div className="space-y-3 bg-[#073b63] p-3.5">
         <div>
           <div className="mb-1.5 flex items-center justify-between text-xs font-black text-cyan-100">
             <span>{t('training.training')}</span>
             <span className="font-mono">{summary.spent}/{capacity}</span>
           </div>
-          <div title={`${summary.spent} of ${capacity} training points allocated`} className="h-3 overflow-hidden rounded-sm border border-cyan-300/20 bg-[#041e31] p-0.5">
+          <div title={`${summary.spent} of ${capacity} training points allocated`} className="h-3 overflow-hidden rounded-sm bg-[#041e31] p-0.5">
             <div className={`h-full transition-all ${summary.overCapacity ? 'bg-rose-500' : 'bg-yellow-400'}`} style={{ width: `${usedPercent}%` }} />
           </div>
         </div>
@@ -223,11 +223,10 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
         onSelect(program.id);
         setIsOpen(false);
       }}
-      className={`flex w-full items-center gap-3 px-3 py-2 text-left transition hover:bg-cyan-500/15 ${
-        program.id === selected?.id ? 'bg-blue-600 text-white' : 'text-cyan-50'
-      }`}
+      className={`flex w-full items-center gap-3 px-3 py-2 text-left transition hover:bg-cyan-500/15 ${program.id === selected?.id ? 'bg-blue-600 text-white' : 'text-cyan-50'
+        }`}
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-cyan-400/40 bg-slate-950/70">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-slate-950/70">
         <img src={publicUrl(`/assets/sprites/${program.spriteId}.webp`)} alt="" className="h-8 w-8 object-contain [image-rendering:pixelated]" />
       </span>
       <span className="min-w-0">
@@ -243,7 +242,7 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
 
   return (
     <section className={`${embedded ? 'relative z-30 bg-slate-900' : `${panel} relative z-30`} overflow-visible`}>
-      <div className="border-b border-cyan-500/30 bg-[#073b63] px-4 py-2.5">
+      <div className="bg-[#073b63] px-4 py-2.5">
         <div className="flex items-center gap-2 text-cyan-200">
           <Dumbbell className="h-4 w-4" />
           <h2 className="text-sm font-black uppercase tracking-wider">{t('training.station')}</h2>
@@ -262,9 +261,9 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
               aria-haspopup="listbox"
               aria-expanded={isOpen}
               title={outcomeTooltip}
-              className={`${input} flex min-h-12 items-center gap-3 border-cyan-500/40 bg-[#082f4d] py-1.5 pr-10 text-left`}
+              className={`${input} flex min-h-12 items-center gap-3 bg-[#082f4d] py-1.5 pr-10 text-left`}
             >
-              {selected && <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-cyan-400/40 bg-slate-950/70">
+              {selected && <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-slate-950/70">
                 <img src={publicUrl(`/assets/sprites/${selected.spriteId}.webp`)} alt="" className="h-8 w-8 object-contain [image-rendering:pixelated]" />
               </span>}
               <span className="min-w-0">
@@ -276,7 +275,7 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
             </button>
             <ChevronDown className={`pointer-events-none absolute right-3 top-3.5 h-5 w-5 text-cyan-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             {isOpen && (
-              <div role="listbox" className="absolute z-50 mt-1 max-h-[430px] w-full overflow-y-auto border border-cyan-400/60 bg-[#082f4d] shadow-2xl">
+              <div role="listbox" className="absolute z-50 mt-1 max-h-[430px] w-full overflow-y-auto bg-[#082f4d] shadow-2xl rounded-lg">
                 {repeatable.length > 0 && <>
                   <div className="sticky top-0 z-10 bg-[#061f35] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
                     {t('training.programs')}
@@ -284,7 +283,7 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
                   {repeatable.map(renderOption)}
                 </>}
                 {consumables.length > 0 && <>
-                  <div className="sticky top-0 z-10 border-t border-cyan-400/30 bg-[#061f35] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
+                  <div className="sticky top-0 z-10 bg-[#061f35] px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-300">
                     {t('training.instantItems')}
                   </div>
                   {consumables.map(renderOption)}
@@ -300,7 +299,7 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
             <InfoTooltip text={t('training.targetFilterHint', { stat: targetLabel })} />
           </span>
           <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-9">
-            {TRAINING_STATS.map((stat) => <button key={stat.key} onClick={() => onTargetChange(stat.key)} title={t('training.setTargetHint', { stat: stat.label })} className={`rounded-md border px-2 py-1.5 text-xs font-black transition ${target === stat.key ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200' : 'border-slate-800 bg-slate-950 text-slate-500 hover:border-slate-700'}`}>{stat.label}</button>)}
+            {TRAINING_STATS.map((stat) => <button key={stat.key} onClick={() => onTargetChange(stat.key)} title={t('training.setTargetHint', { stat: stat.label })} className={`rounded-md px-2 py-1.5 text-xs font-black transition ${target === stat.key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-950/60 text-slate-400 hover:bg-slate-800'}`}>{stat.label}</button>)}
           </div>
         </div>
       </div>
@@ -308,7 +307,7 @@ function ProgramSelector({ programs, selectedId, selected, target, maxTargetPoin
   );
 }
 
-function TrainingStats({ selectedCrew, training, capacity, summary, distribution, fatigue, onChange, onStep, t, children }) {
+function TrainingStats({ selectedCrew, training, capacity, summary, distribution, fatigue, selectedProgram, onSimulate, onReset, lang, onChange, onStep, t, children }) {
   const renderStat = (stat) => {
     const outcome = distribution.find((row) => row.key === stat.key);
     const base = stat.crewKey ? selectedCrew?.[stat.crewKey] : null;
@@ -316,29 +315,25 @@ function TrainingStats({ selectedCrew, training, capacity, summary, distribution
     const trained = calculateTrainedStat(base, value, stat.key);
     return (
       <div key={stat.key} title={base != null ? `${stat.label}: ${number(base)} base × (1 + ${value}%) = ${number(trained)}` : `${stat.label} has no base stat available.`} className="grid w-full min-w-0 grid-cols-[28px_max-content_minmax(30px,1fr)_120px] items-center gap-1 sm:grid-cols-[34px_96px_minmax(38px,1fr)_120px] sm:gap-2">
-        <div className="flex h-7 w-7 items-center justify-center border border-cyan-400/70 bg-[#07517b] sm:h-8 sm:w-8">
+        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#07517b] sm:h-8 sm:w-8">
           <img src={publicUrl(`/assets/sprites/${stat.spriteId}.webp`)} alt="" className="h-6 w-6 object-contain [image-rendering:pixelated] sm:h-7 sm:w-7" />
         </div>
         <div className="min-w-0 overflow-hidden">
           <div className="text-sm font-black leading-none sm:text-base" style={{ color: stat.color }}>{stat.label}</div>
-          <div className="mt-0.5 flex min-w-0 items-baseline gap-0.5 whitespace-nowrap sm:gap-1.5">
+          <div className="mt-0.5 flex min-w-0 items-baseline whitespace-nowrap">
             {base != null
-              ? <>
-                  <span className="text-[10px] font-bold text-slate-300 sm:text-xs"><span className="hidden sm:inline">{t('training.base')} </span>{number(base)}</span>
-                  <span className="text-[10px] text-cyan-600 sm:text-xs">→</span>
-                  <span className="text-xs font-black leading-none text-cyan-300 sm:text-sm">{number(trained)}</span>
-                </>
+              ? <span className="text-xs font-black leading-none text-cyan-300 sm:text-sm">{number(trained)}</span>
               : <span className="text-xs text-slate-500">—</span>}
           </div>
         </div>
         <div title={`${t('training.nextRange')}: ${number(outcome?.min)}–${number(outcome?.max)} ${stat.label}`} className={`whitespace-nowrap text-right font-mono text-[10px] font-black sm:text-xs ${outcome?.max > 0 ? 'text-cyan-300' : 'text-slate-600'}`}>
           {number(outcome?.min)} ~ {number(outcome?.max)}
         </div>
-        <div className="grid w-[126px] grid-cols-[36px_48px_36px] overflow-hidden border-2 border-cyan-400/60 bg-[#073b63] shadow-[inset_0_0_0_1px_rgba(2,20,35,0.8)]">
+        <div className="grid w-[126px] grid-cols-[36px_48px_36px] overflow-hidden rounded-lg bg-[#073b63] shadow-sm">
           <HoldStepButton
             direction={-1}
             disabled={value <= 0}
-            className="h-9 border-r border-cyan-400/30 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
+            className="h-9 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
             label={t('training.decrease', { stat: stat.label })}
             onStep={(delta) => onStep(stat.key, delta)}
           />
@@ -348,13 +343,13 @@ function TrainingStats({ selectedCrew, training, capacity, summary, distribution
             max={capacity || 0}
             value={value}
             onChange={(event) => onChange(stat.key, event.target.value)}
-            className="training-number-input h-9 min-w-0 bg-[#258de2] px-1 text-center font-mono text-base font-black text-white outline-none focus:bg-[#38a4fa]"
+            className="training-number-input h-9 min-w-0 bg-indigo-500 px-1 text-center font-mono text-base font-black text-white outline-none focus:bg-[#38a4fa]"
             aria-label={`${stat.label} training points`}
           />
           <HoldStepButton
             direction={1}
             disabled={value >= capacity}
-            className="h-9 border-l border-cyan-400/30 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
+            className="h-9 text-lg font-black text-cyan-200 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-30"
             label={t('training.increase', { stat: stat.label })}
             onStep={(delta) => onStep(stat.key, delta)}
           />
@@ -366,17 +361,48 @@ function TrainingStats({ selectedCrew, training, capacity, summary, distribution
   return (
     <section className={`${panel} flex flex-col overflow-visible xl:h-full`}>
       {children}
-      <div className="flex flex-col items-start gap-2 border-b border-cyan-500/30 bg-[#073b63] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <div className="flex flex-col items-start gap-2 bg-[#073b63] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
         <div className="flex items-center gap-2 text-cyan-200">
           <Activity className="h-4 w-4" />
           <h2 className="text-sm font-black uppercase tracking-wider">{t('training.stats')}</h2>
           <InfoTooltip text={t('training.statsHint')} />
         </div>
-        <div className="flex items-center gap-2 font-mono text-xs font-black text-cyan-100">
-          <FatigueSprite fatigue={fatigue} size={20} />
-          <span>{fatigue}/100</span>
-          <span className="text-cyan-400/40">·</span>
-          <span>{summary.remaining} TP {t('training.remaining')}</span>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <div className="flex items-center gap-2 font-mono text-xs font-black text-cyan-100">
+            <FatigueSprite fatigue={fatigue} size={20} />
+            <span>{fatigue}/100</span>
+            <span className="text-cyan-400/40">·</span>
+            <span>{summary.remaining} TP {t('training.remaining')}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {onReset && (
+              <button
+                type="button"
+                onClick={onReset}
+                title={t('training.resetHint')}
+                className="flex items-center gap-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 transition"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>{t('training.reset')}</span>
+              </button>
+            )}
+
+            {onSimulate && (
+              <button
+                type="button"
+                onClick={onSimulate}
+                disabled={fatigue >= 100 || summary.remaining <= 0 || !selectedProgram || selectedProgram.available === false}
+                className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-black text-white shadow-sm transition hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <span>
+                  {Number(selectedProgram?.rank) === 100
+                    ? (lang === 'vi' ? 'Dùng vật phẩm' : 'Use Consumable')
+                    : (lang === 'vi' ? 'Huấn luyện' : 'Train Session')}
+                </span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="grid gap-x-6 gap-0 sm:gap-y-2.5 p-1.5 sm:p-4 lg:grid-cols-2">
@@ -468,7 +494,7 @@ function ProgramBrowser({ programs, selectedId, onSelect, lang }) {
 
   return (
     <section className={`${panel} overflow-hidden`}>
-      <div className="border-b border-slate-800 p-5">
+      <div className="p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
@@ -509,7 +535,7 @@ function ProgramBrowser({ programs, selectedId, onSelect, lang }) {
               <th className="px-3 py-3">{lang === 'vi' ? 'Yêu cầu' : 'Requires'}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/80">
+          <tbody>
             {filtered.map((program) => (
               <tr key={program.id} onClick={() => onSelect(program.id)} className={`cursor-pointer transition hover:bg-indigo-500/10 ${program.id === selectedId ? 'bg-indigo-500/15' : ''}`}>
                 <td className="px-4 py-3"><div className="font-bold text-slate-200">{program.name}</div><div className="font-mono text-[9px] text-slate-600">#{program.id}</div></td>
@@ -588,13 +614,41 @@ export function TrainingTool() {
   const selectedBase = programs.find((item) => item.id === selectedProgramId);
   const selected = selectedBase
     ? recommendPrograms([selectedBase], target, 'regular', fatigue)[0] || {
-        ...selectedBase,
-        targetShare: 0,
-        available: Number(fatigue) + (Number(selectedBase.fatigue) || 0) <= 100
-      }
+      ...selectedBase,
+      targetShare: 0,
+      available: Number(fatigue) + (Number(selectedBase.fatigue) || 0) <= 100
+    }
     : recommended;
   const distribution = calculateTrainingPossibilities(selected, capacity, training, fatigue, target, 'regular');
   const maxTargetPoints = distribution.find((row) => row.key === target)?.max || 0;
+
+  const handleSimulate = () => {
+    if (!selected || fatigue >= 100 || summary.remaining <= 0 || selected.available === false) return;
+
+    const addedFatigue = Number(selected.fatigue) || 0;
+    const newFatigue = Math.min(fatigue + addedFatigue, 100);
+
+    const newTraining = { ...training };
+    distribution.forEach((row) => {
+      const minVal = Math.max(0, Math.floor(row.min ?? 0));
+      const maxVal = Math.max(minVal, Math.floor(row.max ?? row.expected ?? 0));
+
+      let gain = 0;
+      if (maxVal > minVal) {
+        // Roll random integer gain in range [minVal, maxVal] inclusive
+        gain = Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal;
+      } else {
+        gain = maxVal;
+      }
+
+      if (gain > 0) {
+        newTraining[row.key] = clampTrainingValue((newTraining[row.key] || 0) + gain, capacity);
+      }
+    });
+
+    setTraining(newTraining);
+    setFatigue(newFatigue);
+  };
 
   const reset = () => {
     setTraining({ ...EMPTY_TRAINING });
@@ -609,10 +663,9 @@ export function TrainingTool() {
 
       <header className="page-header shrink-0">
         <div>
-            <h1 className="page-title">{t('training.pageTitle')}</h1>
-            <p className="mt-1 text-xs text-slate-400">{t('training.pageDescription')}</p>
+          <h1 className="page-title ">{t('training.pageTitle')}</h1>
+          <p className="mt-1 text-xs text-slate-400">{t('training.pageDescription')}</p>
         </div>
-        <button onClick={reset} title={t('training.resetHint')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 transition hover:bg-slate-800"><RotateCcw className="h-3.5 w-3.5" />{t('training.reset')}</button>
       </header>
 
       <div className="grid gap-4 xl:min-h-0 xl:flex-1 xl:grid-cols-[280px_minmax(0,1fr)]">
@@ -641,6 +694,10 @@ export function TrainingTool() {
               summary={summary}
               distribution={distribution}
               fatigue={fatigue}
+              selectedProgram={selected}
+              onSimulate={handleSimulate}
+              onReset={reset}
+              lang={lang}
               onChange={(key, value) => setTraining((current) => ({ ...current, [key]: clampTrainingValue(value, capacity) }))}
               onStep={(key, delta) => setTraining((current) => ({
                 ...current,

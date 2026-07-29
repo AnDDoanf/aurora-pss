@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Zap, Sword, Crosshair, Sparkles, Package } from 'lucide-react';
 import { calculateWeaponMetrics } from '../utils/capacityCalculations';
 import { useTranslation } from '../../../i18n/useTranslation';
+import { SpriteFrame } from '../../../components/ui/SpriteFrame';
 
 export function WeaponConfigurator({
   weapons = [],
@@ -90,11 +91,11 @@ export function WeaponConfigurator({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
+    <div className="bg-slate-900/90 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
       {/* Section Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+      <div className="flex items-center justify-between pb-3 border-b border-slate-800/20">
         <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-md bg-rose-950/80 text-rose-400 border border-rose-800/40">
+          <div className="p-1.5 rounded-md bg-rose-950/80 text-rose-400">
             <Sword className="h-4 w-4" />
           </div>
           <div>
@@ -118,7 +119,7 @@ export function WeaponConfigurator({
 
       {/* Room Picker Drawer */}
       {showRoomPicker && (
-        <div className="bg-slate-950/90 border border-indigo-900/50 p-3 rounded-lg space-y-3 shadow-inner">
+        <div className="bg-slate-950/90 p-3 rounded-lg space-y-3 shadow-inner">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-indigo-300">{t('pages.capacity.selectWeapon')}</span>
             <button onClick={() => setShowRoomPicker(false)} className="text-xs text-slate-400 hover:text-white">{t('pages.capacity.close')}</button>
@@ -128,7 +129,7 @@ export function WeaponConfigurator({
             <select
               value={selectedRoomName}
               onChange={(e) => setSelectedRoomName(e.target.value)}
-              className="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-sans"
+              className="flex-1 bg-slate-900 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-sans"
             >
               <option value="">{t('pages.capacity.chooseWeapon')}</option>
               {weaponRoomOptions.map(r => (
@@ -151,13 +152,13 @@ export function WeaponConfigurator({
 
       {/* Weapons Table - Each Room a Row */}
       {weapons.length === 0 ? (
-        <div className="text-center py-8 text-xs text-slate-500 border border-dashed border-slate-800 rounded-lg">
+        <div className="text-center py-8 text-xs text-slate-500 rounded-lg bg-slate-950/40">
           {t('pages.capacity.noWeapons')}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/60 scrollbar-thin">
+        <div className="overflow-x-auto rounded-lg bg-slate-950/60 scrollbar-thin">
           <table className="w-full text-left text-xs font-mono border-collapse whitespace-nowrap">
-            <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
+            <thead className="bg-slate-950 text-slate-400 text-[10px] uppercase border-b border-slate-800/30">
               <tr>
                 <th className="p-3 min-w-[170px]">{t('pages.capacity.roomDesign')}</th>
                 <th className="p-3 w-20">{t('pages.capacity.level')}</th>
@@ -172,7 +173,7 @@ export function WeaponConfigurator({
                 <th className="p-3 text-right w-12">{t('pages.capacity.deleteShort')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-800/20">
               {weapons.map((w, idx) => {
                 const metrics = calculateWeaponMetrics(w, bonusStats, customBonuses, duration);
                 const matchedRoom = allRooms.find(r => r.name === w.roomName) || allRooms.find(r => r.rootId === w.roomId) || allRooms[0];
@@ -190,15 +191,22 @@ export function WeaponConfigurator({
                 const roomTypeLower = (w.baseStats?.RoomType || w.roomName || '').toLowerCase();
                 const isHangar = roomTypeLower.includes('hangar') || roomTypeLower.includes('carrier');
 
+                const targetLvlObj = uniqueLevels.find(l => l.level === w.level) || uniqueLevels[uniqueLevels.length - 1] || uniqueLevels[0];
+                const roomSpriteId = targetLvlObj?.imageSpriteId || targetLvlObj?.raw?.ImageSpriteId || matchedRoom?.raw?.ImageSpriteId || matchedRoom?.imageSpriteId;
+
                 return (
                   <tr key={w.id || idx} className="hover:bg-slate-900/60 transition-colors">
-                    {/* Room Design (Clean Name) */}
+                    {/* Room Design (Clean Name + Room Sprite Asset) */}
                     <td className="p-3 font-sans">
                       <div className="flex items-center space-x-2">
-                        <div className="w-7 h-7 rounded bg-slate-900 flex items-center justify-center border border-slate-800 shrink-0 relative">
-                          <Crosshair className="h-3.5 w-3.5 text-rose-400" />
+                        <div className="w-8 h-8 rounded bg-slate-900/80 flex items-center justify-center shrink-0 relative overflow-hidden">
+                          {roomSpriteId ? (
+                            <SpriteFrame spriteId={roomSpriteId} alt={w.roomName} size="xs" borderless className="h-7 w-7 object-contain bg-transparent shrink-0" />
+                          ) : (
+                            <Crosshair className="h-3.5 w-3.5 text-rose-400" />
+                          )}
                           {w.applySymphony && (
-                            <Sparkles className="h-2.5 w-2.5 text-amber-400 absolute -top-1 -right-1" />
+                            <Sparkles className="h-2.5 w-2.5 text-amber-400 absolute -top-0.5 -right-0.5" />
                           )}
                         </div>
                         <div className="font-bold text-xs text-slate-100 truncate max-w-[150px]" title={w.roomName}>
@@ -235,7 +243,7 @@ export function WeaponConfigurator({
                               }
                             });
                           }}
-                          className="bg-slate-900 border border-slate-700 text-indigo-300 font-bold rounded px-1.5 py-1 text-xs focus:outline-none focus:border-indigo-500 font-mono"
+                          className="bg-slate-900 text-indigo-300 font-bold rounded px-1.5 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
                         >
                           {uniqueLevels.map(l => (
                             <option key={l.level} value={l.level}>Lv {l.level}</option>
@@ -270,7 +278,7 @@ export function WeaponConfigurator({
                         max="10"
                         value={w.count}
                         onChange={(e) => onUpdateWeapon(w.id, { count: Math.max(1, Number(e.target.value)) })}
-                        className="w-10 bg-slate-900 border border-slate-700 text-slate-200 text-center rounded py-0.5 text-xs focus:outline-none font-mono"
+                        className="w-10 bg-slate-900 text-slate-200 text-center rounded py-0.5 text-xs focus:outline-none font-mono"
                       />
                     </td>
 
@@ -281,7 +289,7 @@ export function WeaponConfigurator({
                         placeholder="0%"
                         value={w.bonusStat || ''}
                         onChange={(e) => onUpdateWeapon(w.id, { bonusStat: Number(e.target.value) })}
-                        className="w-16 bg-slate-950 border border-slate-700 text-rose-400 font-bold rounded px-1.5 py-0.5 text-xs focus:outline-none focus:border-rose-500 font-mono"
+                        className="w-16 bg-slate-950 text-rose-400 font-bold rounded px-1.5 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500 font-mono"
                       />
                     </td>
 
@@ -292,7 +300,7 @@ export function WeaponConfigurator({
                         placeholder="0%"
                         value={w.haste || ''}
                         onChange={(e) => onUpdateWeapon(w.id, { haste: Number(e.target.value) })}
-                        className="w-16 bg-slate-950 border border-slate-700 text-amber-400 font-bold rounded px-1.5 py-0.5 text-xs focus:outline-none focus:border-amber-500 font-mono"
+                        className="w-16 bg-slate-950 text-amber-400 font-bold rounded px-1.5 py-0.5 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono"
                       />
                     </td>
 
@@ -306,7 +314,7 @@ export function WeaponConfigurator({
                               const craft = allCrafts.find(c => c.CraftDesignId === Number(e.target.value)) || null;
                               onUpdateWeapon(w.id, { selectedCraft: craft });
                             }}
-                            className="w-full bg-slate-900 border border-slate-700 text-slate-200 text-[11px] rounded px-1.5 py-1 focus:outline-none"
+                            className="w-full bg-slate-900 text-slate-200 text-[11px] rounded px-1.5 py-1 focus:outline-none"
                           >
                             <option value="">-- Choose Hangar Craft --</option>
                             {allCrafts.map(c => (
@@ -325,7 +333,7 @@ export function WeaponConfigurator({
                               max="12"
                               value={w.craftCount || 1}
                               onChange={(e) => onUpdateWeapon(w.id, { craftCount: Math.max(1, Number(e.target.value)) })}
-                              className="w-10 bg-slate-950 border border-slate-700 text-indigo-300 text-center rounded py-0.2 font-bold focus:outline-none"
+                              className="w-10 bg-slate-950 text-indigo-300 text-center rounded py-0.2 font-bold focus:outline-none"
                             />
                           </div>
                         </div>
@@ -336,7 +344,7 @@ export function WeaponConfigurator({
                             const ammo = allMissiles.find(m => m.MissileDesignId === Number(e.target.value)) || null;
                             onUpdateWeapon(w.id, { selectedAmmo: ammo });
                           }}
-                          className="w-full bg-slate-900 border border-slate-700 text-slate-200 text-[11px] rounded px-1.5 py-1 focus:outline-none max-w-[190px] truncate"
+                          className="w-full bg-slate-900 text-slate-200 text-[11px] rounded px-1.5 py-1 focus:outline-none max-w-[190px] truncate"
                         >
                           <option value="">-- Built-in Ammo --</option>
                           {allMissiles.map(m => (

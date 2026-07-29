@@ -17,10 +17,10 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
   return (
     <div className="space-y-6">
       {/* Active Snapshot Metrics Overview */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg backdrop-blur-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+      <div className="bg-slate-900/90 rounded-xl p-5 space-y-4 shadow-lg backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/20 pb-3">
           <div className="flex items-center space-x-2">
-            <div className="p-1.5 rounded-md bg-indigo-950/80 text-indigo-400 border border-indigo-800/40">
+            <div className="p-1.5 rounded-md bg-indigo-950/80 text-indigo-400">
               <BarChart3 className="h-4 w-4" />
             </div>
             <div>
@@ -40,7 +40,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
         {/* 7 Key Analytics Cards Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
           {/* System DPS */}
-          <div className="bg-slate-950/80 border border-orange-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-orange-400 uppercase tracking-wider flex items-center space-x-1">
               <Target className="h-3 w-3" />
               <span>{t('pages.capacity.systemDps')}</span>
@@ -54,7 +54,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* Shield DPS */}
-          <div className="bg-slate-950/80 border border-sky-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-sky-400 uppercase tracking-wider flex items-center space-x-1">
               <Zap className="h-3 w-3" />
               <span>{t('pages.capacity.shieldDps')}</span>
@@ -68,7 +68,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* Crew DPS */}
-          <div className="bg-slate-950/80 border border-purple-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-purple-400 uppercase tracking-wider flex items-center space-x-1">
               <Users className="h-3 w-3" />
               <span>{t('pages.capacity.crewDps')}</span>
@@ -82,7 +82,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* Hull DPS */}
-          <div className="bg-slate-950/80 border border-rose-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-rose-400 uppercase tracking-wider flex items-center space-x-1">
               <Flame className="h-3 w-3" />
               <span>{t('pages.capacity.hullDps')}</span>
@@ -96,7 +96,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* AP DPS */}
-          <div className="bg-slate-950/80 border border-amber-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center space-x-1">
               <Crosshair className="h-3 w-3" />
               <span>{t('pages.capacity.apDps')}</span>
@@ -110,7 +110,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* Shield Gen Rate */}
-          <div className="bg-slate-950/80 border border-emerald-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center space-x-1">
               <Shield className="h-3 w-3" />
               <span>{t('pages.capacity.shieldGen')}</span>
@@ -124,7 +124,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           {/* Evasion Generation Rate */}
-          <div className="bg-slate-950/80 border border-teal-900/40 p-3 rounded-lg space-y-1">
+          <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
             <div className="text-[10px] font-bold text-teal-400 uppercase tracking-wider flex items-center space-x-1">
               <HeartPulse className="h-3 w-3" />
               <span>{t('pages.capacity.evasionRate')}</span>
@@ -146,9 +146,9 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
             {t('pages.capacity.roomBreakdown')}
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-slate-800">
+          <div className="overflow-x-auto rounded-lg bg-slate-950/40">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-slate-950 text-slate-400 border-b border-slate-800 text-[10px] uppercase">
+              <thead className="bg-slate-950 text-slate-400 text-[10px] uppercase border-b border-slate-800/20">
                 <tr>
                   <th className="p-2.5">{t('pages.capacity.room')}</th>
                   <th className="p-2.5">{t('pages.capacity.powerQuantity')}</th>
@@ -161,7 +161,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
                   <th className="p-2.5 text-emerald-400">{t('pages.capacity.shieldGen')}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 bg-slate-950/40">
+              <tbody className="divide-y divide-slate-800/20 bg-slate-950/40">
                 {activeSnapshot.weapons?.map((w, i) => {
                   const m = calculateWeaponMetrics(w, activeSnapshot.bonusStats, activeSnapshot.customBonuses, activeSnapshot.duration);
                   return (
@@ -169,7 +169,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
                       <td className="p-2.5 font-bold font-sans text-slate-200">
                         {w.roomName} <span className="text-[10px] text-slate-400">Lv{w.level}</span>
                         {w.applySymphony && (
-                          <span className="ml-1.5 text-[9px] bg-amber-500/20 text-amber-300 font-mono px-1 rounded border border-amber-500/40">
+                          <span className="ml-1.5 text-[9px] bg-amber-500/20 text-amber-300 font-mono px-1 rounded">
                             Symphony ({w.symphonyShots || 5}s)
                           </span>
                         )}
@@ -220,8 +220,8 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
 
       {/* Multi-Snapshot Timeline Battle Summary */}
       {snapshots.length > 1 && (
-        <div className="bg-slate-900/90 border border-indigo-900/50 rounded-xl p-5 space-y-4 shadow-lg backdrop-blur-sm">
-          <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+        <div className="bg-slate-900/90 rounded-xl p-5 space-y-4 shadow-lg backdrop-blur-sm">
+          <div className="flex items-center space-x-2 border-b border-slate-800/20 pb-3">
             <Layers className="h-5 w-5 text-indigo-400" />
             <div>
               <h3 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
@@ -234,7 +234,7 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
-            <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
+            <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
               <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalTimeline')}</div>
               <div className="text-lg font-bold text-slate-100">
                 {timelineSummary.totalDuration > 0 ? t('pages.capacity.seconds', { value: timelineSummary.totalDuration }) : t('pages.capacity.continuous')}
@@ -242,21 +242,21 @@ export function AnalyticsResults({ snapshots = [], activeSnapshotId }) {
               </div>
             </div>
 
-            <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
+            <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
               <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalSystemDamage')}</div>
               <div className="text-lg font-bold text-orange-400">
                 {timelineSummary.totalSystemDmg.toFixed(1)}
               </div>
             </div>
 
-            <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
+            <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
               <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.totalHullDamage')}</div>
               <div className="text-lg font-bold text-rose-400">
                 {timelineSummary.totalHullDmg.toFixed(1)}
               </div>
             </div>
 
-            <div className="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
+            <div className="bg-slate-950/80 p-3 rounded-lg space-y-1">
               <div className="text-[10px] text-slate-400 font-sans uppercase">{t('pages.capacity.weightedShield')}</div>
               <div className="text-lg font-bold text-emerald-400">
                 +{timelineSummary.avgShieldGenRate.toFixed(2)} HP/s

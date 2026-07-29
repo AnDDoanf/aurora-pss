@@ -13,24 +13,24 @@ function RoomCard({ room, isCompared, onToggleCompare, targetPath }) {
   const firstLevel = room.levels[0];
 
   return (
-    <div className="group relative flex flex-col items-center gap-3 bg-slate-900 border border-slate-800/60 p-4 rounded-xl shadow-sm hover:border-slate-700/80 transition-all w-full">
+    <div className="group relative flex flex-col items-center gap-3 bg-slate-900/90 p-4 rounded-xl shadow-lg hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 backdrop-blur-sm w-full">
 
       {/* Sprite Container — scaled to fit within the card */}
       <Link to={targetPath} className="w-full relative block">
-        <div className="w-full h-44 bg-slate-950/50 rounded-lg border border-slate-800 flex items-center justify-center p-3 overflow-hidden group-hover:border-indigo-500/40 transition-colors">
+        <div className="w-full h-52 sm:h-56 bg-slate-950/60 rounded-lg flex items-center justify-center p-3 overflow-hidden transition-all relative shadow-inner">
           <SpriteFrame 
             spriteId={topLevel?.imageSpriteId} 
             alt={room.name} 
             size="full" 
             borderless 
-            className="w-full h-full max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105" 
+            className="w-full h-full max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110" 
           />
         </div>
 
         {/* Stat Overlay — slides up from bottom on hover */}
         <div className="absolute inset-0 flex flex-col items-center justify-end rounded-lg overflow-hidden pointer-events-none">
-          <div className="w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-slate-950/90 backdrop-blur-sm px-2 py-2 space-y-1 text-[10px] font-mono">
-            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-center">
+          <div className="w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-slate-950/90 backdrop-blur-md p-3 space-y-1 text-xs font-mono">
+            <div className="grid grid-cols-2 gap-2 text-center">
               <div className="flex justify-between">
                 <span className="text-slate-400">Power:</span>
                 <span className="font-bold text-amber-400">{topLevel.powerRequested || 0}kW</span>
@@ -53,13 +53,13 @@ function RoomCard({ room, isCompared, onToggleCompare, targetPath }) {
       </Link>
 
       {/* Name & Grid below the sprite */}
-      <div className="text-center w-full min-w-0">
+      <div className="text-center w-full min-w-0 pt-1">
         <Link to={targetPath}>
-          <h3 className="font-extrabold text-xs text-slate-100 group-hover:text-indigo-400 transition-colors truncate">
+          <h3 className="font-extrabold text-sm text-slate-100 group-hover:text-indigo-400 transition-colors truncate">
             {room.name}
           </h3>
         </Link>
-        <p className="text-[10px] font-mono text-slate-500 mt-1">
+        <p className="text-xs font-mono text-slate-400 mt-1">
           <span className="text-indigo-400 font-bold">{firstLevel.columns}×{firstLevel.rows}</span>
           {' · '}{room.type}
         </p>
@@ -69,13 +69,13 @@ function RoomCard({ room, isCompared, onToggleCompare, targetPath }) {
       {onToggleCompare && (
         <button
           onClick={(e) => { e.preventDefault(); onToggleCompare(room.rootId); }}
-          className={`flex items-center space-x-1 px-3 py-1 rounded bg-slate-950 border border-slate-800 text-[10px] font-bold transition-all ${
+          className={`flex items-center space-x-1.5 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
             isCompared 
-              ? 'bg-indigo-600 border-indigo-500 text-white shadow' 
-              : 'text-slate-400 hover:text-indigo-400 hover:border-slate-700'
+              ? 'bg-indigo-600 text-white shadow-md' 
+              : 'bg-slate-950 text-slate-300 hover:text-white hover:bg-slate-800 shadow-sm hover:shadow'
           }`}
         >
-          {isCompared ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+          {isCompared ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
           <span>{isCompared ? 'Compared' : 'Compare'}</span>
         </button>
       )}

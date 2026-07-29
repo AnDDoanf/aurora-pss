@@ -1,10 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageOff, Sparkles } from 'lucide-react';
 import { publicUrl } from '../../utils/publicUrl';
+import { loadSpritesMap } from '../../utils/spriteUtils';
 
 export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = false, className = '' }) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentUrl, setCurrentUrl] = useState(null);
+  const [triedFallback, setTriedFallback] = useState(false);
+
+  useEffect(() => {
+    setError(false);
+    setLoading(true);
+    setTriedFallback(false);
+    if (spriteId) {
+      setCurrentUrl(publicUrl(`/assets/sprites/${spriteId}.webp`));
+    } else {
+      setError(true);
+    }
+  }, [spriteId]);
+
+  const handleImageError = () => {
+    if (!triedFallback && spriteId) {
+      setTriedFallback(true);
+      loadSpritesMap().then(spritesMap => {
+        const entry = spritesMap[String(spriteId)];
+        if (entry && entry.imageFileId && String(entry.imageFileId) !== String(spriteId)) {
+          setCurrentUrl(publicUrl(`/assets/sprites/${entry.imageFileId}.webp`));
+          setLoading(true);
+        } else {
+          setError(true);
+        }
+      }).catch(() => setError(true));
+    } else {
+      setError(true);
+    }
+  };
 
   const sizeClasses = {
     xxs: 'w-4 h-4',
@@ -16,15 +47,13 @@ export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = fals
     full: 'w-full h-full'
   }[size] || 'w-16 h-16';
 
-  if (!spriteId || error) {
+  if (!spriteId || error || !currentUrl) {
     return (
       <div className={`flex items-center justify-center ${borderless ? '' : 'rounded-lg bg-slate-900 border border-slate-800'} text-slate-600 ${sizeClasses} ${className}`}>
         <ImageOff className="h-1/2 w-1/2" />
       </div>
     );
   }
-
-  const spriteUrl = publicUrl(`/assets/sprites/${spriteId}.webp`);
 
   if (borderless) {
     return (
@@ -35,10 +64,10 @@ export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = fals
           </div>
         )}
         <img
-          src={spriteUrl}
+          src={currentUrl}
           alt={alt}
           onLoad={() => setLoading(false)}
-          onError={() => setError(true)}
+          onError={handleImageError}
           className={`w-full h-full object-contain [image-rendering:pixelated] transition-opacity duration-150 ${loading ? 'opacity-0' : 'opacity-100'}`}
         />
       </div>
@@ -53,10 +82,10 @@ export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = fals
         </div>
       )}
       <img
-        src={spriteUrl}
+        src={currentUrl}
         alt={alt}
         onLoad={() => setLoading(false)}
-        onError={() => setError(true)}
+        onError={handleImageError}
         className={`max-w-full max-h-full object-contain [image-rendering:pixelated] transition-opacity duration-150 ${loading ? 'opacity-0' : 'opacity-100'}`}
       />
     </div>

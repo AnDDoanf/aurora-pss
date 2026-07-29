@@ -26,15 +26,15 @@ export function SnapshotTimeline({
   };
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
+    <div className="bg-slate-900/90 rounded-xl p-4 space-y-4 shadow-lg backdrop-blur-sm">
       {/* Header & Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-800/20">
         <div className="flex items-center space-x-2">
           <Layers className="h-5 w-5 text-indigo-400" />
           <h2 className="text-sm font-extrabold text-slate-100 uppercase tracking-wider">
             {t('pages.capacity.snapshots')}
           </h2>
-          <span className="text-xs px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 font-mono border border-indigo-800/50">
+          <span className="text-xs px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 font-mono">
             {t('pages.capacity.snapshotCount', { count: snapshots.length })}
           </span>
         </div>
@@ -42,7 +42,7 @@ export function SnapshotTimeline({
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowCopyModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all border border-slate-700/60"
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all"
             title={t('pages.capacity.copyHint')}
           >
             <Copy className="h-3.5 w-3.5 text-indigo-400" />
@@ -68,10 +68,10 @@ export function SnapshotTimeline({
             <div
               key={snap.id}
               onClick={() => onSelectSnapshot(snap.id)}
-              className={`flex items-center space-x-2.5 px-3.5 py-2 rounded-lg cursor-pointer transition-all shrink-0 border ${
+              className={`flex items-center space-x-2.5 px-3.5 py-2 rounded-lg cursor-pointer transition-all shrink-0 ${
                 isActive
-                  ? 'bg-indigo-600/90 text-white font-bold border-indigo-400 shadow-md shadow-indigo-950/50'
-                  : 'bg-slate-950/60 text-slate-300 hover:bg-slate-800/80 border-slate-800'
+                  ? 'bg-indigo-600/90 text-white font-bold shadow-md shadow-indigo-950/30'
+                  : 'bg-slate-950/60 text-slate-300 hover:bg-slate-800/80'
               }`}
             >
               <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${isActive ? 'bg-indigo-950/60 text-indigo-200' : 'bg-slate-800 text-slate-400'}`}>
@@ -94,7 +94,7 @@ export function SnapshotTimeline({
 
       {/* Active Snapshot Settings & Controls Bar */}
       {activeSnapshot && (
-        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-950/60 p-3 rounded-lg border border-slate-800/60">
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-slate-950/60 p-3 rounded-lg">
           <div className="flex flex-col items-stretch gap-1.5 sm:col-span-5 sm:flex-row sm:items-center sm:space-x-2 sm:gap-0">
             <label className="text-xs font-medium text-slate-400 shrink-0">{t('pages.capacity.name')}</label>
             <input
@@ -102,7 +102,7 @@ export function SnapshotTimeline({
               value={activeSnapshot.name}
               onChange={(e) => onUpdateName(activeSnapshot.id, e.target.value)}
               placeholder={t('pages.capacity.namePlaceholder')}
-              className="w-full bg-slate-900 border border-slate-700/80 rounded-md px-2.5 py-1 text-xs text-slate-100 font-semibold focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-900 rounded-md px-2.5 py-1 text-xs text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -117,7 +117,7 @@ export function SnapshotTimeline({
                 onUpdateDuration(activeSnapshot.id, val === '' ? null : Math.max(1, Number(val)));
               }}
               placeholder={t('pages.capacity.durationPlaceholder')}
-              className="w-full bg-slate-900 border border-slate-700/80 rounded-md px-2.5 py-1 text-xs text-slate-100 font-mono focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-900 rounded-md px-2.5 py-1 text-xs text-slate-100 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {activeSnapshot.duration === null || activeSnapshot.duration === undefined || activeSnapshot.duration === '' ? (
               <span className="text-xs text-amber-400 flex items-center space-x-1 shrink-0 font-medium" title={t('pages.capacity.infiniteHint')}>
@@ -131,7 +131,7 @@ export function SnapshotTimeline({
             {snapshots.length > 1 && (
               <button
                 onClick={() => onDeleteSnapshot(activeSnapshot.id)}
-                className="flex min-h-10 w-full items-center justify-center space-x-1 rounded border border-rose-800/50 bg-rose-950/60 px-2.5 py-1.5 text-xs text-rose-300 transition-colors hover:bg-rose-900 sm:w-auto"
+                className="flex min-h-10 w-full items-center justify-center space-x-1 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 dark:bg-rose-950/60 dark:text-rose-300 dark:hover:bg-rose-900 px-3 py-1.5 text-xs font-bold transition-colors sm:w-auto"
                 title={t('pages.capacity.deleteHint')}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -145,7 +145,7 @@ export function SnapshotTimeline({
       {/* Copy Layout Modal */}
       {showCopyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-4">
-          <div className="max-h-[calc(100dvh-1.5rem)] w-full max-w-md space-y-4 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-2xl sm:p-5">
+          <div className="max-h-[calc(100dvh-1.5rem)] w-full max-w-md space-y-4 overflow-y-auto rounded-xl bg-slate-900 p-4 shadow-2xl sm:p-5">
             <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider flex items-center space-x-2">
               <Copy className="h-4 w-4 text-indigo-400" />
               <span>{t('pages.capacity.copyTitle')}</span>
@@ -159,7 +159,7 @@ export function SnapshotTimeline({
               <select
                 value={copySourceId}
                 onChange={(e) => setCopySourceId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-950 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="">{t('pages.capacity.chooseSource')}</option>
                 {snapshots

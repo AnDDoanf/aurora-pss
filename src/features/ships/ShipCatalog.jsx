@@ -66,9 +66,17 @@ export function ShipCatalog() {
     });
     const topLevel = g.levels[g.levels.length - 1];
     const rootLevel = g.levels[0];
+    const spriteCandidate = topLevel.exteriorFileId || 
+                            topLevel.miniShipFileId || 
+                            rootLevel.exteriorFileId || 
+                            rootLevel.miniShipFileId || 
+                            topLevel.raw?.MiniShipSpriteId || 
+                            topLevel.raw?.LogoSpriteId || 
+                            topLevel.raw?.ExteriorSpriteId || 
+                            topLevel.spriteId;
     return {
-      id: rootLevel.id, // Using root ID as the base/canonical ID
-      name: g.baseName, // Group base name (e.g. "Pirate Frigate")
+      id: rootLevel.id,
+      name: g.baseName,
       rootName: rootLevel.name,
       shipLevel: topLevel.shipLevel,
       minLevel: rootLevel.shipLevel,
@@ -76,7 +84,7 @@ export function ShipCatalog() {
       hp: topLevel.hp,
       columns: topLevel.columns,
       rows: topLevel.rows,
-      spriteId: topLevel.raw?.ExteriorSpriteId,
+      spriteId: spriteCandidate,
       levels: g.levels
     };
   });
@@ -144,14 +152,14 @@ export function ShipCatalog() {
       />
 
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedGroups.map(s => (
             <EntityCard
               key={s.id}
               id={s.id}
               name={s.name}
-              subtitle={`${s.levels.length} Levels (Lv ${s.minLevel}-${s.maxLevel})`}
-              category={`Grid: ${s.columns}x${s.rows}`}
+              category={`${s.columns}×${s.rows}`}
+              subtitle={s.levels.length > 1 ? `${s.levels.length} Levels` : '1 Level'}
               spriteId={s.spriteId}
               targetPath={`/${lang}/library/ships/${s.id}`}
               isCompared={comparedIds.includes(s.id)}
@@ -159,7 +167,7 @@ export function ShipCatalog() {
               stats={[
                 { label: 'Max Level', value: s.maxLevel },
                 { label: 'Max HP', value: s.hp },
-                { label: 'Grid Size', value: `${s.columns}x${s.rows}` }
+                { label: 'Grid Size', value: `${s.columns}×${s.rows}` }
               ]}
             />
           ))}

@@ -289,7 +289,7 @@ export function ShipCapacityAnalytics() {
                   localStorage.removeItem(STORAGE_KEY_ACTIVE_ID);
                 } catch (e) {}
               }}
-              className="flex min-h-10 w-full items-center justify-center space-x-1.5 rounded-lg border border-slate-700/60 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-700 md:w-auto"
+              className="flex min-h-10 w-full items-center justify-center space-x-1.5 rounded-lg bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-700 md:w-auto"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>{t('pages.capacity.reset')}</span>
