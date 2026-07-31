@@ -10,6 +10,7 @@ import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { getStoredCompareIds, setStoredCompareIds } from '../compare/compareStorage';
 import { publicUrl } from '../../utils/publicUrl';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 
 const abilityMapping = {
   DeductReload: {
@@ -214,6 +215,7 @@ export function CrewCatalog() {
       rarity: topLevel.rarity,
       specialAbilityType: topLevel.specialAbilityType,
       profileSpriteId: topLevel.profileSpriteId,
+      headSpriteId: getCrewHeadSpriteId(topLevel),
       collectionId: topLevel.collectionId,
       hp: rootLevel.hp,
       finalHp: topLevel.finalHp,
@@ -278,7 +280,7 @@ export function CrewCatalog() {
       header: 'Crew Member',
       cell: (c) => (
         <div className="flex items-center space-x-3">
-          <SpriteFrame spriteId={c.profileSpriteId} alt={c.name} size="sm" />
+          <SpriteFrame spriteId={c.profileSpriteId} fallbackSpriteId={c.headSpriteId} alt={c.name} size="sm" />
           <div>
             <div className="font-bold text-slate-100">{c.name}</div>
             <div className="text-[10px] text-slate-400">
@@ -361,6 +363,7 @@ export function CrewCatalog() {
               rarity={c.rarity}
               category={renderSkillBadge(c.specialAbilityType)}
               spriteId={c.profileSpriteId}
+              fallbackSpriteId={c.headSpriteId}
               targetPath={`/${lang}/library/crew/${c.id}`}
               onClick={setActiveIframeCrewId}
               isCompared={comparedIds.includes(String(c.id))}

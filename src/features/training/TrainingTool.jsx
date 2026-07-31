@@ -5,12 +5,14 @@ import {
 } from 'lucide-react';
 import fallbackTrainingPrograms from '../../../training_designs_parsed.json';
 import { SEOHead } from '../../components/SEOHead';
+import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { useTranslation } from '../../i18n/useTranslation';
 import { publicUrl } from '../../utils/publicUrl';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 import {
-  EMPTY_TRAINING, TRAINING_STATS, clampTrainingValue,
+  EMPTY_TRAINING, TRAINING_STATS, clampTrainingAllocation, clampTrainingValue,
   calculateTrainedStat, calculateTrainingPossibilities, formatDuration, getTrainingCapacity,
-  isPrimaryTrainingStat, recommendPrograms, summarizeTraining
+  getCrisprTrainingBonus, isPrimaryTrainingStat, recommendPrograms, summarizeTraining
 } from './trainingCalculations';
 
 const panel = 'rounded-xl bg-slate-900 shadow-sm';
@@ -119,7 +121,7 @@ function HoldStepButton({ direction, disabled, onStep, label, className }) {
   );
 }
 
-function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loading, onCrewChange, onFatigueChange, t }) {
+function CrewStage({ crew, crewId, selectedCrew, capacity, crisprCount, summary, fatigue, loading, onCrewChange, onCrisprChange, onFatigueChange, t }) {
   const state = getFatigueState(fatigue);
   const usedPercent = capacity ? Math.min((summary.spent / capacity) * 100, 100) : 0;
   const fatiguePercent = Math.min(Math.max(fatigue, 0), 100);
@@ -149,10 +151,13 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
         {selectedCrew && <>
           <div className="relative z-10 flex h-40 w-40 items-center justify-center 2xl:h-48 2xl:w-48">
             <div className="absolute inset-3 rounded-full bg-cyan-400/10 blur-2xl" />
-            <img
-              src={publicUrl(`/assets/sprites/${selectedCrew.profileSpriteId}.webp`)}
+            <SpriteFrame
+              spriteId={selectedCrew.profileSpriteId}
+              fallbackSpriteId={getCrewHeadSpriteId(selectedCrew)}
               alt={selectedCrew.name}
-              className={`relative max-h-full max-w-full scale-[1.65] object-contain [image-rendering:pixelated] transition-all duration-300 ${fatigue >= 90 ? 'grayscale contrast-75' : fatigue >= 65 ? 'saturate-50' : ''}`}
+              size="full"
+              borderless
+              className={`relative max-h-full max-w-full scale-[1.65] transition-all duration-300 ${fatigue >= 90 ? 'grayscale contrast-75' : fatigue >= 65 ? 'saturate-50' : ''}`}
             />
           </div>
           <div className="relative z-10 mt-3 text-center">
@@ -170,6 +175,31 @@ function CrewStage({ crew, crewId, selectedCrew, capacity, summary, fatigue, loa
           </div>
           <div title={`${summary.spent} of ${capacity} training points allocated`} className="h-3 overflow-hidden rounded-sm bg-[#041e31] p-0.5">
             <div className={`h-full transition-all ${summary.overCapacity ? 'bg-rose-500' : 'bg-yellow-400'}`} style={{ width: `${usedPercent}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-cyan-200/70">{t('training.crispr')}</div>
+            <div className="font-mono text-[9px] text-cyan-300/60">
+              {t('training.crisprBonus', { bonus: getCrisprTrainingBonus(crisprCount) })}
+            </div>
+          </div>
+          <div className="grid grid-cols-3 rounded-lg bg-[#041e31] p-0.5">
+            {[0, 1, 2].map((count) => (
+              <button
+                key={count}
+                type="button"
+                onClick={() => onCrisprChange(count)}
+                title={t('training.crisprUses', { count })}
+                className={`min-h-8 min-w-9 rounded-md px-2 text-xs font-black transition ${
+                  crisprCount === count
+                    ? 'bg-indigo-500 text-white shadow-sm'
+                    : 'text-cyan-200/60 hover:bg-cyan-400/10 hover:text-cyan-100'
+                }`}
+              >
+                {count}
+              </button>
+            ))}
           </div>
         </div>
         <label className="block">
@@ -313,15 +343,17 @@ function TrainingStats({ selectedCrew, training, capacity, summary, distribution
     const base = stat.crewKey ? selectedCrew?.[stat.crewKey] : null;
     const value = training[stat.key];
     const trained = calculateTrainedStat(base, value, stat.key);
+    const isDirectTrainingStat = stat.key === 'sta';
+    const hasCalculatedValue = isDirectTrainingStat || base != null;
     return (
-      <div key={stat.key} title={base != null ? `${stat.label}: ${number(base)} base × (1 + ${value}%) = ${number(trained)}` : `${stat.label} has no base stat available.`} className="grid w-full min-w-0 grid-cols-[28px_max-content_minmax(30px,1fr)_120px] items-center gap-1 sm:grid-cols-[34px_96px_minmax(38px,1fr)_120px] sm:gap-2">
+      <div key={stat.key} title={isDirectTrainingStat ? `${stat.label}: ${value} TP = ${number(trained)}` : base != null ? `${stat.label}: ${number(base)} base × (1 + ${value}%) = ${number(trained)}` : `${stat.label} has no base stat available.`} className="grid w-full min-w-0 grid-cols-[28px_max-content_minmax(30px,1fr)_120px] items-center gap-1 sm:grid-cols-[34px_96px_minmax(38px,1fr)_120px] sm:gap-2">
         <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[#07517b] sm:h-8 sm:w-8">
           <img src={publicUrl(`/assets/sprites/${stat.spriteId}.webp`)} alt="" className="h-6 w-6 object-contain [image-rendering:pixelated] sm:h-7 sm:w-7" />
         </div>
         <div className="min-w-0 overflow-hidden">
           <div className="text-sm font-black leading-none sm:text-base" style={{ color: stat.color }}>{stat.label}</div>
           <div className="mt-0.5 flex min-w-0 items-baseline whitespace-nowrap">
-            {base != null
+            {hasCalculatedValue
               ? <span className="text-xs font-black leading-none text-cyan-300 sm:text-sm">{number(trained)}</span>
               : <span className="text-xs text-slate-500">—</span>}
           </div>
@@ -564,6 +596,7 @@ export function TrainingTool() {
   const [crewId, setCrewId] = useState('');
   const [target, setTarget] = useState('abl');
   const [training, setTraining] = useState({ ...EMPTY_TRAINING });
+  const [crisprCount, setCrisprCount] = useState(0);
   const [fatigue, setFatigue] = useState(0);
   const [selectedProgramId, setSelectedProgramId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -616,7 +649,7 @@ export function TrainingTool() {
       } : program;
     });
   }, [apiPrograms, instantItems]);
-  const capacity = getTrainingCapacity(selectedCrew);
+  const capacity = getTrainingCapacity(selectedCrew, crisprCount);
   const summary = summarizeTraining(training, capacity);
   const recommendations = useMemo(() => recommendPrograms(programs, target, 'regular', fatigue), [fatigue, programs, target]);
   const recommended = recommendations[0];
@@ -667,9 +700,44 @@ export function TrainingTool() {
 
   const reset = () => {
     setTraining({ ...EMPTY_TRAINING });
+    setCrisprCount(0);
     setFatigue(0);
     setTarget('abl');
     setSelectedProgramId(null);
+  };
+
+  const updateCrisprCount = (nextCount) => {
+    const normalizedCount = Math.min(Math.max(Math.trunc(Number(nextCount) || 0), 0), 2);
+    const nextCapacity = getTrainingCapacity(selectedCrew, normalizedCount);
+    setCrisprCount(normalizedCount);
+    setTraining((current) => clampTrainingAllocation(current, nextCapacity));
+  };
+
+  const updateTrainingStat = (key, nextValue) => {
+    setTraining((current) => {
+      const otherSpent = TRAINING_STATS.reduce((sum, stat) => (
+        stat.key === key ? sum : sum + (Number(current[stat.key]) || 0)
+      ), 0);
+      return {
+        ...current,
+        [key]: clampTrainingValue(nextValue, Math.max(capacity - otherSpent, 0))
+      };
+    });
+  };
+
+  const stepTrainingStat = (key, delta) => {
+    setTraining((current) => {
+      const otherSpent = TRAINING_STATS.reduce((sum, stat) => (
+        stat.key === key ? sum : sum + (Number(current[stat.key]) || 0)
+      ), 0);
+      return {
+        ...current,
+        [key]: clampTrainingValue(
+          (Number(current[key]) || 0) + delta,
+          Math.max(capacity - otherSpent, 0)
+        )
+      };
+    });
   };
 
   return (
@@ -699,13 +767,16 @@ export function TrainingTool() {
           crewId={crewId}
           selectedCrew={selectedCrew}
           capacity={capacity}
+          crisprCount={crisprCount}
           summary={summary}
           fatigue={fatigue}
           loading={loading}
           onCrewChange={(value) => {
             setCrewId(value);
             setTraining({ ...EMPTY_TRAINING });
+            setCrisprCount(0);
           }}
+          onCrisprChange={updateCrisprCount}
           onFatigueChange={setFatigue}
           t={t}
         />
@@ -723,11 +794,8 @@ export function TrainingTool() {
               onSimulate={handleSimulate}
               onReset={reset}
               lang={lang}
-              onChange={(key, value) => setTraining((current) => ({ ...current, [key]: clampTrainingValue(value, capacity) }))}
-              onStep={(key, delta) => setTraining((current) => ({
-                ...current,
-                [key]: clampTrainingValue(current[key] + delta, capacity)
-              }))}
+              onChange={updateTrainingStat}
+              onStep={stepTrainingStat}
               t={t}
             >
               <ProgramSelector
@@ -765,7 +833,14 @@ export function TrainingTool() {
                 </div>
               </label>
               {selectedCrew && <div className="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/70 p-3">
-                <img src={publicUrl(`/assets/sprites/${selectedCrew.profileSpriteId}.webp`)} alt="" className="h-12 w-12 object-contain [image-rendering:pixelated]" />
+                <SpriteFrame
+                  spriteId={selectedCrew.profileSpriteId}
+                  fallbackSpriteId={getCrewHeadSpriteId(selectedCrew)}
+                  alt={selectedCrew.name}
+                  size="sm"
+                  borderless
+                  className="h-12 w-12"
+                />
                 <div className="min-w-0"><div className="truncate text-sm font-black text-slate-200">{selectedCrew.name}</div><div className="text-[10px] uppercase tracking-wider text-slate-500">{selectedCrew.rarity} · {capacity} TP</div></div>
               </div>}
               {selectedCrew && <div>

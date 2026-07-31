@@ -41,7 +41,13 @@ export function StatComparisonRow({ label, baseValue, finalValue, unit = '' }) {
         <span className="text-slate-600">→</span>
         <span className="text-slate-100 font-bold">{finalValue}{unit}</span>
         {delta !== '0.0' && (
-          <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPositive ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}`}>
+          <span
+            className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset ${
+              isPositive
+                ? 'bg-emerald-500/10 text-emerald-600 ring-emerald-500/15'
+                : 'bg-rose-500/10 text-rose-500 ring-rose-500/15'
+            }`}
+          >
             {isPositive ? `+${delta}` : delta}
           </span>
         )}

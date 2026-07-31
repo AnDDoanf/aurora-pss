@@ -4,7 +4,8 @@ import { Backpack, Dumbbell, Minus, Package, Plus, X } from 'lucide-react';
 import { HoldStepButton } from '../../components/ui/HoldStepButton';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
-import { TRAINING_STATS } from '../training/trainingCalculations';
+import { TRAINING_STATS, getCrisprTrainingBonus } from '../training/trainingCalculations';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 
 export function InventoryEditor({
   entry,
@@ -19,6 +20,7 @@ export function InventoryEditor({
   t,
   onClose,
   onUpdate,
+  onUpdateCrispr,
   onUpdateTraining
 }) {
   if (!entry || !crew) return null;
@@ -36,7 +38,7 @@ export function InventoryEditor({
         onClick={(event) => event.stopPropagation()}
       >
         <header className="sticky top-0 z-10 flex items-start gap-3 border-b border-slate-800 bg-slate-900 p-4 sm:p-5">
-          <SpriteFrame spriteId={crew.profileSpriteId} alt={crew.name} size="md" />
+          <SpriteFrame spriteId={crew.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(crew)} alt={crew.name} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="truncate text-lg font-black text-slate-100">{entry.nickname || crew.name}</h2>
@@ -110,6 +112,33 @@ export function InventoryEditor({
                 })}
               </span>
             </div>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-950/60 p-2.5">
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                  {t('pages.inventory.crispr')}
+                </div>
+                <div className="mt-0.5 font-mono text-[9px] text-slate-500">
+                  {t('pages.inventory.crisprBonus', { bonus: getCrisprTrainingBonus(entry.crisprCount) })}
+                </div>
+              </div>
+              <div className="grid grid-cols-3 overflow-hidden rounded-lg bg-slate-800 p-0.5">
+                {[0, 1, 2].map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    onClick={() => onUpdateCrispr(count)}
+                    className={`min-h-8 min-w-10 rounded-md px-2 text-xs font-black transition ${
+                      entry.crisprCount === count
+                        ? 'bg-indigo-600 text-white shadow-sm'
+                        : 'text-slate-400 hover:bg-indigo-500/10 hover:text-indigo-300'
+                    }`}
+                    title={t('pages.inventory.crisprUses', { count })}
+                  >
+                    {count}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="grid gap-x-5 gap-y-2 lg:grid-cols-2">
               {[TRAINING_STATS.slice(0, 5), TRAINING_STATS.slice(5)].map((column, columnIndex) => (
                 <div key={columnIndex} className="space-y-2">
@@ -133,7 +162,6 @@ export function InventoryEditor({
                           </div>
                         </div>
                         <div className="whitespace-nowrap text-right font-mono text-[10px] font-black text-slate-500">
-                          0 ~ {value}
                         </div>
                         <div className="grid grid-cols-[36px_54px_36px] overflow-hidden rounded-lg bg-slate-800 shadow-sm">
                           <HoldStepButton

@@ -5,6 +5,7 @@ import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { StatBar, StatComparisonRow } from '../../components/ui/StatBar';
 import { pssApiUrl } from '../../config/api';
+import { getCrewHeadSpriteId, getCrewPartSpriteId } from '../../utils/crewSprites';
 
 const abilityMapping = {
   DeductReload: {
@@ -201,17 +202,9 @@ export function CrewDetail() {
   const currentWeapon = calcStat(crew.weapon, crew.finalWeapon);
   const currentScience = calcStat(crew.science, crew.finalScience);
 
-  const getCrewPartSprite = (crewObj, partType) => {
-    const parts = crewObj?.raw?.CharacterParts?.CharacterPart;
-    if (!parts) return null;
-    const partsArray = Array.isArray(parts) ? parts : [parts];
-    const part = partsArray.find(p => p.CharacterPartType === partType);
-    return part ? part.StandardSpriteId : null;
-  };
-
-  const headSpriteId = getCrewPartSprite(crew, 'Head');
-  const bodySpriteId = getCrewPartSprite(crew, 'Body');
-  const legSpriteId = getCrewPartSprite(crew, 'Leg');
+  const headSpriteId = getCrewHeadSpriteId(crew);
+  const bodySpriteId = getCrewPartSpriteId(crew, 'Body');
+  const legSpriteId = getCrewPartSpriteId(crew, 'Leg');
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 py-4">
@@ -245,7 +238,7 @@ export function CrewDetail() {
                   )}
                 </div>
               ) : (
-                <SpriteFrame spriteId={crew.profileSpriteId} alt={crew.name} size="full" borderless className="max-w-full max-h-full" />
+                <SpriteFrame spriteId={crew.profileSpriteId} fallbackSpriteId={headSpriteId} alt={crew.name} size="full" borderless className="max-w-full max-h-full" />
               )}
             </div>
             <div className="min-w-0 flex-1">
@@ -428,7 +421,7 @@ export function CrewDetail() {
                           onClick={(e) => handleCrewLinkClick(e, recipe.id1)}
                           className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
                         >
-                          {c1 && <SpriteFrame spriteId={c1.profileSpriteId} alt={c1.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
+                          {c1 && <SpriteFrame spriteId={c1.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(c1)} alt={c1.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{c1?.name || `#${recipe.id1}`}</span>
                         </Link>
                         <span className="text-[10px] text-slate-500 font-bold">+</span>
@@ -437,7 +430,7 @@ export function CrewDetail() {
                           onClick={(e) => handleCrewLinkClick(e, recipe.id2)}
                           className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
                         >
-                          {c2 && <SpriteFrame spriteId={c2.profileSpriteId} alt={c2.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
+                          {c2 && <SpriteFrame spriteId={c2.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(c2)} alt={c2.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{c2?.name || `#${recipe.id2}`}</span>
                         </Link>
                       </div>
@@ -473,7 +466,7 @@ export function CrewDetail() {
                           className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
                         >
                           <span className="text-[10px] text-slate-500 font-bold">+</span>
-                          {partner && <SpriteFrame spriteId={partner.profileSpriteId} alt={partner.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
+                          {partner && <SpriteFrame spriteId={partner.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(partner)} alt={partner.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-slate-200 truncate font-medium hover:text-emerald-400 transition-colors">{partner?.name || `#${partnerId}`}</span>
                         </Link>
                         <span className="text-[10px] text-slate-500 font-bold">→</span>
@@ -482,7 +475,7 @@ export function CrewDetail() {
                           onClick={(e) => handleCrewLinkClick(e, recipe.toId)}
                           className="flex items-center space-x-1.5 min-w-0 flex-1 hover:bg-slate-800/50 rounded px-1 -mx-1 transition-colors"
                         >
-                          {result && <SpriteFrame spriteId={result.profileSpriteId} alt={result.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
+                          {result && <SpriteFrame spriteId={result.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(result)} alt={result.name} size="xxs" borderless className="shrink-0 bg-transparent" />}
                           <span className="text-xs text-emerald-400 truncate font-bold hover:text-emerald-300 transition-colors">{result?.name || `#${recipe.toId}`}</span>
                         </Link>
                       </div>

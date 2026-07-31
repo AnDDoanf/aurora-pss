@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { EyeOff, SlidersHorizontal, Plus, Trash2 } from 'lucide-react';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 import { getStoredCompareIds, setStoredCompareIds } from './compareStorage';
 import { useTranslation } from '../../i18n/useTranslation';
 
@@ -164,7 +165,12 @@ export function CompareWorkspace() {
                     <th key={eId} className="min-w-[180px] p-3 text-slate-100 font-bold sm:min-w-[200px] sm:p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center space-x-3">
-                          <SpriteFrame spriteId={spriteId} alt={name} size="md" />
+                          <SpriteFrame
+                            spriteId={spriteId}
+                            fallbackSpriteId={type === 'crew' ? getCrewHeadSpriteId(e) : undefined}
+                            alt={name}
+                            size="md"
+                          />
                           <div>
                             <div className="text-sm text-slate-100">{name}</div>
                             <div className="text-[10px] text-slate-400">#{eId}</div>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Backpack, Search, Trash2, UserPlus } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
-import { TRAINING_STATS, getTrainingCapacity } from '../training/trainingCalculations';
+import { TRAINING_STATS, clampTrainingAllocation, getTrainingCapacity } from '../training/trainingCalculations';
 import { InventoryCard } from './InventoryCard';
 import { InventoryEditor } from './InventoryEditor';
 import {
@@ -125,6 +125,7 @@ export function InventoryPage() {
   const duplicateCrew = (source) => {
     const duplicate = createInventoryEntry(source.crewId);
     duplicate.nickname = source.nickname;
+    duplicate.crisprCount = source.crisprCount;
     duplicate.training = { ...source.training };
     duplicate.equipment = { ...source.equipment };
     duplicate.secondaryStats = Object.fromEntries(
@@ -140,7 +141,7 @@ export function InventoryPage() {
 
   const updateTraining = (entry, statKey, nextValue) => {
     const crew = crewById.get(String(entry.crewId));
-    const capacity = getTrainingCapacity(crew);
+    const capacity = getTrainingCapacity(crew, entry.crisprCount);
     const otherSpent = TRAINING_STATS.reduce((sum, stat) => (
       stat.key === statKey ? sum : sum + (Number(entry.training?.[stat.key]) || 0)
     ), 0);
@@ -151,9 +152,20 @@ export function InventoryPage() {
     }));
   };
 
+  const updateCrisprCount = (entry, nextCount) => {
+    const crew = crewById.get(String(entry.crewId));
+    const crisprCount = Math.min(Math.max(Math.trunc(Number(nextCount) || 0), 0), 2);
+    const capacity = getTrainingCapacity(crew, crisprCount);
+    updateEntry(entry.instanceId, (current) => ({
+      ...current,
+      crisprCount,
+      training: clampTrainingAllocation(current.training, capacity)
+    }));
+  };
+
   const activeEntry = entries.find((entry) => entry.instanceId === activeEntryId);
   const activeCrew = activeEntry ? crewById.get(String(activeEntry.crewId)) : null;
-  const activeCapacity = activeCrew ? getTrainingCapacity(activeCrew) : 0;
+  const activeCapacity = activeCrew ? getTrainingCapacity(activeCrew, activeEntry.crisprCount) : 0;
   const activeSpent = activeEntry
     ? TRAINING_STATS.reduce((sum, stat) => sum + (Number(activeEntry.training?.[stat.key]) || 0), 0)
     : 0;
@@ -233,7 +245,7 @@ export function InventoryPage() {
           {entries.map((entry, index) => {
             const crew = crewById.get(String(entry.crewId));
             if (!crew) return null;
-            const capacity = getTrainingCapacity(crew);
+            const capacity = getTrainingCapacity(crew, entry.crisprCount);
             const spent = TRAINING_STATS.reduce((sum, stat) => sum + (Number(entry.training?.[stat.key]) || 0), 0);
             return (
               <InventoryCard
@@ -272,6 +284,7 @@ export function InventoryPage() {
         t={t}
         onClose={() => setActiveEntryId(null)}
         onUpdate={(updater) => updateEntry(activeEntry.instanceId, updater)}
+        onUpdateCrispr={(value) => updateCrisprCount(activeEntry, value)}
         onUpdateTraining={(statKey, value) => updateTraining(activeEntry, statKey, value)}
       />
     </div>

@@ -21,19 +21,19 @@ export function CompareTray({ selectedIds = [], type = 'crew', onRemove, onClear
 
   return (
     <div className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-full max-w-xl -translate-x-1/2 px-2 sm:bottom-4 sm:px-4">
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-800 bg-slate-900/95 p-3 text-slate-100 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:p-4">
+      <div className="flex flex-col gap-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-card)] p-3 text-[var(--text-main)] shadow-[0_12px_36px_rgba(30,32,76,0.18)] backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:p-4">
         
         <div className="flex min-w-0 items-center space-x-3">
-          <div className="p-2 rounded-lg bg-indigo-950 text-indigo-400">
+          <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-500">
             <TrayIcon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <div className="text-xs font-bold text-slate-100">
+            <div className="text-xs font-bold text-[var(--text-main)]">
               {isCrewInventory
                 ? t('common.inventorySelected', { count: selectedIds.length })
                 : t('common.comparing', { count: selectedIds.length, type })}
             </div>
-            <div className="truncate text-[10px] text-slate-400 font-mono">
+            <div className="truncate font-mono text-[10px] text-slate-500">
               {t('common.ids', { ids: selectedIds.join(', ') })}
             </div>
           </div>
@@ -43,7 +43,7 @@ export function CompareTray({ selectedIds = [], type = 'crew', onRemove, onClear
           {onClear && (
             <button 
               onClick={onClear}
-              className="flex min-h-10 min-w-10 items-center justify-center rounded-lg bg-slate-950 text-slate-400 transition-colors hover:text-rose-400"
+              className="flex min-h-10 min-w-10 items-center justify-center rounded-lg bg-[var(--bg-card-header)] text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-500"
               title={t('common.clearComparison')}
             >
               <Trash2 className="h-4 w-4" />

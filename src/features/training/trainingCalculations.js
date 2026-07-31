@@ -23,10 +23,19 @@ const FALLBACK_CAPACITY = {
   Captain: 200
 };
 
-export function getTrainingCapacity(crew) {
+export function getCrisprTrainingBonus(crisprCount = 0) {
+  const uses = Math.min(Math.max(Math.trunc(Number(crisprCount) || 0), 0), 2);
+  if (uses === 1) return 6;
+  if (uses === 2) return 10;
+  return 0;
+}
+
+export function getTrainingCapacity(crew, crisprCount = 0) {
   const apiCapacity = Number(crew?.raw?.TrainingCapacity);
-  if (Number.isFinite(apiCapacity) && apiCapacity > 0) return apiCapacity;
-  return FALLBACK_CAPACITY[crew?.rarity] ?? 0;
+  const baseCapacity = Number.isFinite(apiCapacity) && apiCapacity > 0
+    ? apiCapacity
+    : FALLBACK_CAPACITY[crew?.rarity] ?? 0;
+  return baseCapacity + getCrisprTrainingBonus(crisprCount);
 }
 
 export function clampTrainingValue(value, capacity) {
@@ -35,10 +44,22 @@ export function clampTrainingValue(value, capacity) {
   return Math.min(Math.max(Math.round(parsed), 0), Math.max(capacity, 0));
 }
 
+export function clampTrainingAllocation(training, capacity) {
+  let remaining = Math.max(Number(capacity) || 0, 0);
+  return Object.fromEntries(TRAINING_STATS.map(({ key }) => {
+    const value = Math.min(clampTrainingValue(training?.[key], capacity), remaining);
+    remaining -= value;
+    return [key, value];
+  }));
+}
+
 export function calculateTrainedStat(baseStat, trainingPoints, statKey) {
-  const base = Number(baseStat);
   const points = Number(trainingPoints);
-  if (!Number.isFinite(base) || !Number.isFinite(points)) return null;
+  if (!Number.isFinite(points)) return null;
+  if (statKey === 'sta') return Math.max(Math.round(points), 0);
+
+  const base = Number(baseStat);
+  if (!Number.isFinite(base)) return null;
 
   const trained = base * (1 + Math.max(points, 0) / 100);
   return statKey === 'hp'

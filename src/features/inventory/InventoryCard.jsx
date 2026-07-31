@@ -2,6 +2,7 @@ import React from 'react';
 import { CopyPlus, Sparkles, Trash2 } from 'lucide-react';
 import { RarityBadge } from '../../components/ui/RarityBadge';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 
 const ABILITY_SPRITES = {
   DeductReload: 2703,
@@ -94,6 +95,7 @@ export function InventoryCard({
         <div className="flex min-w-0 items-center justify-center overflow-hidden">
           <SpriteFrame
             spriteId={crew.profileSpriteId}
+            fallbackSpriteId={getCrewHeadSpriteId(crew)}
             alt={crew.name}
             size="full"
             borderless

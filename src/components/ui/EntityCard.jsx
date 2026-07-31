@@ -11,6 +11,7 @@ export function EntityCard({
   rarity, 
   category, 
   spriteId, 
+  fallbackSpriteId,
   targetPath, 
   stats = [], 
   isCompared = false, 
@@ -54,6 +55,7 @@ export function EntityCard({
             )}
             <SpriteFrame 
               spriteId={spriteId} 
+              fallbackSpriteId={fallbackSpriteId}
               alt={name} 
               size="full" 
               borderless 

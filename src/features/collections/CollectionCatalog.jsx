@@ -4,6 +4,7 @@ import { Award } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
 import { publicUrl } from '../../utils/publicUrl';
+import { getCrewHeadSpriteId } from '../../utils/crewSprites';
 
 const getTechnicalPerkDescription = (col) => {
   const triggerMap = {
@@ -192,7 +193,7 @@ export function CollectionCatalog() {
                     onClick={() => setActiveIframeCrewId(m.id)}
                     className="flex items-center space-x-2 p-2 rounded-lg bg-slate-950 hover:bg-slate-950/80 text-xs cursor-pointer transition-all hover:scale-[1.01] group min-w-0"
                   >
-                    <SpriteFrame spriteId={m.profileSpriteId} alt={m.name} size="sm" borderless className="bg-slate-900 shrink-0" />
+                    <SpriteFrame spriteId={m.profileSpriteId} fallbackSpriteId={getCrewHeadSpriteId(m)} alt={m.name} size="sm" borderless className="bg-slate-900 shrink-0" />
                     <div className="min-w-0">
                       <div className="font-bold text-slate-200 group-hover:text-indigo-400 transition-colors truncate">{m.name}</div>
                       <div className="text-[10px] text-slate-500 font-mono truncate">{m.rarity}</div>

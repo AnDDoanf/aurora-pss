@@ -3,37 +3,66 @@ import { ImageOff, Sparkles } from 'lucide-react';
 import { publicUrl } from '../../utils/publicUrl';
 import { loadSpritesMap } from '../../utils/spriteUtils';
 
-export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = false, className = '' }) {
+export function SpriteFrame({
+  spriteId,
+  fallbackSpriteId,
+  alt = '',
+  size = 'md',
+  borderless = false,
+  className = ''
+}) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentUrl, setCurrentUrl] = useState(null);
-  const [triedFallback, setTriedFallback] = useState(false);
+  const [activeSpriteId, setActiveSpriteId] = useState(null);
+  const [triedMappedAsset, setTriedMappedAsset] = useState(false);
+  const [usingFallbackSprite, setUsingFallbackSprite] = useState(false);
 
   useEffect(() => {
+    const initialSpriteId = spriteId || fallbackSpriteId;
     setError(false);
     setLoading(true);
-    setTriedFallback(false);
-    if (spriteId) {
-      setCurrentUrl(publicUrl(`/assets/sprites/${spriteId}.webp`));
+    setTriedMappedAsset(false);
+    setUsingFallbackSprite(!spriteId && Boolean(fallbackSpriteId));
+    setActiveSpriteId(initialSpriteId || null);
+    if (initialSpriteId) {
+      setCurrentUrl(publicUrl(`/assets/sprites/${initialSpriteId}.webp`));
     } else {
+      setCurrentUrl(null);
       setError(true);
     }
-  }, [spriteId]);
+  }, [spriteId, fallbackSpriteId]);
+
+  const tryFallbackSprite = () => {
+    if (
+      !usingFallbackSprite
+      && fallbackSpriteId
+      && String(fallbackSpriteId) !== String(activeSpriteId)
+    ) {
+      setUsingFallbackSprite(true);
+      setActiveSpriteId(fallbackSpriteId);
+      setTriedMappedAsset(false);
+      setCurrentUrl(publicUrl(`/assets/sprites/${fallbackSpriteId}.webp`));
+      setLoading(true);
+      return;
+    }
+    setError(true);
+  };
 
   const handleImageError = () => {
-    if (!triedFallback && spriteId) {
-      setTriedFallback(true);
+    if (!triedMappedAsset && activeSpriteId) {
+      setTriedMappedAsset(true);
       loadSpritesMap().then(spritesMap => {
-        const entry = spritesMap[String(spriteId)];
-        if (entry && entry.imageFileId && String(entry.imageFileId) !== String(spriteId)) {
+        const entry = spritesMap[String(activeSpriteId)];
+        if (entry?.imageFileId && String(entry.imageFileId) !== String(activeSpriteId)) {
           setCurrentUrl(publicUrl(`/assets/sprites/${entry.imageFileId}.webp`));
           setLoading(true);
         } else {
-          setError(true);
+          tryFallbackSprite();
         }
-      }).catch(() => setError(true));
+      }).catch(tryFallbackSprite);
     } else {
-      setError(true);
+      tryFallbackSprite();
     }
   };
 
@@ -47,7 +76,7 @@ export function SpriteFrame({ spriteId, alt = '', size = 'md', borderless = fals
     full: 'w-full h-full'
   }[size] || 'w-16 h-16';
 
-  if (!spriteId || error || !currentUrl) {
+  if ((!spriteId && !fallbackSpriteId) || error || !currentUrl) {
     return (
       <div className={`flex items-center justify-center ${borderless ? '' : 'rounded-lg bg-slate-900 border border-slate-800'} text-slate-600 ${sizeClasses} ${className}`}>
         <ImageOff className="h-1/2 w-1/2" />

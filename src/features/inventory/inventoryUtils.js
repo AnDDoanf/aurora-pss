@@ -2,7 +2,7 @@ import {
   EMPTY_TRAINING,
   TRAINING_STATS,
   calculateTrainedStat,
-  clampTrainingValue,
+  clampTrainingAllocation,
   getTrainingCapacity
 } from '../training/trainingCalculations.js';
 
@@ -42,6 +42,7 @@ export function createInventoryEntry(crewId) {
     instanceId: createInstanceId(),
     crewId: String(crewId),
     nickname: '',
+    crisprCount: 0,
     training: { ...EMPTY_TRAINING },
     equipment: {},
     secondaryStats: {}
@@ -54,15 +55,9 @@ export function getCrewEquipmentSlots(crew) {
 }
 
 export function normalizeInventoryEntry(entry, crew) {
-  const capacity = getTrainingCapacity(crew);
-  const training = Object.fromEntries(
-    TRAINING_STATS.map(({ key }) => [key, clampTrainingValue(entry?.training?.[key], capacity)])
-  );
-  let remaining = capacity;
-  for (const { key } of TRAINING_STATS) {
-    training[key] = Math.min(training[key], remaining);
-    remaining -= training[key];
-  }
+  const crisprCount = Math.min(Math.max(Math.trunc(Number(entry?.crisprCount) || 0), 0), 2);
+  const capacity = getTrainingCapacity(crew, crisprCount);
+  const training = clampTrainingAllocation(entry?.training, capacity);
 
   const allowedSlots = new Set(getCrewEquipmentSlots(crew).map(({ key }) => key));
   const equipment = Object.fromEntries(
@@ -90,6 +85,7 @@ export function normalizeInventoryEntry(entry, crew) {
     instanceId: entry?.instanceId || createInstanceId(),
     crewId: String(crew?.id ?? entry?.crewId ?? ''),
     nickname: String(entry?.nickname || ''),
+    crisprCount,
     training,
     equipment,
     secondaryStats
@@ -129,7 +125,7 @@ export function calculateInventoryStats(crew, entry, itemById) {
       : (stat.crewKey ? crew?.[stat.crewKey] : 0);
     const base = Number(rawBase) || 0;
     const trainingPoints = Number(entry?.training?.[stat.key]) || 0;
-    const trained = stat.key === 'sta' || stat.key === 'fr'
+    const trained = stat.key === 'fr'
       ? base
       : (calculateTrainedStat(base, trainingPoints, stat.key) ?? base);
     const equipmentBonus = bonuses[stat.key] || 0;
