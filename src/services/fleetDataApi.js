@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 const FALLBACK_DIRECT_URL = 'https://fleetdata.dolores2.xyz';
+const SESSION_CACHE_PREFIX = 'pss:fleetdata:v1:';
+const COLLECTION_CACHE_MAX_AGE_MS = 15 * 60 * 1000;
 const configuredBase = String(import.meta.env.VITE_FLEET_DATA_BASE_URL || '')
   .trim()
   .replace(/\/+$/, '');
@@ -12,6 +14,53 @@ const FLEET_DATA_PROXY_URL = configuredProxy
   || (baseIsAppsScript ? configuredBase : '');
 const FLEET_DATA_BASE = (baseIsAppsScript ? '' : configuredBase)
   || (import.meta.env.DEV ? '/api-fleetdata' : FALLBACK_DIRECT_URL);
+
+const readSessionCache = (key, maxAge = Number.POSITIVE_INFINITY) => {
+  if (typeof window === 'undefined' || !window.sessionStorage) return null;
+  try {
+    const cached = JSON.parse(window.sessionStorage.getItem(`${SESSION_CACHE_PREFIX}${key}`));
+    if (!cached || !Object.prototype.hasOwnProperty.call(cached, 'data')) return null;
+    if (Date.now() - cached.cachedAt > maxAge) {
+      window.sessionStorage.removeItem(`${SESSION_CACHE_PREFIX}${key}`);
+      return null;
+    }
+    return cached.data;
+  } catch {
+    return null;
+  }
+};
+
+const writeSessionCache = (key, data) => {
+  if (typeof window === 'undefined' || !window.sessionStorage) return data;
+  const storageKey = `${SESSION_CACHE_PREFIX}${key}`;
+  const payload = JSON.stringify({ cachedAt: Date.now(), data });
+  try {
+    window.sessionStorage.setItem(storageKey, payload);
+  } catch {
+    try {
+      const cachedEntries = [];
+      for (let index = 0; index < window.sessionStorage.length; index += 1) {
+        const candidateKey = window.sessionStorage.key(index);
+        if (!candidateKey?.startsWith(SESSION_CACHE_PREFIX) || candidateKey === storageKey) continue;
+        let cachedAt = 0;
+        try {
+          cachedAt = JSON.parse(window.sessionStorage.getItem(candidateKey))?.cachedAt || 0;
+        } catch {
+          // Invalid entries are the first candidates for removal.
+        }
+        cachedEntries.push({ key: candidateKey, cachedAt });
+      }
+      cachedEntries
+        .sort((a, b) => a.cachedAt - b.cachedAt)
+        .slice(0, Math.max(1, Math.ceil(cachedEntries.length / 3)))
+        .forEach((entry) => window.sessionStorage.removeItem(entry.key));
+      window.sessionStorage.setItem(storageKey, payload);
+    } catch {
+      // Storage can be unavailable or full; network data remains usable.
+    }
+  }
+  return data;
+};
 
 const appsScriptParams = (path, params = {}) => {
   let match = path.match(/^\/allianceHistory\/(\d+)$/);
@@ -26,6 +75,15 @@ const appsScriptParams = (path, params = {}) => {
       action: 'getAlliance',
       collectionId: match[1],
       fleetId: match[2]
+    };
+  }
+
+  match = path.match(/^\/collections\/(\d+)\/alliances$/);
+  if (match) {
+    return {
+      ...params,
+      action: 'getCollectionAlliances',
+      collectionId: match[1]
     };
   }
 
@@ -99,6 +157,12 @@ const memberAllianceScore = (member) => {
   const score = Array.isArray(member) ? member[4] : member?.alliance_score;
   return typeof score === 'number' ? score : 0;
 };
+const snapshotFleetScore = (snapshot) => {
+  const score = Array.isArray(snapshot?.fleet)
+    ? snapshot.fleet[2]
+    : snapshot?.fleet?.score;
+  return typeof score === 'number' ? score : 0;
+};
 
 const mapAllianceMembers = (users, fleetId, fleetName) =>
   users.map((member) => {
@@ -121,6 +185,8 @@ const mapAllianceMembers = (users, fleetId, fleetName) =>
   });
 
 export const getRunningCollectionId = async () => {
+  const cached = readSessionCache('running-collection', COLLECTION_CACHE_MAX_AGE_MS);
+  if (cached) return cached;
   try {
     const response = await requestFleetData('/collections', {
       params: { tournaments_only: true }
@@ -130,12 +196,83 @@ export const getRunningCollectionId = async () => {
     if (Array.isArray(collections) && collections.length > 0) {
       // Find the collection with the highest collection_id or latest timestamp
       const sorted = [...collections].sort((a, b) => b.collection_id - a.collection_id);
-      return sorted[0].collection_id;
+      return writeSessionCache('running-collection', sorted[0].collection_id);
     }
     return 36823; // fallback active collection ID if none returned
   } catch (err) {
     console.error("Failed to fetch collection ID from FleetData API:", err);
     return 36823;
+  }
+};
+
+export const getTournamentCollections = async () => {
+  const cached = readSessionCache('tournament-collections', COLLECTION_CACHE_MAX_AGE_MS);
+  if (cached) return cached;
+  try {
+    const response = await requestFleetData('/collections', {
+      params: { tournaments_only: true }
+    });
+    const collections = (Array.isArray(response.data) ? response.data : [])
+      .filter((collection) => collection?.collection_id && collection?.timestamp)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    return writeSessionCache('tournament-collections', collections);
+  } catch (error) {
+    console.error('Failed to fetch tournament collections:', error);
+    return [];
+  }
+};
+
+export const getTournamentCollectionAlliances = async (collectionId, division = 'Div A') => {
+  const cacheKey = `collection:${collectionId}:alliances:${division}`;
+  const cached = readSessionCache(cacheKey);
+  if (cached) return cached;
+  try {
+    let response;
+    try {
+      response = await requestFleetData(`/collections/${collectionId}/alliances`);
+    } catch (proxyError) {
+      if (!import.meta.env.DEV) throw proxyError;
+      response = await axios.get(`/api-fleetdata/collections/${collectionId}/alliances`);
+    }
+
+    const divisionId = division === 'Div A'
+      ? 1
+      : division === 'Div B'
+        ? 2
+        : division === 'Div C'
+          ? 3
+          : 4;
+    const fleets = Array.isArray(response.data?.fleets) ? response.data.fleets : [];
+
+    const alliances = fleets
+      .filter((fleet) => Number(Array.isArray(fleet) ? fleet[3] : fleet?.division_design_id) === divisionId)
+      .map((fleet, index) => {
+        if (Array.isArray(fleet)) {
+          return {
+            alliance_id: Number(fleet[0]),
+            alliance_name: fleet[1],
+            stars: Number(fleet[2]) || 0,
+            division,
+            trophy: Number(fleet[4]) || 0,
+            members: Number(fleet[6]) || 0,
+            rank: index + 1
+          };
+        }
+        return {
+          alliance_id: Number(fleet.id),
+          alliance_name: fleet.name,
+          stars: Number(fleet.score) || 0,
+          division,
+          trophy: Number(fleet.trophy) || 0,
+          members: Number(fleet.member_count) || 0,
+          rank: index + 1
+        };
+      })
+      .filter((fleet) => fleet.alliance_id && fleet.alliance_name);
+    return writeSessionCache(cacheKey, alliances);
+  } catch (error) {
+    console.error(`Failed to fetch tournament collection ${collectionId}:`, error);
+    return [];
   }
 };
 
@@ -173,6 +310,9 @@ export const getAllianceTournamentProgression = async (
   fleetName,
   tournamentStatus
 ) => {
+  const cacheKey = `progression:${fleetId}:${tournamentStatus.tournamentStartDate}:${tournamentStatus.tournamentEndDate}`;
+  const cached = tournamentStatus.isLive ? null : readSessionCache(cacheKey);
+  if (cached) return cached;
   const tournamentStart = new Date(tournamentStatus.tournamentStartDate);
   const tournamentEnd = new Date(tournamentStatus.tournamentEndDate);
   const baselineDate = addUtcDays(tournamentStart, -1);
@@ -302,13 +442,150 @@ export const getAllianceTournamentProgression = async (
     };
   });
 
-  return {
+  const result = {
     members,
     days: daySnapshots.map(({ day, date }) => ({ day, date }))
   };
+  return tournamentStatus.isLive ? result : writeSessionCache(cacheKey, result);
+};
+
+export const getAllianceTournamentAnalytics = async (
+  fleetId,
+  fleetName,
+  tournamentPeriod
+) => {
+  const cacheKey = `analytics:${fleetId}:${tournamentPeriod.tournamentStartDate}:${tournamentPeriod.tournamentEndDate}`;
+  const cached = tournamentPeriod.isLive ? null : readSessionCache(cacheKey);
+  if (cached) return cached;
+  const tournamentStart = new Date(tournamentPeriod.tournamentStartDate);
+  const tournamentEnd = new Date(tournamentPeriod.tournamentEndDate);
+  const baselineDate = addUtcDays(tournamentStart, -1);
+  const visibleDayCount = tournamentPeriod.isLive
+    ? tournamentPeriod.currentDay
+    : tournamentPeriod.totalDays;
+  const lastVisibleDate = tournamentPeriod.isLive ? new Date() : tournamentEnd;
+
+  try {
+    const response = await requestFleetData(`/allianceHistory/${fleetId}`, {
+      params: {
+        fromDate: baselineDate.toISOString(),
+        toDate: lastVisibleDate.toISOString(),
+        interval: 'day',
+        desc: false,
+        take: tournamentPeriod.totalDays + 1,
+        onMissing: 'last'
+      }
+    });
+    const snapshots = Array.isArray(response.data) ? [...response.data] : [];
+
+    if (tournamentPeriod.isLive) {
+      const currentDayStart = new Date();
+      currentDayStart.setUTCHours(0, 0, 0, 0);
+      const currentResponse = await requestFleetData(`/allianceHistory/${fleetId}`, {
+        params: {
+          fromDate: currentDayStart.toISOString(),
+          toDate: new Date().toISOString(),
+          interval: 'hour',
+          desc: true,
+          take: 1,
+          onMissing: 'skip'
+        }
+      });
+      const currentSnapshot = Array.isArray(currentResponse.data)
+        ? currentResponse.data[0]
+        : null;
+      if (currentSnapshot) {
+        const key = utcDateKey(currentSnapshot.collection.timestamp);
+        const existingIndex = snapshots.findIndex(
+          (snapshot) => utcDateKey(snapshot.collection.timestamp) === key
+        );
+        if (existingIndex >= 0) snapshots[existingIndex] = currentSnapshot;
+        else snapshots.push(currentSnapshot);
+      }
+    }
+
+    const snapshotByDate = new Map(
+      snapshots.map((snapshot) => [utcDateKey(snapshot.collection.timestamp), snapshot])
+    );
+    const previousScores = new Map(
+      (snapshotByDate.get(utcDateKey(baselineDate))?.users || []).map((member) => [
+        String(memberId(member)),
+        memberAllianceScore(member)
+      ])
+    );
+    let previousFleetScore = snapshotFleetScore(
+      snapshotByDate.get(utcDateKey(baselineDate))
+    );
+    const participants = new Map();
+    let cumulativeStars = 0;
+    const daily = [];
+
+    for (let index = 0; index < visibleDayCount; index += 1) {
+      const date = addUtcDays(tournamentStart, index);
+      const snapshot = snapshotByDate.get(utcDateKey(date));
+      const currentFleetScore = snapshot
+        ? snapshotFleetScore(snapshot)
+        : previousFleetScore;
+      const earned = earnedSincePreviousSnapshot(currentFleetScore, previousFleetScore);
+
+      for (const member of snapshot?.users || []) {
+        const id = String(memberId(member));
+        const currentScore = memberAllianceScore(member);
+        const gained = earnedSincePreviousSnapshot(currentScore, previousScores.get(id) || 0);
+        if (gained > 0) {
+          const parsed = parseMember(member, fleetName);
+          const participant = participants.get(id) || {
+            id: parsed.id,
+            name: parsed.name,
+            tournamentStars: 0,
+            dailyStars: Array(visibleDayCount).fill(0)
+          };
+          participant.name = parsed.name;
+          participant.tournamentStars += gained;
+          participant.dailyStars[index] += gained;
+          participants.set(id, participant);
+        }
+        previousScores.set(id, currentScore);
+      }
+
+      previousFleetScore = currentFleetScore;
+      cumulativeStars += earned;
+      daily.push({
+        day: index + 1,
+        date: utcDateKey(date),
+        earned,
+        cumulativeStars
+      });
+    }
+
+    const result = {
+      fleetId,
+      fleetName,
+      participantCount: participants.size,
+      participants: [...participants.values()].sort(
+        (a, b) => b.tournamentStars - a.tournamentStars
+      ),
+      totalStars: cumulativeStars,
+      daily
+    };
+    return tournamentPeriod.isLive ? result : writeSessionCache(cacheKey, result);
+  } catch (error) {
+    console.error(`Failed to calculate tournament analytics for ${fleetName} (${fleetId}):`, error);
+    return {
+      fleetId,
+      fleetName,
+      participantCount: 0,
+      participants: [],
+      totalStars: 0,
+      daily: []
+    };
+  }
 };
 
 export const getAllianceDataFromCollection = async (collectionId, fleetId, fleetName) => {
+  const cacheKey = `collection:${collectionId}:fleet:${fleetId}:members`;
+  const cached = readSessionCache(cacheKey);
+  if (cached) return cached;
   try {
     const response = await requestFleetData(
       `/collections/${collectionId}/alliances/${fleetId}`
@@ -317,7 +594,10 @@ export const getAllianceDataFromCollection = async (collectionId, fleetId, fleet
     const alliance = response.data;
     
     if (alliance && Array.isArray(alliance.users)) {
-      return mapAllianceMembers(alliance.users, fleetId, fleetName);
+      return writeSessionCache(
+        cacheKey,
+        mapAllianceMembers(alliance.users, fleetId, fleetName)
+      );
     }
     return [];
   } catch (err) {
@@ -327,6 +607,9 @@ export const getAllianceDataFromCollection = async (collectionId, fleetId, fleet
 };
 
 export const getUserHistory = async (userId) => {
+  const cacheKey = `user-history:${userId}`;
+  const cached = readSessionCache(cacheKey, COLLECTION_CACHE_MAX_AGE_MS);
+  if (cached) return cached;
   try {
     const response = await requestFleetData(`/userHistory/${userId}`);
 
@@ -391,10 +674,10 @@ export const getUserHistory = async (userId) => {
       // Extract unique past names used by this user over time
       const pastNames = Array.from(new Set(historyList.map(h => h.name).filter(Boolean)));
 
-      return {
+      return writeSessionCache(cacheKey, {
         historyList,
         pastNames
-      };
+      });
     }
     return { historyList: [], pastNames: [] };
   } catch (err) {

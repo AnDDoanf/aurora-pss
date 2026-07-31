@@ -343,7 +343,7 @@ function TrainingStats({ selectedCrew, training, capacity, summary, distribution
             max={capacity || 0}
             value={value}
             onChange={(event) => onChange(stat.key, event.target.value)}
-            className="training-number-input h-9 min-w-0 bg-indigo-500 px-1 text-center font-mono text-base font-black text-white outline-none focus:bg-[#38a4fa]"
+            className="training-number-input training-stat-input h-9 min-w-0 bg-indigo-500 px-1 text-center font-mono text-base font-black text-white outline-none"
             aria-label={`${stat.label} training points`}
           />
           <HoldStepButton

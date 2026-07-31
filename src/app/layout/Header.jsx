@@ -139,14 +139,14 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
           </div>
 
           <Link
-            to={`/${lang}/compare/crew`}
+            to={`/${lang}/inventory`}
             className={`px-3 py-2 rounded-lg transition-all ${
-              location.pathname.includes('/compare')
+              location.pathname.includes('/inventory')
                 ? 'bg-indigo-600 text-white font-bold shadow-sm' 
                 : 'text-slate-300 hover:text-indigo-400 hover:bg-slate-900/60'
             }`}
           >
-            {t('nav.compare')}
+            {t('nav.inventory')}
           </Link>
 
           {/* Hover Tools Dropdown */}

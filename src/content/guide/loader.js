@@ -12,6 +12,20 @@ const cleanHeading = (heading) =>
 const cleanMarkdown = (markdown) =>
   markdown.replace(/\s+\{#[^}]+\}(?=\s*$)/gm, '').trim();
 
+const guideCacheKey = (language, modules) => {
+  const signature = Object.entries(modules).reduce(
+    (hash, [path, markdown]) => {
+      const value = `${path}\0${markdown}`;
+      for (let index = 0; index < value.length; index += 1) {
+        hash = ((hash << 5) - hash + value.charCodeAt(index)) | 0;
+      }
+      return hash;
+    },
+    0
+  );
+  return `pss:guide:v1:${language}:${signature}`;
+};
+
 const parseGuideFile = (markdown, filePath) => {
   const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
 
@@ -57,6 +71,14 @@ const groupFromPath = (filePath) => {
 };
 
 const loadGuide = (language, modules) => {
+  const cacheKey = guideCacheKey(language, modules);
+  try {
+    const cached = window.sessionStorage.getItem(cacheKey);
+    if (cached) return JSON.parse(cached);
+  } catch {
+    // Server rendering/private modes continue with normal parsing.
+  }
+
   const files = Object.entries(modules)
     .map(([filePath, markdown]) => [
       filePath,
@@ -108,7 +130,13 @@ const loadGuide = (language, modules) => {
       };
     });
 
-  return { title, introduction, sections };
+  const guide = { title, introduction, sections };
+  try {
+    window.sessionStorage.setItem(cacheKey, JSON.stringify(guide));
+  } catch {
+    // The bundled guide remains available when storage is unavailable.
+  }
+  return guide;
 };
 
 const vietnameseGuideFiles = import.meta.glob('./vi/**/*.md', {

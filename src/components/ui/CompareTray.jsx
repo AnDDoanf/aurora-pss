@@ -1,18 +1,23 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeftRight, Trash2 } from 'lucide-react';
+import { ArrowLeftRight, Backpack, Trash2 } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 
 export function CompareTray({ selectedIds = [], type = 'crew', onRemove, onClear }) {
   const { lang } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const isCrewInventory = type === 'crew';
 
   if (!selectedIds || selectedIds.length === 0) return null;
 
   const handleGoToCompare = () => {
-    navigate(`/${lang}/compare/${type}?ids=${selectedIds.join(',')}`);
+    if (isCrewInventory && onClear) onClear();
+    navigate(isCrewInventory
+      ? `/${lang}/inventory?ids=${selectedIds.join(',')}`
+      : `/${lang}/compare/${type}?ids=${selectedIds.join(',')}`);
   };
+  const TrayIcon = isCrewInventory ? Backpack : ArrowLeftRight;
 
   return (
     <div className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-full max-w-xl -translate-x-1/2 px-2 sm:bottom-4 sm:px-4">
@@ -20,11 +25,13 @@ export function CompareTray({ selectedIds = [], type = 'crew', onRemove, onClear
         
         <div className="flex min-w-0 items-center space-x-3">
           <div className="p-2 rounded-lg bg-indigo-950 text-indigo-400">
-            <ArrowLeftRight className="h-5 w-5" />
+            <TrayIcon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
             <div className="text-xs font-bold text-slate-100">
-              {t('common.comparing', { count: selectedIds.length, type })}
+              {isCrewInventory
+                ? t('common.inventorySelected', { count: selectedIds.length })
+                : t('common.comparing', { count: selectedIds.length, type })}
             </div>
             <div className="truncate text-[10px] text-slate-400 font-mono">
               {t('common.ids', { ids: selectedIds.join(', ') })}
@@ -47,7 +54,7 @@ export function CompareTray({ selectedIds = [], type = 'crew', onRemove, onClear
             onClick={handleGoToCompare}
             className="flex min-h-10 flex-1 items-center justify-center space-x-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-indigo-500 sm:flex-none"
           >
-            <span>{t('common.compareNow')}</span>
+            <span>{isCrewInventory ? t('common.addToInventory') : t('common.compareNow')}</span>
           </button>
         </div>
 

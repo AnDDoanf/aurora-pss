@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n/useTranslation';
 import { EntityCard } from '../../components/ui/EntityCard';
@@ -130,6 +131,15 @@ export function CrewCatalog() {
       window.removeEventListener('message', handleMessage);
     };
   }, []);
+
+  useEffect(() => {
+    if (!activeIframeCrewId) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [activeIframeCrewId]);
 
   useEffect(() => {
     Promise.all([
@@ -355,6 +365,8 @@ export function CrewCatalog() {
               onClick={setActiveIframeCrewId}
               isCompared={comparedIds.includes(String(c.id))}
               onToggleCompare={toggleCompare}
+              selectedLabel={t('common.inventorySelectedShort')}
+              selectLabel={t('common.selectForInventory')}
               stats={[
                 { label: 'HP', value: `${c.hp} → ${c.finalHp}` },
                 { label: 'ATK', value: `${c.attack} → ${c.finalAttack}` },
@@ -383,9 +395,15 @@ export function CrewCatalog() {
       />
 
       {/* Embedded Crew Details Iframe Dialog Modal */}
-      {activeIframeCrewId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-sm sm:p-6">
-          <div className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl sm:h-[85vh]">
+      {activeIframeCrewId && createPortal((
+        <div
+          className="crew-profile-backdrop fixed inset-0 z-[120] flex items-center justify-center p-2 sm:p-6"
+          onClick={() => setActiveIframeCrewId(null)}
+        >
+          <div
+            className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-slate-900 shadow-2xl sm:h-[85vh]"
+            onClick={(event) => event.stopPropagation()}
+          >
             
             {/* Modal Header */}
             <div className="flex items-center justify-between gap-2 bg-slate-950/60 px-3 py-3 sm:px-6 sm:py-4">
@@ -411,7 +429,7 @@ export function CrewCatalog() {
 
           </div>
         </div>
-      )}
+      ), document.body)}
 
     </div>
   );

@@ -14,6 +14,9 @@ function doGet(e) {
       case 'getAlliance':
         data = getAlliance_(parameters.collectionId, parameters.fleetId);
         break;
+      case 'getCollectionAlliances':
+        data = getCollectionAlliances_(parameters.collectionId);
+        break;
       case 'getUser':
         data = getUser_(parameters.userId);
         break;
@@ -51,6 +54,11 @@ function getAlliance_(collectionId, fleetId) {
   requireDigits_('collectionId', collectionId);
   requireDigits_('fleetId', fleetId);
   return fetchJson_(`/collections/${collectionId}/alliances/${fleetId}`);
+}
+
+function getCollectionAlliances_(collectionId) {
+  requireDigits_('collectionId', collectionId);
+  return fetchJson_(`/collections/${collectionId}/alliances`);
 }
 
 function getAllianceHistory_(fleetId, parameters) {

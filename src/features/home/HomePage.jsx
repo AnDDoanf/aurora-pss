@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import {
   ArrowRight, BarChart3, BookOpen, Database, Dumbbell, Search,
-  ShieldCheck, Sparkles, Target, Wrench
+  Backpack, ShieldCheck, Sparkles, Wrench
 } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { SpriteFrame } from '../../components/ui/SpriteFrame';
@@ -25,7 +25,7 @@ export function HomePage({ onOpenSearch }) {
     { title: t('nav.guide'), path: `/${lang}/guide`, icon: BookOpen },
     { title: t('layout.training'), path: `/${lang}/tools/training`, icon: Dumbbell },
     { title: t('nav.capacity'), path: `/${lang}/tools/capacity`, icon: BarChart3 },
-    { title: t('nav.compare'), path: `/${lang}/compare/crew`, icon: Target },
+    { title: t('nav.inventory'), path: `/${lang}/inventory`, icon: Backpack },
     { title: t('nav.tools'), path: `/${lang}/tools/targeting`, icon: Wrench }
   ];
 
@@ -64,11 +64,11 @@ export function HomePage({ onOpenSearch }) {
 
       <Link
         to={`/${lang}/tools/training`}
-        className="group relative grid min-w-0 max-w-full overflow-hidden rounded-lg bg-gradient-to-br from-[#073b63] via-slate-900 to-indigo-950 p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-xl sm:p-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(360px,0.75fr)] lg:items-center lg:gap-8"
+        className="home-training-promo group relative grid min-w-0 max-w-full overflow-hidden rounded-lg bg-gradient-to-br from-[#073b63] via-slate-900 to-indigo-950 p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-xl sm:p-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(360px,0.75fr)] lg:items-center lg:gap-8"
       >
         <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 bg-cyan-400/10 blur-3xl" />
         <div className="relative min-w-0">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-300">
+          <div className="home-training-eyebrow mb-3 inline-flex items-center gap-2 rounded-full bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-300">
             <Sparkles className="h-3.5 w-3.5" />
             {t('home.trainingEyebrow')}
           </div>
@@ -77,13 +77,13 @@ export function HomePage({ onOpenSearch }) {
               <Dumbbell className="h-7 w-7" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-white transition-colors group-hover:text-cyan-200 sm:text-2xl">
+              <h2 className="home-training-title text-xl font-black text-white transition-colors group-hover:text-cyan-200 sm:text-2xl">
                 {t('home.trainingTitle')}
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-cyan-100/65">
+              <p className="home-training-description mt-2 max-w-2xl text-sm leading-relaxed text-cyan-100/65">
                 {t('home.trainingDescription')}
               </p>
-              <span className="mt-4 inline-flex items-center gap-2 text-xs font-black text-cyan-300">
+              <span className="home-training-link mt-4 inline-flex items-center gap-2 text-xs font-black text-cyan-300">
                 {t('home.openTraining')}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
@@ -97,10 +97,10 @@ export function HomePage({ onOpenSearch }) {
             [Dumbbell, '9', t('home.trainableStats')],
             [ShieldCheck, '545', t('home.crewDesigns')]
           ].map(([Icon, value, label]) => (
-            <div key={label} className="rounded-lg bg-slate-950/55 p-3 text-center backdrop-blur sm:p-4">
+            <div key={label} className="home-training-stat rounded-lg bg-slate-950/55 p-3 text-center backdrop-blur sm:p-4">
               <Icon className="mx-auto h-4 w-4 text-cyan-300" />
-              <div className="mt-2 font-mono text-lg font-black text-white sm:text-xl">{value}</div>
-              <div className="mt-0.5 break-words text-[9px] font-bold uppercase leading-tight tracking-wider text-slate-400">{label}</div>
+              <div className="home-training-stat-value mt-2 font-mono text-lg font-black text-white sm:text-xl">{value}</div>
+              <div className="home-training-stat-label mt-0.5 break-words text-[9px] font-bold uppercase leading-tight tracking-wider text-slate-400">{label}</div>
             </div>
           ))}
         </div>

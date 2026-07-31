@@ -15,6 +15,8 @@ export function EntityCard({
   stats = [], 
   isCompared = false, 
   onToggleCompare,
+  selectedLabel = 'Compared',
+  selectLabel = 'Compare',
   onClick
 }) {
   const handleLinkClick = (e) => {
@@ -109,7 +111,7 @@ export function EntityCard({
             }`}
           >
             {isCompared ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-            <span>{isCompared ? 'Compared' : 'Compare'}</span>
+            <span>{isCompared ? selectedLabel : selectLabel}</span>
           </button>
         </div>
       )}

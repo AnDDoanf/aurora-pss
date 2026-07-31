@@ -119,6 +119,29 @@ body {
   -webkit-appearance: none;
 }
 
+.training-stat-input {
+  background-color: rgba(74, 77, 181, 0.72) !important;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.training-stat-input:focus {
+  background-color: rgba(74, 77, 181, 0.86) !important;
+  box-shadow: inset 0 0 0 1px rgba(165, 180, 252, 0.45);
+}
+
+html.light .training-number-input.training-stat-input,
+body.light-mode .training-number-input.training-stat-input {
+  background-color: #e0e7ff !important;
+  color: #313380 !important;
+  box-shadow: inset 1px 0 #c7d2fe, inset -1px 0 #c7d2fe;
+}
+
+html.light .training-number-input.training-stat-input:focus,
+body.light-mode .training-number-input.training-stat-input:focus {
+  background-color: #c7d2fe !important;
+  box-shadow: inset 0 0 0 1px #a5b4fc;
+}
+
 /* Reduced Border Radius App-Wide */
 .rounded-3xl,
 .rounded-2xl,
@@ -734,4 +757,166 @@ html.light input[type="range"]::-moz-range-track,
 body.light-mode input[type="range"]::-moz-range-track {
   background-color: #cbd5e1 !important;
   border-radius: 9999px;
+}
+
+/* Homepage training promo has its own surface, so theme overrides stay coherent. */
+html.light .home-training-promo,
+body.light-mode .home-training-promo {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 52%, #eef2ff 100%) !important;
+  border: 1px solid #c7d2fe !important;
+  box-shadow: 0 8px 24px rgba(74, 77, 181, 0.1) !important;
+}
+
+html.light .home-training-eyebrow,
+body.light-mode .home-training-eyebrow {
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
+}
+
+html.light .home-training-title,
+body.light-mode .home-training-title {
+  color: #0f102b !important;
+}
+
+html.light .home-training-description,
+body.light-mode .home-training-description {
+  color: #475569 !important;
+}
+
+html.light .home-training-link,
+body.light-mode .home-training-link {
+  color: #0369a1 !important;
+}
+
+html.light .home-training-stat,
+body.light-mode .home-training-stat {
+  background-color: rgba(255, 255, 255, 0.78) !important;
+  border: 1px solid #dbeafe !important;
+  box-shadow: 0 2px 8px rgba(74, 77, 181, 0.06) !important;
+}
+
+html.light .home-training-stat-value,
+body.light-mode .home-training-stat-value {
+  color: #0f102b !important;
+}
+
+html.light .home-training-stat-label,
+body.light-mode .home-training-stat-label {
+  color: #64748b !important;
+}
+
+/* Keep the mobile drawer above the page without replacing the page background. */
+.mobile-drawer-backdrop {
+  background-color: rgba(2, 6, 23, 0.76) !important;
+}
+
+.mobile-drawer-panel {
+  background-color: #151736 !important;
+}
+
+html.light .mobile-drawer-backdrop,
+body.light-mode .mobile-drawer-backdrop {
+  background-color: rgba(15, 23, 42, 0.42) !important;
+}
+
+html.light .mobile-drawer-panel,
+body.light-mode .mobile-drawer-panel {
+  background-color: #ffffff !important;
+  border-color: #c7d2fe !important;
+  color: #0f102b !important;
+}
+
+/* Player history overlays the current page instead of replacing it with a solid surface. */
+.player-history-backdrop {
+  background-color: rgba(2, 6, 23, 0.68) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+html.light .player-history-backdrop,
+body.light-mode .player-history-backdrop {
+  background-color: rgba(30, 41, 59, 0.22) !important;
+}
+
+.inventory-editor-backdrop {
+  background-color: rgba(2, 6, 23, 0.68) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.crew-profile-backdrop {
+  background-color: rgba(15, 23, 42, 0.28) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html.light .crew-profile-backdrop,
+body.light-mode .crew-profile-backdrop {
+  background-color: rgba(30, 41, 59, 0.16) !important;
+}
+
+html.light .inventory-editor-backdrop,
+body.light-mode .inventory-editor-backdrop {
+  background-color: rgba(30, 41, 59, 0.22) !important;
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobile-nav-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mobile-drawer-backdrop,
+.player-history-backdrop,
+.inventory-editor-backdrop {
+  animation: overlay-fade-in 180ms ease-out both;
+}
+
+.mobile-drawer-panel {
+  animation: mobile-nav-slide-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.player-history-modal,
+.inventory-editor-modal {
+  animation: modal-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-drawer-backdrop,
+  .mobile-drawer-panel,
+  .player-history-backdrop,
+  .player-history-modal,
+  .inventory-editor-backdrop,
+  .inventory-editor-modal {
+    animation: none;
+  }
 }

@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate, Outlet, useParams } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import { AppLayout } from '../layout/AppLayout';
 import { HomePage } from '../../features/home/HomePage';
 import { DataFreshness } from '../../features/about/DataFreshness';
@@ -24,6 +24,7 @@ const MissionDetail = lazy(() => import('../../features/missions/MissionDetail')
 const CollectionCatalog = lazy(() => import('../../features/collections/CollectionCatalog').then(m => ({ default: m.CollectionCatalog })));
 const SkinCatalog = lazy(() => import('../../features/skins/SkinCatalog').then(m => ({ default: m.SkinCatalog })));
 const CompareWorkspace = lazy(() => import('../../features/compare/CompareWorkspace').then(m => ({ default: m.CompareWorkspace })));
+const InventoryPage = lazy(() => import('../../features/inventory/InventoryPage').then(m => ({ default: m.InventoryPage })));
 
 const Guide = lazy(() => import('../../components/Guide'));
 const StarTargeting = lazy(() => import('../../components/StarTargeting'));
@@ -47,6 +48,12 @@ function LanguageGuard() {
     return <Navigate to="/vi" replace />;
   }
   return <Outlet />;
+}
+
+function CrewInventoryRedirect() {
+  const { lang } = useParams();
+  const { search } = useLocation();
+  return <Navigate to={`/${lang}/inventory${search}`} replace />;
 }
 
 export const router = createBrowserRouter([
@@ -140,6 +147,14 @@ export const router = createBrowserRouter([
           {
             path: 'library/skins',
             element: <Suspense fallback={<LoadingFallback />}><SkinCatalog /></Suspense>
+          },
+          {
+            path: 'inventory',
+            element: <Suspense fallback={<LoadingFallback />}><InventoryPage /></Suspense>
+          },
+          {
+            path: 'compare/crew',
+            element: <CrewInventoryRedirect />
           },
           {
             path: 'compare/:type',
