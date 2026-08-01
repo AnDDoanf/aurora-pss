@@ -72,7 +72,7 @@ const renderLevelBadge = (level, lang) => {
 };
 
 export default function Guide() {
-  const { lang = 'vi' } = useParams();
+  const { lang = 'en' } = useParams();
   const { t } = useTranslation();
   const location = useLocation();
 

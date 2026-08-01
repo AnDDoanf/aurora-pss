@@ -3,7 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { LANGUAGES, replaceLanguageInPath } from '../i18n/languages';
 
 export function SEOHead({ title, description, canonicalUrl, ogImage = '/public/guide-images/game_assets/game_icon.png' }) {
-  const { lang = 'vi' } = useParams();
+  const { lang = 'en' } = useParams();
   const location = useLocation();
 
   const siteName = 'PSS Library';

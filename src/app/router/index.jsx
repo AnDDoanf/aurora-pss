@@ -49,7 +49,7 @@ function LoadingFallback() {
 function LanguageGuard() {
   const { lang } = useParams();
   if (!isSupportedLanguage(lang)) {
-    return <Navigate to="/vi" replace />;
+    return <Navigate to="/en" replace />;
   }
   return <Outlet />;
 }
@@ -63,7 +63,7 @@ function CrewInventoryRedirect() {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/vi" replace />
+    element: <Navigate to="/en" replace />
   },
   {
     path: '/:lang',
@@ -210,7 +210,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <Navigate to="/vi" replace />
+    element: <Navigate to="/en" replace />
   }
 ], {
   basename: import.meta.env.BASE_URL === '/'

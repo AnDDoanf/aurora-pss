@@ -13,8 +13,8 @@ const dictionaries = { en, vi, ru, jp, it, ko, cn, es };
 
 export function useTranslation() {
   const { lang } = useParams();
-  const currentLang = isSupportedLanguage(lang) ? lang : 'vi';
-  const dict = dictionaries[currentLang] || dictionaries.vi;
+  const currentLang = isSupportedLanguage(lang) ? lang : 'en';
+  const dict = dictionaries[currentLang] || dictionaries.en;
 
   /**
    * Lookup key string path, e.g., t('nav.crew')
