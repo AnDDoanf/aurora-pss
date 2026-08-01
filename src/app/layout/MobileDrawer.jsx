@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Award, Backpack, BarChart3, BookOpen, Cpu, Database, Dumbbell,
-  ChevronDown, LayoutGrid, Package, Rocket, Target, Users, X
+  ChevronDown, Grid3X3, LayoutGrid, Package, Rocket, Target, Users, X
 } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 
@@ -24,6 +24,7 @@ export function MobileDrawer({ isOpen, onClose }) {
   ];
 
   const toolLinks = [
+    { label: t('nav.shipBuilder'), path: `/${lang}/tools/ship-builder`, icon: Grid3X3 },
     { label: t('nav.capacity'), path: `/${lang}/tools/capacity`, icon: BarChart3 },
     { label: t('layout.training'), path: `/${lang}/tools/training`, icon: Dumbbell },
     { label: t('layout.targeting'), path: `/${lang}/tools/targeting`, icon: Target }

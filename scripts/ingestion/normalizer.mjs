@@ -159,6 +159,7 @@ export function normalizeSnapshot(snapshotDir) {
 
   // 4. Rooms
   const roomsRaw = readRaw('RoomService/ListRoomDesigns2');
+  const roomPurchasesRaw = readRaw('RoomService/ListRoomDesignPurchase');
   const roomSpritesRaw = readRaw('RoomDesignSpriteService/ListRoomDesignSprites2');
   const roomActionsRaw = readRaw('RoomService/ListActionTypes2');
   const roomConditionsRaw = readRaw('RoomService/ListConditionTypes2');
@@ -286,6 +287,7 @@ export function normalizeSnapshot(snapshotDir) {
   writeJson('crew.json', crewCatalog);
   writeJson('training.json', trainingCatalog);
   writeJson('rooms.json', Object.values(roomGroups));
+  writeJson('roomPurchases.json', roomPurchasesRaw);
   writeJson('ships.json', shipsCatalog);
   writeJson('items.json', itemsCatalog);
   writeJson('crafts.json', craftsRaw);

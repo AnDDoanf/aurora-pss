@@ -185,6 +185,52 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
   background: #4a4db5 !important;
 }
 
+/* Ship builder surfaces need local contrast instead of global utility remapping. */
+.ship-builder-scrollbar {
+  scrollbar-color: #475569 transparent;
+  scrollbar-width: thin;
+}
+
+.ship-builder-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ship-builder-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.ship-builder-status-valid {
+  background: rgba(16, 185, 129, 0.18);
+  color: #6ee7b7;
+}
+
+.ship-builder-status-error {
+  background: rgba(244, 63, 94, 0.18);
+  color: #fda4af;
+}
+
+html.light .ship-builder-scrollbar,
+body.light-mode .ship-builder-scrollbar {
+  scrollbar-color: #a5b4fc transparent;
+}
+
+html.light .ship-builder-scrollbar::-webkit-scrollbar-thumb,
+body.light-mode .ship-builder-scrollbar::-webkit-scrollbar-thumb {
+  background: #a5b4fc !important;
+}
+
+html.light .ship-builder-status-valid,
+body.light-mode .ship-builder-status-valid {
+  background: #d1fae5;
+  color: #047857;
+}
+
+html.light .ship-builder-status-error,
+body.light-mode .ship-builder-status-error {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
 /* Glassmorphism & Glowing Card Utilities */
 .glass-panel {
   background: rgba(21, 23, 54, 0.8);

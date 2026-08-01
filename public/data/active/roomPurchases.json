@@ -1,0 +1,1658 @@
+[
+  {
+    "RoomDesignPurchaseId": 1,
+    "RoomDesignId": 2,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 3,
+    "RoomDesignId": 2,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 4,
+    "RoomDesignId": 3,
+    "Level": 1,
+    "Quantity": 6,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 5,
+    "RoomDesignId": 3,
+    "Level": 2,
+    "Quantity": 4,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 6,
+    "RoomDesignId": 3,
+    "Level": 4,
+    "Quantity": 4,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 7,
+    "RoomDesignId": 4,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 8,
+    "RoomDesignId": 4,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 9,
+    "RoomDesignId": 5,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 10,
+    "RoomDesignId": 5,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 11,
+    "RoomDesignId": 6,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 12,
+    "RoomDesignId": 6,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 15,
+    "RoomDesignId": 8,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 16,
+    "RoomDesignId": 9,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 17,
+    "RoomDesignId": 1,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 18,
+    "RoomDesignId": 18,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 19,
+    "RoomDesignId": 26,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 20,
+    "RoomDesignId": 42,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 21,
+    "RoomDesignId": 2,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 22,
+    "RoomDesignId": 60,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 23,
+    "RoomDesignId": 62,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 25,
+    "RoomDesignId": 26,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 26,
+    "RoomDesignId": 42,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 29,
+    "RoomDesignId": 26,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 30,
+    "RoomDesignId": 42,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 31,
+    "RoomDesignId": 9,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 32,
+    "RoomDesignId": 79,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 33,
+    "RoomDesignId": 82,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 34,
+    "RoomDesignId": 103,
+    "Level": 1,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 35,
+    "RoomDesignId": 103,
+    "Level": 3,
+    "Quantity": 10,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 36,
+    "RoomDesignId": 103,
+    "Level": 5,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 37,
+    "RoomDesignId": 103,
+    "Level": 7,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 38,
+    "RoomDesignId": 60,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 39,
+    "RoomDesignId": 26,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 40,
+    "RoomDesignId": 62,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 41,
+    "RoomDesignId": 42,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 42,
+    "RoomDesignId": 60,
+    "Level": 11,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 43,
+    "RoomDesignId": 62,
+    "Level": 11,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 44,
+    "RoomDesignId": 109,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 45,
+    "RoomDesignId": 103,
+    "Level": 9,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 46,
+    "RoomDesignId": 3,
+    "Level": 6,
+    "Quantity": 4,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 47,
+    "RoomDesignId": 3,
+    "Level": 8,
+    "Quantity": 4,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 48,
+    "RoomDesignId": 120,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 49,
+    "RoomDesignId": 124,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 50,
+    "RoomDesignId": 132,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 51,
+    "RoomDesignId": 5,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 52,
+    "RoomDesignId": 109,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 53,
+    "RoomDesignId": 103,
+    "Level": 10,
+    "Quantity": 10,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 54,
+    "RoomDesignId": 120,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 55,
+    "RoomDesignId": 156,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 56,
+    "RoomDesignId": 150,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 57,
+    "RoomDesignId": 156,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 58,
+    "RoomDesignId": 204,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 59,
+    "RoomDesignId": 219,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 60,
+    "RoomDesignId": 221,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 61,
+    "RoomDesignId": 222,
+    "Level": 11,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 62,
+    "RoomDesignId": 3,
+    "Level": 10,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 63,
+    "RoomDesignId": 103,
+    "Level": 11,
+    "Quantity": 10,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 64,
+    "RoomDesignId": 7,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 65,
+    "RoomDesignId": 247,
+    "Level": 4,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 66,
+    "RoomDesignId": 259,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 67,
+    "RoomDesignId": 247,
+    "Level": 7,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 68,
+    "RoomDesignId": 247,
+    "Level": 10,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 69,
+    "RoomDesignId": 263,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 70,
+    "RoomDesignId": 269,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 71,
+    "RoomDesignId": 290,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 72,
+    "RoomDesignId": 315,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 73,
+    "RoomDesignId": 299,
+    "Level": 3,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 74,
+    "RoomDesignId": 298,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 75,
+    "RoomDesignId": 263,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 76,
+    "RoomDesignId": 3,
+    "Level": 11,
+    "Quantity": 10,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 77,
+    "RoomDesignId": 318,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 78,
+    "RoomDesignId": 319,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 79,
+    "RoomDesignId": 320,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 80,
+    "RoomDesignId": 321,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 81,
+    "RoomDesignId": 322,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 82,
+    "RoomDesignId": 247,
+    "Level": 1,
+    "Quantity": 10,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 83,
+    "RoomDesignId": 323,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 84,
+    "RoomDesignId": 323,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 85,
+    "RoomDesignId": 325,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 86,
+    "RoomDesignId": 324,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 88,
+    "RoomDesignId": 103,
+    "Level": 1,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 90,
+    "RoomDesignId": 32,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 91,
+    "RoomDesignId": 155,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 92,
+    "RoomDesignId": 5,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 93,
+    "RoomDesignId": 318,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 94,
+    "RoomDesignId": 322,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 95,
+    "RoomDesignId": 103,
+    "Level": 2,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 96,
+    "RoomDesignId": 385,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 97,
+    "RoomDesignId": 386,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 98,
+    "RoomDesignId": 398,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 99,
+    "RoomDesignId": 408,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 100,
+    "RoomDesignId": 408,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 101,
+    "RoomDesignId": 403,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 102,
+    "RoomDesignId": 299,
+    "Level": 1,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 103,
+    "RoomDesignId": 103,
+    "Level": 3,
+    "Quantity": 10,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 104,
+    "RoomDesignId": 3,
+    "Level": 5,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 105,
+    "RoomDesignId": 247,
+    "Level": 3,
+    "Quantity": 10,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 106,
+    "RoomDesignId": 5,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 107,
+    "RoomDesignId": 320,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 108,
+    "RoomDesignId": 416,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 109,
+    "RoomDesignId": 5,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 110,
+    "RoomDesignId": 422,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 111,
+    "RoomDesignId": 103,
+    "Level": 8,
+    "Quantity": 5,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 112,
+    "RoomDesignId": 442,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 113,
+    "RoomDesignId": 462,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 114,
+    "RoomDesignId": 475,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 115,
+    "RoomDesignId": 517,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 116,
+    "RoomDesignId": 518,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 117,
+    "RoomDesignId": 519,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 118,
+    "RoomDesignId": 3,
+    "Level": 12,
+    "Quantity": 10,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 119,
+    "RoomDesignId": 103,
+    "Level": 12,
+    "Quantity": 10,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 120,
+    "RoomDesignId": 247,
+    "Level": 11,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 121,
+    "RoomDesignId": 263,
+    "Level": 12,
+    "Quantity": 2,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 122,
+    "RoomDesignId": 562,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 125,
+    "RoomDesignId": 602,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 126,
+    "RoomDesignId": 247,
+    "Level": 12,
+    "Quantity": 10,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 127,
+    "RoomDesignId": 221,
+    "Level": 11,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 128,
+    "RoomDesignId": 204,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 129,
+    "RoomDesignId": 562,
+    "Level": 11,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 130,
+    "RoomDesignId": 562,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 131,
+    "RoomDesignId": 688,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 132,
+    "RoomDesignId": 156,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 133,
+    "RoomDesignId": 692,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 134,
+    "RoomDesignId": 692,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 135,
+    "RoomDesignId": 693,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 136,
+    "RoomDesignId": 700,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 137,
+    "RoomDesignId": 703,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 139,
+    "RoomDesignId": 705,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 140,
+    "RoomDesignId": 706,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 141,
+    "RoomDesignId": 707,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 142,
+    "RoomDesignId": 708,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 143,
+    "RoomDesignId": 509,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 144,
+    "RoomDesignId": 156,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 145,
+    "RoomDesignId": 156,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 146,
+    "RoomDesignId": 156,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 147,
+    "RoomDesignId": 462,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 148,
+    "RoomDesignId": 705,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 149,
+    "RoomDesignId": 706,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 150,
+    "RoomDesignId": 325,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 151,
+    "RoomDesignId": 475,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 152,
+    "RoomDesignId": 442,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 153,
+    "RoomDesignId": 475,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 154,
+    "RoomDesignId": 442,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 155,
+    "RoomDesignId": 221,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 156,
+    "RoomDesignId": 221,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 157,
+    "RoomDesignId": 204,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 158,
+    "RoomDesignId": 204,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 159,
+    "RoomDesignId": 263,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 160,
+    "RoomDesignId": 263,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 161,
+    "RoomDesignId": 109,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 162,
+    "RoomDesignId": 109,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 163,
+    "RoomDesignId": 259,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 164,
+    "RoomDesignId": 259,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 165,
+    "RoomDesignId": 222,
+    "Level": 4,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 166,
+    "RoomDesignId": 222,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 167,
+    "RoomDesignId": 103,
+    "Level": 4,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 168,
+    "RoomDesignId": 103,
+    "Level": 6,
+    "Quantity": 5,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 169,
+    "RoomDesignId": 3,
+    "Level": 3,
+    "Quantity": 4,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 171,
+    "RoomDesignId": 704,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 172,
+    "RoomDesignId": 737,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 173,
+    "RoomDesignId": 79,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 174,
+    "RoomDesignId": 779,
+    "Level": 13,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 175,
+    "RoomDesignId": 781,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 176,
+    "RoomDesignId": 782,
+    "Level": 13,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 177,
+    "RoomDesignId": 103,
+    "Level": 13,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 178,
+    "RoomDesignId": 247,
+    "Level": 13,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 179,
+    "RoomDesignId": 3,
+    "Level": 13,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 180,
+    "RoomDesignId": 709,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 181,
+    "RoomDesignId": 710,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 182,
+    "RoomDesignId": 711,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 183,
+    "RoomDesignId": 712,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 184,
+    "RoomDesignId": 713,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 185,
+    "RoomDesignId": 714,
+    "Level": 7,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 186,
+    "RoomDesignId": 509,
+    "Level": 13,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 187,
+    "RoomDesignId": 794,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 188,
+    "RoomDesignId": 794,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 3,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 189,
+    "RoomDesignId": 795,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 190,
+    "RoomDesignId": 795,
+    "Level": 6,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 191,
+    "RoomDesignId": 709,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 192,
+    "RoomDesignId": 710,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 193,
+    "RoomDesignId": 709,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 194,
+    "RoomDesignId": 711,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 195,
+    "RoomDesignId": 711,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 196,
+    "RoomDesignId": 712,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 3"
+  },
+  {
+    "RoomDesignPurchaseId": 197,
+    "RoomDesignId": 713,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 198,
+    "RoomDesignId": 714,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 2"
+  },
+  {
+    "RoomDesignPurchaseId": 199,
+    "RoomDesignId": 713,
+    "Level": 12,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": "originalRaceId == 1"
+  },
+  {
+    "RoomDesignPurchaseId": 200,
+    "RoomDesignId": 823,
+    "Level": 8,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 202,
+    "RoomDesignId": 475,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 203,
+    "RoomDesignId": 832,
+    "Level": 14,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 204,
+    "RoomDesignId": 781,
+    "Level": 10,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 205,
+    "RoomDesignId": 779,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 206,
+    "RoomDesignId": 416,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 207,
+    "RoomDesignId": 692,
+    "Level": 1,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 208,
+    "RoomDesignId": 823,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 209,
+    "RoomDesignId": 703,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 210,
+    "RoomDesignId": 781,
+    "Level": 2,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 211,
+    "RoomDesignId": 693,
+    "Level": 3,
+    "Quantity": 1,
+    "AvailabilityMask": 2,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 212,
+    "RoomDesignId": 794,
+    "Level": 9,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 213,
+    "RoomDesignId": 109,
+    "Level": 13,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 214,
+    "RoomDesignId": 840,
+    "Level": 5,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 215,
+    "RoomDesignId": 841,
+    "Level": 14,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 216,
+    "RoomDesignId": 846,
+    "Level": 14,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 218,
+    "RoomDesignId": 853,
+    "Level": 14,
+    "Quantity": 1,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 220,
+    "RoomDesignId": 103,
+    "Level": 14,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 221,
+    "RoomDesignId": 3,
+    "Level": 14,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  },
+  {
+    "RoomDesignPurchaseId": 222,
+    "RoomDesignId": 247,
+    "Level": 14,
+    "Quantity": 5,
+    "AvailabilityMask": 1,
+    "RequirementString": ""
+  }
+]

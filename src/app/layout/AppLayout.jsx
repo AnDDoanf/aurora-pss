@@ -44,6 +44,7 @@ export function AppLayout() {
 
   const isEmbedded = new URLSearchParams(window.location.search).get('embed') === 'true';
   const isTrainingTool = location.pathname.includes('/tools/training');
+  const isShipBuilder = location.pathname.includes('/tools/ship-builder');
 
   if (isEmbedded) {
     return (
@@ -74,7 +75,7 @@ export function AppLayout() {
         onClose={() => setIsMobileNavOpen(false)}
       />
 
-      <main className={`flex-1 max-w-[1600px] w-full min-w-0 mx-auto px-3 sm:px-6 lg:px-8 ${
+      <main className={`flex-1 w-full min-w-0 mx-auto ${isShipBuilder ? 'max-w-none px-2 sm:px-3' : 'max-w-[1600px] px-3 sm:px-6 lg:px-8'} ${
         isTrainingTool ? 'py-4 sm:py-6 xl:h-[calc(100dvh-7.75rem)] xl:flex-none xl:overflow-hidden' : 'py-4 sm:py-6'
       }`}>
         <Outlet context={{ onOpenSearch: () => setIsSearchOpen(true) }} />

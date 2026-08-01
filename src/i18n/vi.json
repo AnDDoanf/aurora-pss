@@ -15,6 +15,7 @@
     "compare": "So sánh",
     "inventory": "Đội hình",
     "tools": "Công cụ",
+    "shipBuilder": "Thiết kế tàu",
     "capacity": "Giả lập",
     "aboutData": "Cập nhật dữ liệu",
     "searchPlaceholder": "Tìm phi hành đoàn, phòng, tàu, vật phẩm, bài viết... (Ctrl+K)"
@@ -36,6 +37,7 @@
     "trainingDesc": "Lập kế hoạch TP và chương trình",
     "targeting": "Giải đấu",
     "targetingDesc": "Tìm đối thủ theo tiêu chí",
+    "shipBuilderDesc": "Nhập, chỉnh sửa và xuất bố cục tàu",
     "openMenu": "Mở menu điều hướng",
     "closeMenu": "Đóng menu điều hướng",
     "switchLanguage": "Đổi ngôn ngữ",

@@ -15,6 +15,7 @@
     "compare": "Compare",
     "inventory": "Inventory",
     "tools": "Tools",
+    "shipBuilder": "Ship Builder",
     "capacity": "Stimulate",
     "aboutData": "Data Freshness",
     "searchPlaceholder": "Search crew, rooms, ships, items, or guides... (Ctrl+K)"
@@ -36,6 +37,7 @@
     "trainingDesc": "Plan TP and training programs",
     "targeting": "Target Finder",
     "targetingDesc": "Find opponents by your criteria",
+    "shipBuilderDesc": "Import, edit, and export ship layouts",
     "openMenu": "Open navigation menu",
     "closeMenu": "Close navigation menu",
     "switchLanguage": "Switch language",
