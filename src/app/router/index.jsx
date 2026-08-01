@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { isSupportedLanguage } from '../../i18n/languages';
 import { AppLayout } from '../layout/AppLayout';
 import { HomePage } from '../../features/home/HomePage';
 import { DataFreshness } from '../../features/about/DataFreshness';
@@ -47,7 +48,7 @@ function LoadingFallback() {
 
 function LanguageGuard() {
   const { lang } = useParams();
-  if (lang !== 'en' && lang !== 'vi') {
+  if (!isSupportedLanguage(lang)) {
     return <Navigate to="/vi" replace />;
   }
   return <Outlet />;

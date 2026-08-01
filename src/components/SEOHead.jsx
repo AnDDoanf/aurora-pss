@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { LANGUAGES, replaceLanguageInPath } from '../i18n/languages';
 
 export function SEOHead({ title, description, canonicalUrl, ogImage = '/public/guide-images/game_assets/game_icon.png' }) {
   const { lang = 'vi' } = useParams();
@@ -50,27 +51,16 @@ export function SEOHead({ title, description, canonicalUrl, ogImage = '/public/g
     }
     ogDescTag.content = metaDesc;
 
-    // Hreflang alternate links (en and vi)
-    const enPath = location.pathname.replace(/^\/(en|vi)/, '/en');
-    const viPath = location.pathname.replace(/^\/(en|vi)/, '/vi');
-
-    let hrefEn = document.querySelector('link[hreflang="en"]');
-    if (!hrefEn) {
-      hrefEn = document.createElement('link');
-      hrefEn.rel = 'alternate';
-      hrefEn.hreflang = 'en';
-      document.head.appendChild(hrefEn);
-    }
-    hrefEn.href = `https://pixelstarships.guide${enPath}`;
-
-    let hrefVi = document.querySelector('link[hreflang="vi"]');
-    if (!hrefVi) {
-      hrefVi = document.createElement('link');
-      hrefVi.rel = 'alternate';
-      hrefVi.hreflang = 'vi';
-      document.head.appendChild(hrefVi);
-    }
-    hrefVi.href = `https://pixelstarships.guide${viPath}`;
+    LANGUAGES.forEach(({ code, hreflang }) => {
+      let alternate = document.querySelector(`link[hreflang="${hreflang}"]`);
+      if (!alternate) {
+        alternate = document.createElement('link');
+        alternate.rel = 'alternate';
+        alternate.hreflang = hreflang;
+        document.head.appendChild(alternate);
+      }
+      alternate.href = `https://pixelstarships.guide${replaceLanguageInPath(location.pathname, code)}`;
+    });
 
   }, [fullTitle, metaDesc, currentCanonical, location.pathname]);
 

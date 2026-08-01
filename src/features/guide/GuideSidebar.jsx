@@ -5,7 +5,7 @@ import { guideGroups, guides } from '../../content/guide/loader';
 
 export function GuideSidebar({ lang }) {
   const location = useLocation();
-  const guide = guides[lang] || guides.vi;
+  const guide = guides[lang] || guides.en;
   const [isOpen, setIsOpen] = useState(false);
 
   // Find active section for mobile dropdown button header

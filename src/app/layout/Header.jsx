@@ -4,6 +4,7 @@ import { Globe, Menu, Moon, Sun, Search, ChevronDown, Users, LayoutGrid, Rocket,
 import { useTranslation } from '../../i18n/useTranslation';
 import { DirectSearchInput } from '../../features/search/DirectSearchInput';
 import { publicUrl } from '../../utils/publicUrl';
+import { LANGUAGES, replaceLanguageInPath } from '../../i18n/languages';
 
 export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }) {
   const { t, lang } = useTranslation();
@@ -13,10 +14,9 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
 
-  const toggleLanguage = () => {
-    const nextLang = lang === 'en' ? 'vi' : 'en';
-    const newPath = location.pathname.replace(/^\/(en|vi)/, `/${nextLang}`);
-    navigate(newPath + location.search);
+  const changeLanguage = (nextLang) => {
+    const newPath = replaceLanguageInPath(location.pathname, nextLang);
+    navigate(newPath + location.search + location.hash);
   };
 
   const catalogItems = [
@@ -238,14 +238,13 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
             <Search className="h-4 w-4" />
           </button>
 
-          <button
-            onClick={toggleLanguage}
-            className="flex shrink-0 items-center gap-1 rounded-lg bg-slate-900 px-2 py-2 text-xs font-bold text-slate-200 transition-colors hover:text-indigo-400 sm:gap-1.5 sm:px-2.5 sm:py-1.5"
-            title={t('layout.switchLanguage')}
-          >
-            <Globe className="hidden h-3.5 w-3.5 text-indigo-400 min-[360px]:block" />
-            <span>{lang.toUpperCase()}</span>
-          </button>
+          <label className="relative flex shrink-0 items-center rounded-lg bg-slate-900 text-xs font-bold text-slate-200" title={t('layout.switchLanguage')}>
+            <Globe className="pointer-events-none absolute left-2 hidden h-3.5 w-3.5 text-indigo-400 min-[360px]:block" />
+            <span className="sr-only">{t('layout.switchLanguage')}</span>
+            <select value={lang} onChange={(event) => changeLanguage(event.target.value)} className="max-w-[5.25rem] cursor-pointer appearance-none rounded-lg bg-transparent py-2 pl-2 pr-2 text-xs font-bold text-slate-200 outline-none hover:text-indigo-400 min-[360px]:pl-7 sm:max-w-[8rem]">
+              {LANGUAGES.map((language) => <option key={language.code} value={language.code} className="bg-slate-900 text-slate-100">{language.label}</option>)}
+            </select>
+          </label>
 
           <button
             onClick={onToggleTheme}

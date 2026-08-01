@@ -12,7 +12,7 @@ const readJson = (file) => {
 
 console.log('[Sitemap] Generating public/sitemap.xml...');
 
-const languages = ['en', 'vi'];
+const languages = ['en', 'vi', 'ru', 'jp', 'it', 'ko', 'cn', 'es'];
 const staticRoutes = [
   '',
   '/guide',

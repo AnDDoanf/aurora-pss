@@ -76,7 +76,7 @@ export default function Guide() {
   const { t } = useTranslation();
   const location = useLocation();
 
-  const guide = guides[lang] || guides.vi;
+  const guide = guides[lang] || guides.en;
   const pathParts = location.pathname.split('/').filter(Boolean);
   const lastPart = pathParts[pathParts.length - 1];
 

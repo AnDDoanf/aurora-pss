@@ -1,12 +1,19 @@
 import { useParams } from 'react-router-dom';
 import en from './en.json';
 import vi from './vi.json';
+import ru from './ru.json';
+import jp from './jp.json';
+import it from './it.json';
+import ko from './ko.json';
+import cn from './cn.json';
+import es from './es.json';
+import { isSupportedLanguage } from './languages';
 
-const dictionaries = { en, vi };
+const dictionaries = { en, vi, ru, jp, it, ko, cn, es };
 
 export function useTranslation() {
   const { lang } = useParams();
-  const currentLang = (lang === 'en' || lang === 'vi') ? lang : 'vi';
+  const currentLang = isSupportedLanguage(lang) ? lang : 'vi';
   const dict = dictionaries[currentLang] || dictionaries.vi;
 
   /**

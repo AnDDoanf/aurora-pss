@@ -49,7 +49,8 @@
     "libraryMenu": "PSS Library Menu",
     "referenceLibrary": "Pixel Starships Reference Library",
     "snapshot": "Snapshot: {date}",
-    "snapshotActive": "Snapshot active"
+    "snapshotActive": "Snapshot active",
+    "attributionDisclaimer": "Special thanks to SavySoda and Pixel Starships; Solevis, Bril, The worst., Stex Ghost, Xeon, and Sokitume of PixyShip; Pixel Prestige; FleetData (fleetdata.dolores2.xyz); PSS Reality; Pixel Perfect Guide; and guide contributors Kafka and King Na. Their products, artwork, data, tools, or designs are referenced or adapted here. All rights remain with their respective owners. This independent, non-commercial fan project is not affiliated with or endorsed by them."
   },
   "home": {
     "title": "Pixel Starships Guide & Reference Library",
