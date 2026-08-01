@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom';
 import {
   getAllianceDataFromCollection,
   getLatestAllianceData,
-  getUserHistory,
-  getAllianceTournamentProgression,
   getAllianceTournamentAnalytics,
   getCollectionAlliances,
   getFleetSnapshotAt,
@@ -17,6 +15,7 @@ import { getTargetStatuses, setTargetStatus, exportToCSV } from '../services/sto
 import { Search, Download, RefreshCw, CheckCircle, XCircle, HelpCircle, Copy, History, X, Trophy, LineChart, List, Tag, Shield, ChevronUp, ChevronDown, ChevronsUpDown, BarChart3, Users, ArrowRightLeft } from 'lucide-react';
 import { useTranslation } from '../i18n/useTranslation';
 import { compareFleetMembers } from '../features/fleet/fleetSnapshotComparison';
+import { PlayerDetailModal } from '../features/player/PlayerDetailModal';
 
 const HOURLY_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
 const UTC_HOURS = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
@@ -616,51 +615,9 @@ const StarTargeting = () => {
     showToast(t('pages.targeting.nameCopied', { name }));
   };
 
-  const handleRowClick = async (player) => {
+  const handleRowClick = (player) => {
     setSelectedRowId(player.id);
     setActiveHistoryPlayer(player);
-    setViewMode('chart');
-    setDailyStarData(null);
-    setHistoryLoading(true);
-    const shouldLoadDailyStars = tournamentStatus.isLive && Boolean(player.fleetId);
-    setDailyStarsLoading(shouldLoadDailyStars);
-
-    const historyRequest = getUserHistory(player.id);
-    const progressionRequest = shouldLoadDailyStars
-      ? getAllianceTournamentProgression(player.fleetId, player.fleet, tournamentStatus)
-      : Promise.resolve(null);
-    const [historyResult, progressionResult] = await Promise.allSettled([
-      historyRequest,
-      progressionRequest
-    ]);
-
-    if (historyResult.status === 'fulfilled') {
-      const res = historyResult.value;
-      setHistoryData(res.historyList || []);
-      setPastNames(res.pastNames || [player.name]);
-    } else {
-      console.error("Failed to fetch user history:", historyResult.reason);
-      setHistoryData([]);
-      setPastNames([player.name]);
-    }
-
-    if (progressionResult.status === 'fulfilled' && progressionResult.value) {
-      const progression = progressionResult.value;
-      const member = progression.members.find(
-        (candidate) => String(candidate.id) === String(player.id)
-      );
-      setDailyStarData(member ? {
-        days: progression.days,
-        dailyStars: member.dailyStars,
-        tournamentStars: member.tournamentStars
-      } : null);
-    } else if (progressionResult.status === 'rejected') {
-      console.error("Failed to fetch tournament star progression:", progressionResult.reason);
-      setDailyStarData(null);
-    }
-
-    setHistoryLoading(false);
-    setDailyStarsLoading(false);
   };
 
   const filteredData = useMemo(() => {
@@ -1382,8 +1339,10 @@ const StarTargeting = () => {
         </div>
       </div>}
 
-      {/* Floating Player History Info Modal Overlay */}
-      {activeHistoryPlayer && createPortal((
+      <PlayerDetailModal player={activeHistoryPlayer} onClose={() => setActiveHistoryPlayer(null)} />
+
+      {/* Legacy history view retained for its data helpers; the shared player page is now displayed above. */}
+      {false && activeHistoryPlayer && createPortal((
         <div className="player-history-backdrop fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 p-2 backdrop-blur-md sm:p-4" onClick={() => setActiveHistoryPlayer(null)}>
           <div className="player-history-modal max-h-[calc(100dvh-1rem)] w-full max-w-4xl space-y-4 overflow-y-auto rounded-lg bg-slate-900 p-4 shadow-2xl sm:max-h-[90vh] sm:space-y-6 sm:p-8" onClick={(e) => e.stopPropagation()}>
             <div className="flex flex-col gap-3 border-b border-slate-800 pb-4 sm:flex-row sm:items-center sm:justify-between">

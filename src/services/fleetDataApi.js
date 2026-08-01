@@ -732,6 +732,8 @@ export const getUserHistory = async (userId) => {
     if (Array.isArray(response.data)) {
       const historyList = response.data.map(item => {
         const timestamp = item.collection?.timestamp;
+        const collectionId = item.collection?.collection_id;
+        const tournamentRunning = Boolean(item.collection?.tourney_running);
         
         let fleetName = 'Unknown';
         let divisionId = 1;
@@ -749,7 +751,7 @@ export const getUserHistory = async (userId) => {
                              divisionId === 4 ? 'Div D' : 'Div A';
 
         const user = item.user;
-        let id, name, trophy, allianceScore, maxTrophy;
+        let id, name, trophy, allianceScore, maxTrophy, tournamentBonusScore;
 
         if (Array.isArray(user)) {
           id = user[0];
@@ -757,12 +759,14 @@ export const getUserHistory = async (userId) => {
           trophy = typeof user[3] === 'number' ? user[3] : 0;
           allianceScore = typeof user[4] === 'number' ? user[4] : 0;
           maxTrophy = typeof user[18] === 'number' ? user[18] : trophy;
+          tournamentBonusScore = typeof user[19] === 'number' ? user[19] : 0;
         } else if (user) {
           id = user.id;
           name = user.name || `Captain #${id}`;
           trophy = user.trophy || 0;
           allianceScore = user.alliance_score || 0;
           maxTrophy = user.highest_trophy || trophy;
+          tournamentBonusScore = user.tournament_bonus_score || 0;
         }
 
         const starValue = Math.max(
@@ -772,6 +776,9 @@ export const getUserHistory = async (userId) => {
 
         return {
           timestamp,
+          collectionId,
+          tournamentRunning,
+          tournamentBonusScore,
           date: timestamp ? new Date(timestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A',
           fleetName,
           division: divisionName,

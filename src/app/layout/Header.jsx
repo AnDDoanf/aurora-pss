@@ -58,6 +58,12 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
       path: `/${lang}/tools/fleet`,
       icon: Users,
       desc: t('layout.fleetIntelligenceDesc')
+    },
+    {
+      label: t('layout.playerIntelligence'),
+      path: `/${lang}/tools/player`,
+      icon: Target,
+      desc: t('layout.playerIntelligenceDesc')
     }
   ];
 

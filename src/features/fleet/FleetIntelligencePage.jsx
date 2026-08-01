@@ -1,18 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import {
-  ArrowRightLeft, Search, TrendingUp, Users, X
-} from 'lucide-react';
+import { ArrowRightLeft, Search, TrendingUp, Users } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import {
   getAllianceDataFromCollection,
   getCollectionAlliances,
   getFleetHistory,
   getFleetSnapshotAt,
-  getLatestFleetSnapshots,
-  getUserHistory
+  getLatestFleetSnapshots
 } from '../../services/fleetDataApi';
 import { compareFleetMembers } from './fleetSnapshotComparison';
+import { PlayerDetailModal } from '../player/PlayerDetailModal';
 
 const UTC_HOURS = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
 const METRICS = {
@@ -104,8 +102,6 @@ export function FleetIntelligencePage() {
   const [memberSearch, setMemberSearch] = useState('');
   const [pageLoading, setPageLoading] = useState(true);
   const [activeUser, setActiveUser] = useState(null);
-  const [userDetail, setUserDetail] = useState(null);
-  const [userLoading, setUserLoading] = useState(false);
 
   const [firstDate, setFirstDate] = useState('');
   const [firstHour, setFirstHour] = useState('');
@@ -184,14 +180,7 @@ export function FleetIntelligencePage() {
     setSearchParams(match ? { fleet: String(match.id) } : {});
   };
 
-  const openUser = async (user) => {
-    setActiveUser(user);
-    setUserDetail(null);
-    setUserLoading(true);
-    const detail = await getUserHistory(user.id);
-    setUserDetail(detail);
-    setUserLoading(false);
-  };
+  const openUser = (user) => setActiveUser(user);
 
   const compareSnapshots = async () => {
     if (!selectedFleet || !firstSnapshot || !secondSnapshot) return;
@@ -280,7 +269,7 @@ export function FleetIntelligencePage() {
         </>
       )}
 
-      {activeUser && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4" onMouseDown={(event) => { if (event.target === event.currentTarget) setActiveUser(null); }}><div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-slate-900 shadow-2xl"><div className="sticky top-0 flex items-start justify-between bg-slate-900 p-5"><div><button type="button" onClick={() => openUser(activeUser)} className="text-lg font-black text-slate-100 hover:text-indigo-300">{activeUser.name}</button><div className="font-mono text-[10px] text-slate-500">#{activeUser.id}</div></div><button type="button" onClick={() => setActiveUser(null)} className="rounded-lg bg-slate-800 p-2 text-slate-400"><X className="h-4 w-4" /></button></div>{userLoading ? <div className="p-12 text-center font-mono text-xs text-slate-500">{t('pages.targeting.historyLoading')}</div> : <div className="space-y-5 p-5 pt-0">{userDetail?.pastNames?.length > 0 && <div><h3 className="mb-2 text-[9px] font-black uppercase text-slate-500">{t('pages.targeting.renameHistory', { count: userDetail.pastNames.length })}</h3><div className="flex flex-wrap gap-2">{userDetail.pastNames.map((name) => <button key={name} type="button" onClick={() => openUser({ ...activeUser, name })} className="rounded-full bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-200 hover:text-indigo-300">{name}</button>)}</div></div>}<div className="overflow-x-auto"><table className="w-full min-w-[600px] text-left text-xs"><thead className="text-[9px] uppercase text-slate-500"><tr><th className="py-2">{t('pages.targeting.historyColumns.snapshotTime')}</th><th>{t('pages.targeting.historyColumns.fleet')}</th><th className="text-right">{t('pages.targeting.historyColumns.trophies')}</th><th className="text-right">{t('pages.targeting.historyColumns.totalStars')}</th></tr></thead><tbody>{userDetail?.historyList?.map((entry, index) => <tr key={`${entry.timestamp}-${index}`} className="border-t border-slate-800"><td className="py-2 font-mono text-slate-400">{entry.date}</td><td className="text-slate-300">{entry.fleetName}</td><td className="text-right font-mono">{entry.trophy?.toLocaleString()}</td><td className="text-right font-mono text-amber-300">{entry.totalStars?.toLocaleString()}</td></tr>)}</tbody></table></div></div>}</div></div>}
+      <PlayerDetailModal player={activeUser} onClose={() => setActiveUser(null)} />
     </div>
   );
 }
