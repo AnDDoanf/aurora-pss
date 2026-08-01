@@ -30,6 +30,7 @@ const staticRoutes = [
   '/compare/crew',
   '/tools/training',
   '/tools/targeting',
+  '/tools/fleet',
   '/tools/advisor',
   '/tools/tournaments',
   '/tools/market',

@@ -34,6 +34,7 @@ const MarketAnalytics = lazy(() => import('../../components/MarketAnalytics'));
 const ShipCapacityAnalytics = lazy(() => import('../../features/tools/ShipCapacityAnalytics').then(m => ({ default: m.ShipCapacityAnalytics })));
 const TrainingTool = lazy(() => import('../../features/training/TrainingTool').then(m => ({ default: m.TrainingTool })));
 const ShipBuilderPage = lazy(() => import('../../features/shipBuilder/ShipBuilderPage').then(m => ({ default: m.ShipBuilderPage })));
+const FleetIntelligencePage = lazy(() => import('../../features/fleet/FleetIntelligencePage').then(m => ({ default: m.FleetIntelligencePage })));
 
 function LoadingFallback() {
   return (
@@ -164,6 +165,10 @@ export const router = createBrowserRouter([
           {
             path: 'tools/targeting',
             element: <Suspense fallback={<LoadingFallback />}><StarTargeting /></Suspense>
+          },
+          {
+            path: 'tools/fleet',
+            element: <Suspense fallback={<LoadingFallback />}><FleetIntelligencePage /></Suspense>
           },
           {
             path: 'tools/advisor',

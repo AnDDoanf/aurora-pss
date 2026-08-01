@@ -27,7 +27,8 @@ export function MobileDrawer({ isOpen, onClose }) {
     { label: t('nav.shipBuilder'), path: `/${lang}/tools/ship-builder`, icon: Grid3X3 },
     { label: t('nav.capacity'), path: `/${lang}/tools/capacity`, icon: BarChart3 },
     { label: t('layout.training'), path: `/${lang}/tools/training`, icon: Dumbbell },
-    { label: t('layout.targeting'), path: `/${lang}/tools/targeting`, icon: Target }
+    { label: t('layout.targeting'), path: `/${lang}/tools/targeting`, icon: Target },
+    { label: t('layout.fleetIntelligence'), path: `/${lang}/tools/fleet`, icon: Users }
   ];
 
   const renderLink = (link, nested = false) => {

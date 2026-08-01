@@ -13,9 +13,9 @@ import {
 } from './shipBuilderUrl';
 import {
   deploymentLimitForDesign,
-  findFirstPlacement,
   flattenRoomCatalog,
   gridPositionFromPointer,
+  hasConflictingSuperWeapon,
   isPlayerShipRoomDesign,
   isRoomOutsideHull,
   TILE_SIZE,
@@ -178,6 +178,7 @@ export function ShipBuilderPage() {
   const [sourceInput, setSourceInput] = useState(EMPTY_LAYOUT_URL);
   const [selectedUid, setSelectedUid] = useState(null);
   const [selectedUids, setSelectedUids] = useState([]);
+  const [selectedPaletteDesignId, setSelectedPaletteDesignId] = useState(null);
   const [selectionRect, setSelectionRect] = useState(null);
   const [roomSearch, setRoomSearch] = useState('');
   const [zoom, setZoom] = useState(0.75);
@@ -236,6 +237,19 @@ export function ShipBuilderPage() {
   }, []);
 
   useEffect(() => {
+    const clearRoomSelection = (event) => {
+      if (activeLineDesignId != null) return;
+      if (event.target instanceof Element
+        && event.target.closest('[data-ship-room="true"], [data-canvas-control="true"]')) return;
+      setSelectedUid(null);
+      setSelectedUids([]);
+      setSelectedPaletteDesignId(null);
+    };
+    document.addEventListener('pointerdown', clearRoomSelection, true);
+    return () => document.removeEventListener('pointerdown', clearRoomSelection, true);
+  }, [activeLineDesignId]);
+
+  useEffect(() => {
     setCanvasOffset({ x: 0, y: 0 });
   }, [shipId]);
 
@@ -284,11 +298,31 @@ export function ShipBuilderPage() {
   );
   const selectedRoom = rooms.find((room) => room.uid === selectedUid) || null;
   const selectedDesign = selectedRoom ? roomById.get(Number(selectedRoom.roomDesignId)) : null;
+  const selectedPaletteDesign = roomById.get(Number(selectedPaletteDesignId)) || null;
+  const availabilityForDesign = (targetDesign) => {
+    if (!targetDesign) return null;
+    const rootId = Number(targetDesign.rootId || targetDesign.id);
+    const deployed = rooms.filter((room) => {
+      const design = roomById.get(Number(room.roomDesignId));
+      return Number(design?.rootId || design?.id) === rootId;
+    }).length;
+    const limit = hasConflictingSuperWeapon(rooms, targetDesign, roomById)
+      ? 0
+      : deploymentLimitForDesign(ship, targetDesign, roomPurchases);
+    return {
+      deployed,
+      limit,
+      remaining: Number.isFinite(limit) ? Math.max(0, limit - deployed) : '\u221e'
+    };
+  };
+  const selectedAvailability = availabilityForDesign(selectedDesign);
+  const selectedPaletteAvailability = availabilityForDesign(selectedPaletteDesign);
   const translateIssue = (issue) => {
     if (issue === 'Unknown room design') return t('shipBuilder.issues.unknownDesign');
     if (issue === 'Outside hull bounds') return t('shipBuilder.issues.outsideBounds');
     if (issue === 'Outside usable hull grid') return t('shipBuilder.issues.outsideGrid');
     if (issue === 'Overlaps another room') return t('shipBuilder.issues.overlap');
+    if (issue === 'Cannot mix super weapon room types') return t('shipBuilder.issues.superWeaponConflict');
     const tier = issue.match(/^Room cannot be placed on Tier (\d+) grid$/);
     if (tier) return t('shipBuilder.issues.wrongTier', { tier: tier[1] });
     const limit = issue.match(/^Exceeds deployment limit \((\d+)\)$/);
@@ -334,6 +368,7 @@ export function ShipBuilderPage() {
       setActiveLineDesignId(null);
       setSelectedUid(null);
       setSelectedUids([]);
+      setSelectedPaletteDesignId(null);
       setError('');
       setSearchParams(buildBuilderSearch(parsed.shipId, parsed.rooms), { replace: true });
     } catch (importError) {
@@ -351,6 +386,7 @@ export function ShipBuilderPage() {
     if (selectedUids.includes(uid)) return;
     setSelectedUids([]);
     setSelectedUid(uid);
+    setSelectedPaletteDesignId(null);
   };
 
   const startRoomMove = (uid) => {
@@ -428,6 +464,7 @@ export function ShipBuilderPage() {
   };
 
   const addRoomAt = (design, placement) => {
+    if (hasConflictingSuperWeapon(rooms, design, roomById)) return false;
     const rootId = Number(design.rootId || design.id);
     const deployed = rooms.filter((room) => {
       const deployedDesign = roomById.get(Number(room.roomDesignId));
@@ -445,6 +482,7 @@ export function ShipBuilderPage() {
     setRooms((current) => [...current, next]);
     setSelectedUid(next.uid);
     setSelectedUids([]);
+    setSelectedPaletteDesignId(null);
     setRoomSearch('');
     return true;
   };
@@ -472,10 +510,6 @@ export function ShipBuilderPage() {
       return nextRooms;
     });
     setRoomSearch('');
-  };
-
-  const addRoom = (design) => {
-    addRoomAt(design, findFirstPlacement(ship, rooms, design, roomById, roomPurchases));
   };
 
   const startPaletteDrag = (event, design) => {
@@ -540,12 +574,14 @@ export function ShipBuilderPage() {
     setDropActive(false);
   };
 
-  const clickPaletteRoom = (design) => {
+  const selectPaletteRoom = (design) => {
     if (suppressPaletteClick.current === Number(design.id)) {
       suppressPaletteClick.current = null;
       return;
     }
-    addRoom(design);
+    setSelectedPaletteDesignId(Number(design.id));
+    setSelectedUid(null);
+    setSelectedUids([]);
   };
 
   const toggleLinePaint = (design) => {
@@ -744,7 +780,7 @@ export function ShipBuilderPage() {
             return Number(deployedDesign?.rootId || deployedDesign?.id) === rootId;
           }).length;
           const limit = deploymentLimitForDesign(ship, entry, roomPurchases);
-          const capped = deployed >= limit;
+          const capped = hasConflictingSuperWeapon(rooms, entry, roomById) || deployed >= limit;
           const capLabel = Number.isFinite(limit)
             ? t('shipBuilder.deploymentCap', { deployed, limit })
             : '';
@@ -753,7 +789,7 @@ export function ShipBuilderPage() {
           type="button"
           key={entry.id}
           draggable={!capped}
-          disabled={capped}
+          aria-disabled={capped}
           title={t('shipBuilder.designTooltip', {
             name: entry.name, id: entry.id, columns: entry.columns, rows: entry.rows, cap: capLabel
           })}
@@ -763,9 +799,11 @@ export function ShipBuilderPage() {
           onPointerMove={movePalettePointerDrag}
           onPointerUp={finishPalettePointerDrag}
           onPointerCancel={cancelPalettePointerDrag}
-          onClick={() => clickPaletteRoom(entry)}
-          className={`group flex h-16 min-w-16 shrink-0 touch-pan-x cursor-grab items-center justify-center bg-transparent p-1 transition hover:brightness-125 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:brightness-100 ${
-            Number(activeLineDesignId) === Number(entry.id) ? 'ring-2 ring-inset ring-cyan-400' : ''
+          onClick={() => selectPaletteRoom(entry)}
+          className={`group flex h-16 min-w-16 shrink-0 touch-pan-x items-center justify-center bg-transparent p-1 transition hover:brightness-125 ${capped ? 'cursor-default opacity-30' : 'cursor-grab active:cursor-grabbing'} ${
+            Number(activeLineDesignId) === Number(entry.id)
+              ? 'ring-2 ring-inset ring-cyan-400'
+              : Number(selectedPaletteDesignId) === Number(entry.id) ? 'ring-2 ring-inset ring-indigo-400' : ''
           }`}
         >
           <img src={publicUrl(`/assets/sprites/${entry.imageSpriteId}.webp`)} alt={entry.name} className="max-h-16 max-w-full object-contain [image-rendering:pixelated]" />
@@ -941,26 +979,6 @@ export function ShipBuilderPage() {
               canvasPanning ? 'cursor-grabbing select-none' : 'cursor-grab'
             }`}
           >
-            {activeLineDesign && (
-              <div data-canvas-control="true" className="absolute left-3 top-3 z-50 flex items-center gap-2 rounded-xl bg-[var(--bg-card-header)] p-2 pl-3 shadow-xl">
-                <img src={publicUrl(`/assets/sprites/${activeLineDesign.imageSpriteId}.webp`)} alt="" className="h-7 w-7 object-contain [image-rendering:pixelated]" />
-                <span className="max-w-40 truncate text-xs font-bold text-[var(--text-main)]">
-                  {t('shipBuilder.paintMode', { name: activeLineDesign.name })}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveLineDesignId(null);
-                    setLinePaintPreview([]);
-                    canvasLinePaint.current = null;
-                  }}
-                  title={t('shipBuilder.exitPaintMode')}
-                  className="rounded-lg bg-[var(--bg-input)] p-2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
             {selectedUids.length > 1 && (
               <div data-canvas-control="true" className="absolute right-3 top-3 z-50 flex items-center gap-3 rounded-xl bg-[var(--bg-card-header)] p-2 pl-3 shadow-xl">
                 <span className="text-xs font-bold text-[var(--text-main)]">
@@ -968,6 +986,52 @@ export function ShipBuilderPage() {
                 </span>
                 <button type="button" onClick={removeSelected} title={t('shipBuilder.removeSelectedRooms')} className="rounded-lg bg-rose-950 p-2 text-rose-300 hover:bg-rose-900">
                   <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            {selectedPaletteDesign && (
+              <div data-canvas-control="true" className="absolute right-3 top-3 z-50 flex min-w-0 flex-wrap items-center gap-2 rounded-xl bg-[var(--bg-card-header)] p-2 shadow-xl">
+                <img src={publicUrl(`/assets/sprites/${selectedPaletteDesign.imageSpriteId}.webp`)} alt="" className="h-9 w-9 object-contain [image-rendering:pixelated]" />
+                <div className="max-w-40">
+                  <div className="truncate text-[11px] font-bold text-[var(--text-main)]">{selectedPaletteDesign.name}</div>
+                  <div className="font-mono text-[9px] text-[var(--text-muted)]">#{selectedPaletteDesign.id}</div>
+                </div>
+                {selectedPaletteAvailability && (
+                  <div
+                    className="w-14 rounded-md bg-[var(--bg-input)] px-2 py-1"
+                    title={t('shipBuilder.remainingRoomsDetail', {
+                      deployed: selectedPaletteAvailability.deployed,
+                      limit: Number.isFinite(selectedPaletteAvailability.limit) ? selectedPaletteAvailability.limit : '\u221e'
+                    })}
+                  >
+                    <span className="block text-[8px] font-bold uppercase text-[var(--text-muted)]">{t('shipBuilder.remainingRooms')}</span>
+                    <span className="font-mono text-xs font-bold text-indigo-500">{selectedPaletteAvailability.remaining}</span>
+                  </div>
+                )}
+                {isLineBuildDesign(selectedPaletteDesign) && (
+                  <button
+                    type="button"
+                    onClick={() => toggleLinePaint(selectedPaletteDesign)}
+                    disabled={selectedPaletteAvailability?.remaining === 0}
+                    title={Number(activeLineDesignId) === Number(selectedPaletteDesign.id)
+                      ? t('shipBuilder.exitPaintMode')
+                      : t('shipBuilder.enablePaintMode')}
+                    className={`rounded-lg p-2 transition disabled:cursor-not-allowed disabled:opacity-30 ${
+                      Number(activeLineDesignId) === Number(selectedPaletteDesign.id)
+                        ? 'bg-cyan-500 text-slate-950'
+                        : 'bg-[var(--bg-input)] text-cyan-500 hover:brightness-110'
+                    }`}
+                  >
+                    <Paintbrush className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setSelectedPaletteDesignId(null)}
+                  title={t('shipBuilder.clearSelection')}
+                  className="rounded-lg bg-[var(--bg-input)] p-2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
+                >
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
@@ -993,6 +1057,18 @@ export function ShipBuilderPage() {
                     />
                   </label>
                 ))}
+                {selectedAvailability && (
+                  <div
+                    className="w-14 rounded-md bg-[var(--bg-input)] px-2 py-1"
+                    title={t('shipBuilder.remainingRoomsDetail', {
+                      deployed: selectedAvailability.deployed,
+                      limit: Number.isFinite(selectedAvailability.limit) ? selectedAvailability.limit : '∞'
+                    })}
+                  >
+                    <span className="block text-[8px] font-bold uppercase text-[var(--text-muted)]">{t('shipBuilder.remainingRooms')}</span>
+                    <span className="font-mono text-xs font-bold text-indigo-500">{selectedAvailability.remaining}</span>
+                  </div>
+                )}
                 {isLineBuildDesign(selectedDesign) && (
                   <button
                     type="button"

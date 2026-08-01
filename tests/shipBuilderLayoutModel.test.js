@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   deploymentLimitForDesign,
   gridPositionFromPointer,
+  hasConflictingSuperWeapon,
+  isSuperWeaponDesign,
   isPlayerShipRoomDesign,
   isRoomOutsideHull,
   roomSupportsGridType,
@@ -93,6 +95,48 @@ describe('ship builder layout validation', () => {
       { ...design, raw: { ...design.raw, MaxCount: 1 } },
       purchases
     )).toBe(1);
+  });
+
+  it('unlocks faction super weapons for non-Pirate, non-Federation, and non-Qtarian ships', () => {
+    const federationSuperlaser = { id: 517, rootId: 517, raw: { SupportedGridTypes: 1 } };
+    const pirateRocket = { id: 518, rootId: 518, raw: { SupportedGridTypes: 1 } };
+    const purchases = [
+      { RoomDesignId: 517, Level: 1, Quantity: 1, AvailabilityMask: 1, RequirementString: 'originalRaceId == 2' },
+      { RoomDesignId: 518, Level: 1, Quantity: 1, AvailabilityMask: 1, RequirementString: 'originalRaceId == 1' }
+    ];
+
+    expect(deploymentLimitForDesign({ shipLevel: 20, raceId: 4 }, federationSuperlaser, purchases)).toBe(1);
+    expect(deploymentLimitForDesign({ shipLevel: 20, raceId: 4 }, pirateRocket, purchases)).toBe(1);
+    expect(deploymentLimitForDesign({ shipLevel: 20, raceId: 1 }, federationSuperlaser, purchases)).toBe(0);
+    expect(deploymentLimitForDesign({ shipLevel: 20, raceId: 1 }, pirateRocket, purchases)).toBe(1);
+  });
+
+  it('allows upgrades of one super-weapon type but rejects a different type', () => {
+    const superlaser1 = { id: 1001, rootId: 517, columns: 1, rows: 1, raw: { SupportedGridTypes: 1 } };
+    const superlaser2 = { id: 1002, rootId: 517, columns: 1, rows: 1, raw: { SupportedGridTypes: 1 } };
+    const pirateRocket = { id: 1003, rootId: 518, columns: 1, rows: 1, raw: { SupportedGridTypes: 1 } };
+    const designs = new Map([[1001, superlaser1], [1002, superlaser2], [1003, pirateRocket]]);
+    const purchases = [
+      { RoomDesignId: 517, Level: 1, Quantity: 2, AvailabilityMask: 1, RequirementString: 'originalRaceId == 2' },
+      { RoomDesignId: 518, Level: 1, Quantity: 2, AvailabilityMask: 1, RequirementString: 'originalRaceId == 1' }
+    ];
+    const existing = [{ uid: 'a', roomDesignId: 1001, column: 0, row: 0 }];
+
+    expect(hasConflictingSuperWeapon(existing, superlaser2, designs)).toBe(false);
+    expect(hasConflictingSuperWeapon(existing, pirateRocket, designs)).toBe(true);
+
+    const issues = validateLayout(
+      { columns: 4, rows: 1, mask: '1111', shipLevel: 20, raceId: 4 },
+      [...existing, { uid: 'b', roomDesignId: 1003, column: 2, row: 0 }],
+      designs,
+      purchases
+    );
+    expect(issues.get('b')).toContain('Cannot mix super weapon room types');
+    expect(issues.has('a')).toBe(false);
+  });
+
+  it('includes the Gamma Beam Emitter in super-weapon exclusivity', () => {
+    expect(isSuperWeaponDesign({ id: 853, rootId: 853 })).toBe(true);
   });
 
   it('marks only rooms beyond the deployment cap as invalid', () => {

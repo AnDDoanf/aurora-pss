@@ -26,6 +26,22 @@ export function roomSupportsGridType(design, gridType) {
 }
 
 const purchaseRootId = (purchase) => Number(purchase?.RoomDesignId || purchase?.roomDesignId || 0);
+const STANDARD_FACTION_RACE_IDS = new Set([1, 2, 3]);
+export const SUPER_WEAPON_ROOT_IDS = new Set([517, 518, 519, 709, 710, 711, 712, 713, 714, 853]);
+
+export function isSuperWeaponDesign(design) {
+  return SUPER_WEAPON_ROOT_IDS.has(Number(design?.rootId || design?.id));
+}
+
+export function hasConflictingSuperWeapon(rooms, design, roomById) {
+  if (!isSuperWeaponDesign(design)) return false;
+  const targetRootId = Number(design.rootId || design.id);
+  return rooms.some((room) => {
+    const deployedDesign = roomById.get(Number(room.roomDesignId));
+    return isSuperWeaponDesign(deployedDesign)
+      && Number(deployedDesign.rootId || deployedDesign.id) !== targetRootId;
+  });
+}
 
 export function isPlayerShipRoomDesign(design, roomPurchases = []) {
   if (!design || (Number(design.raw?.SupportedGridTypes ?? 1) & 1) === 0) return false;
@@ -42,6 +58,7 @@ export function deploymentLimitForDesign(ship, design, roomPurchases = []) {
   if (!isPlayerShipRoomDesign(design, roomPurchases)) return 0;
   const rootId = Number(design.rootId || design.id);
   const shipLevel = Number(ship?.shipLevel || ship?.raw?.ShipLevel || 0);
+  const shipRaceId = Number(ship?.raceId || ship?.raw?.RaceId || 0);
   const playerRules = roomPurchases.filter((purchase) => (
     purchaseRootId(purchase) === rootId
     && (Number(purchase.AvailabilityMask ?? 1) & 1) !== 0
@@ -53,7 +70,11 @@ export function deploymentLimitForDesign(ship, design, roomPurchases = []) {
       if (Number(purchase.Level || 0) > shipLevel) return total;
       const requirement = String(purchase.RequirementString || '');
       const raceMatch = requirement.match(/originalRaceId\s*==\s*(\d+)/);
-      if (raceMatch && Number(raceMatch[1]) !== Number(ship?.raceId || ship?.raw?.RaceId || 0)) return total;
+      if (raceMatch && Number(raceMatch[1]) !== shipRaceId) {
+        const unlockedForOtherFaction = isSuperWeaponDesign(design)
+          && !STANDARD_FACTION_RACE_IDS.has(shipRaceId);
+        if (!unlockedForOtherFaction) return total;
+      }
       return total + Number(purchase.Quantity || 0);
     }, 0);
   }
@@ -119,10 +140,15 @@ export function validateLayout(ship, rooms, roomById, roomPurchases = []) {
   });
 
   const deployedByRoot = new Map();
+  let deployedSuperWeaponRoot = null;
   rooms.forEach((room) => {
     const design = roomById.get(Number(room.roomDesignId));
     if (!design) return;
     const rootId = Number(design.rootId || design.id);
+    if (isSuperWeaponDesign(design)) {
+      if (deployedSuperWeaponRoot === null) deployedSuperWeaponRoot = rootId;
+      else if (deployedSuperWeaponRoot !== rootId) addIssue(room.uid, 'Cannot mix super weapon room types');
+    }
     const deployed = (deployedByRoot.get(rootId) || 0) + 1;
     deployedByRoot.set(rootId, deployed);
     const limit = deploymentLimitForDesign(ship, design, roomPurchases);

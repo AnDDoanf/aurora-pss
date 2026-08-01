@@ -52,6 +52,12 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
       path: `/${lang}/tools/targeting`,
       icon: Target,
       desc: t('layout.targetingDesc')
+    },
+    {
+      label: t('layout.fleetIntelligence'),
+      path: `/${lang}/tools/fleet`,
+      icon: Users,
+      desc: t('layout.fleetIntelligenceDesc')
     }
   ];
 

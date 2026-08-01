@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { buildFleetSnapshotQuery } from '../features/fleet/fleetSnapshotSelection';
 
 const FALLBACK_DIRECT_URL = 'https://fleetdata.dolores2.xyz';
 const SESSION_CACHE_PREFIX = 'pss:fleetdata:v1:';
@@ -218,6 +219,121 @@ export const getTournamentCollections = async () => {
     return writeSessionCache('tournament-collections', collections);
   } catch (error) {
     console.error('Failed to fetch tournament collections:', error);
+    return [];
+  }
+};
+
+export const getLatestFleetSnapshots = async (take = 2) => {
+  const safeTake = Math.min(100, Math.max(1, Number(take) || 2));
+  const cacheKey = `latest-hourly-collections:${safeTake}`;
+  const cached = readSessionCache(cacheKey, COLLECTION_CACHE_MAX_AGE_MS);
+  if (cached) return cached;
+  try {
+    const response = await requestFleetData('/collections', {
+      params: { interval: 'hour', desc: true, take: safeTake }
+    });
+    const snapshots = (Array.isArray(response.data) ? response.data : [])
+      .filter((snapshot) => snapshot?.collection_id && snapshot?.timestamp)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    return writeSessionCache(cacheKey, snapshots);
+  } catch (error) {
+    console.error('Failed to fetch latest hourly FleetData snapshots:', error);
+    return [];
+  }
+};
+
+export const getFleetSnapshotAt = async (dateValue, hourValue) => {
+  const params = buildFleetSnapshotQuery(dateValue, hourValue);
+  if (!params) return null;
+  try {
+    const response = await requestFleetData('/collections', { params });
+    const snapshots = Array.isArray(response.data) ? response.data : [];
+    const snapshot = snapshots
+      .filter((snapshot) => snapshot?.collection_id && snapshot?.timestamp)
+      .sort((a, b) => params.desc
+        ? new Date(b.timestamp) - new Date(a.timestamp)
+        : new Date(a.timestamp) - new Date(b.timestamp))[0] || null;
+    if (snapshot) return snapshot;
+
+    // Immediately after UTC reset, today's first hourly collection may not
+    // exist yet. "Today" without an hour still means the latest known snapshot.
+    if (!hourValue && params.desc) {
+      return (await getLatestFleetSnapshots(1))[0] || null;
+    }
+    return null;
+  } catch (error) {
+    console.error(`Failed to resolve FleetData snapshot for ${dateValue || 'today'} ${hourValue || ''}:`, error);
+    return null;
+  }
+};
+
+export const getCollectionAlliances = async (collectionId) => {
+  const cacheKey = `collection:${collectionId}:alliances:all`;
+  const cached = readSessionCache(cacheKey);
+  if (cached) return cached;
+  try {
+    const response = await requestFleetData(`/collections/${collectionId}/alliances`);
+    const fleets = Array.isArray(response.data?.fleets) ? response.data.fleets : [];
+    const alliances = fleets.map((fleet) => {
+      if (Array.isArray(fleet)) {
+        return {
+          id: Number(fleet[0]),
+          name: fleet[1],
+          stars: Number(fleet[2]) || 0,
+          divisionId: Number(fleet[3]) || 0,
+          trophy: Number(fleet[4]) || 0,
+          memberCount: Number(fleet[6]) || 0
+        };
+      }
+      return {
+        id: Number(fleet.id),
+        name: fleet.name,
+        stars: Number(fleet.score) || 0,
+        divisionId: Number(fleet.division_design_id) || 0,
+        trophy: Number(fleet.trophy) || 0,
+        memberCount: Number(fleet.member_count) || 0
+      };
+    }).filter((fleet) => fleet.id && fleet.name);
+    return writeSessionCache(cacheKey, alliances);
+  } catch (error) {
+    console.error(`Failed to fetch fleets for collection ${collectionId}:`, error);
+    return [];
+  }
+};
+
+export const getFleetHistory = async (fleetId, interval = 'month', take = 100) => {
+  const safeInterval = ['day', 'month'].includes(interval) ? interval : 'month';
+  const safeTake = Math.min(100, Math.max(1, Number(take) || 100));
+  const cacheKey = `fleet-history:${fleetId}:${safeInterval}:${safeTake}`;
+  const cached = readSessionCache(cacheKey, COLLECTION_CACHE_MAX_AGE_MS);
+  if (cached) return cached;
+  try {
+    const response = await requestFleetData(`/allianceHistory/${fleetId}`, {
+      params: {
+        interval: safeInterval,
+        desc: safeInterval === 'day',
+        take: safeTake,
+        onMissing: 'skip'
+      }
+    });
+    const points = (Array.isArray(response.data) ? response.data : []).map((snapshot) => {
+      const fleet = snapshot?.fleet;
+      const users = Array.isArray(snapshot?.users) ? snapshot.users : [];
+      return {
+        collectionId: snapshot?.collection?.collection_id,
+        timestamp: snapshot?.collection?.timestamp,
+        fleetName: Array.isArray(fleet) ? fleet[1] : fleet?.name,
+        stars: Number(Array.isArray(fleet) ? fleet[2] : fleet?.score) || 0,
+        divisionId: Number(Array.isArray(fleet) ? fleet[3] : fleet?.division_design_id) || 0,
+        trophy: Number(Array.isArray(fleet) ? fleet[4] : fleet?.trophy) || 0,
+        memberCount: Number(Array.isArray(fleet) ? fleet[6] : fleet?.member_count) || users.length,
+        totalMemberStars: users.reduce((total, user) => total + memberAllianceScore(user), 0)
+      };
+    }).filter((point) => point.timestamp)
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    return writeSessionCache(cacheKey, points);
+  } catch (error) {
+    console.error(`Failed to fetch history for fleet ${fleetId}:`, error);
     return [];
   }
 };

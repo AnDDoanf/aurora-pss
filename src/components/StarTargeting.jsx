@@ -1,21 +1,25 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  getRunningCollectionId,
   getAllianceDataFromCollection,
   getLatestAllianceData,
   getUserHistory,
   getAllianceTournamentProgression,
   getAllianceTournamentAnalytics,
+  getCollectionAlliances,
+  getFleetSnapshotAt,
+  getLatestFleetSnapshots,
   getTournamentCollectionAlliances,
   getTournamentCollections
 } from '../services/fleetDataApi';
 import { getAllianceRankingsWithDivisions, getTournamentStatus } from '../services/pssPublicApi';
 import { getTargetStatuses, setTargetStatus, exportToCSV } from '../services/storageService';
-import { Search, Download, RefreshCw, CheckCircle, XCircle, HelpCircle, Copy, History, X, Trophy, LineChart, List, Tag, Shield, ChevronUp, ChevronDown, ChevronsUpDown, BarChart3, Users } from 'lucide-react';
+import { Search, Download, RefreshCw, CheckCircle, XCircle, HelpCircle, Copy, History, X, Trophy, LineChart, List, Tag, Shield, ChevronUp, ChevronDown, ChevronsUpDown, BarChart3, Users, ArrowRightLeft } from 'lucide-react';
 import { useTranslation } from '../i18n/useTranslation';
+import { compareFleetMembers } from '../features/fleet/fleetSnapshotComparison';
 
 const HOURLY_REFRESH_INTERVAL_MS = 60 * 60 * 1000;
+const UTC_HOURS = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, '0'));
 const FLEET_CHART_COLORS = [
   '#ef4444', '#22c55e', '#3b82f6', '#f59e0b', '#a855f7', '#06b6d4',
   '#f97316', '#ec4899', '#84cc16', '#14b8a6', '#6366f1', '#eab308'
@@ -303,6 +307,21 @@ const StarTargeting = () => {
   const [fleetTournamentData, setFleetTournamentData] = useState([]);
   const [fleetStatsLoading, setFleetStatsLoading] = useState(false);
   const [expandedFleetId, setExpandedFleetId] = useState(null);
+  const [firstSnapshotDate, setFirstSnapshotDate] = useState('');
+  const [firstSnapshotHour, setFirstSnapshotHour] = useState('');
+  const [secondSnapshotDate, setSecondSnapshotDate] = useState('');
+  const [secondSnapshotHour, setSecondSnapshotHour] = useState('');
+  const [firstSnapshotId, setFirstSnapshotId] = useState('');
+  const [secondSnapshotId, setSecondSnapshotId] = useState('');
+  const [firstResolvedSnapshot, setFirstResolvedSnapshot] = useState(null);
+  const [secondResolvedSnapshot, setSecondResolvedSnapshot] = useState(null);
+  const [snapshotResolutionLoading, setSnapshotResolutionLoading] = useState(false);
+  const [snapshotResolutionError, setSnapshotResolutionError] = useState(false);
+  const [comparisonFleets, setComparisonFleets] = useState([]);
+  const [comparisonFleetName, setComparisonFleetName] = useState('');
+  const [comparisonFleetId, setComparisonFleetId] = useState('');
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+  const [comparisonResult, setComparisonResult] = useState(null);
   const loadRequestRef = useRef(0);
   const fleetStatsRequestRef = useRef(0);
   const [sortConfig, setSortConfig] = useState({
@@ -323,12 +342,26 @@ const StarTargeting = () => {
     try {
       const currentTournamentStatus = getTournamentStatus();
       setTournamentStatus(currentTournamentStatus);
-      const divisionRankings = await getAllianceRankingsWithDivisions(0, 100);
-      const divAlliances = (divisionRankings[division] || []).map((alliance) => ({
-        ...alliance,
-        alliance_id: alliance.id,
-        alliance_name: alliance.fleet
-      }));
+      let completedTournament = null;
+      let divAlliances = [];
+
+      if (currentTournamentStatus.isLive) {
+        const divisionRankings = await getAllianceRankingsWithDivisions(0, 100);
+        divAlliances = (divisionRankings[division] || []).map((alliance) => ({
+          ...alliance,
+          alliance_id: alliance.id,
+          alliance_name: alliance.fleet
+        }));
+      } else {
+        const completedTournaments = await getTournamentCollections();
+        completedTournament = completedTournaments[0] || null;
+        if (completedTournament) {
+          divAlliances = await getTournamentCollectionAlliances(
+            completedTournament.collection_id,
+            division
+          );
+        }
+      }
       if (requestId !== loadRequestRef.current) return;
       setAlliances(divAlliances);
 
@@ -349,8 +382,8 @@ const StarTargeting = () => {
         sourceTimestamp = sourceTimes.length > 0
           ? new Date(Math.max(...sourceTimes))
           : null;
-      } else if (divAlliances.length > 0) {
-        const collectionId = await getRunningCollectionId();
+      } else if (completedTournament && divAlliances.length > 0) {
+        const collectionId = completedTournament.collection_id;
         if (collectionId) {
           const playerGroups = await Promise.all(
             divAlliances.map((alliance) =>
@@ -362,6 +395,7 @@ const StarTargeting = () => {
             )
           );
           allPlayers = playerGroups.flat();
+          sourceTimestamp = new Date(completedTournament.timestamp);
         }
       }
 
@@ -405,6 +439,79 @@ const StarTargeting = () => {
   }, []);
 
   useEffect(() => {
+    if (tournamentStatus.isLive || tournamentCollections.length === 0) return;
+    setSelectedTournament((current) => current === 'current'
+      ? String(tournamentCollections[0].collection_id)
+      : current);
+  }, [tournamentCollections, tournamentStatus.isLive]);
+
+  useEffect(() => {
+    if (activeTab !== 'comparison') return undefined;
+    let cancelled = false;
+    const resolveSnapshots = async () => {
+      setSnapshotResolutionLoading(true);
+      setSnapshotResolutionError(false);
+      setComparisonResult(null);
+
+      const latest = await getLatestFleetSnapshots(2);
+      const hasFirstInput = Boolean(firstSnapshotDate || firstSnapshotHour);
+      const hasSecondInput = Boolean(secondSnapshotDate || secondSnapshotHour);
+      const [first, second] = await Promise.all([
+        hasFirstInput
+          ? getFleetSnapshotAt(firstSnapshotDate, firstSnapshotHour)
+          : Promise.resolve(latest[1] || latest[0] || null),
+        hasSecondInput
+          ? getFleetSnapshotAt(secondSnapshotDate, secondSnapshotHour)
+          : Promise.resolve(latest[0] || null)
+      ]);
+
+      if (cancelled) return;
+      setFirstResolvedSnapshot(first);
+      setSecondResolvedSnapshot(second);
+      setFirstSnapshotId(first ? String(first.collection_id) : '');
+      setSecondSnapshotId(second ? String(second.collection_id) : '');
+      setSnapshotResolutionLoading(false);
+      if (!first || !second) setSnapshotResolutionError(true);
+    };
+    resolveSnapshots();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    activeTab,
+    firstSnapshotDate,
+    firstSnapshotHour,
+    secondSnapshotDate,
+    secondSnapshotHour
+  ]);
+
+  useEffect(() => {
+    if (activeTab !== 'comparison' || !firstSnapshotId || !secondSnapshotId) return undefined;
+    let cancelled = false;
+    setComparisonResult(null);
+    Promise.all([
+      getCollectionAlliances(firstSnapshotId),
+      getCollectionAlliances(secondSnapshotId)
+    ]).then(([firstFleets, secondFleets]) => {
+      if (cancelled) return;
+      const fleetById = new Map();
+      [...firstFleets, ...secondFleets].forEach((fleet) => fleetById.set(String(fleet.id), fleet));
+      const fleets = [...fleetById.values()].sort((a, b) =>
+        a.name.localeCompare(b.name, lang, { sensitivity: 'base' })
+      );
+      setComparisonFleets(fleets);
+      const selectedStillExists = fleets.some((fleet) => String(fleet.id) === String(comparisonFleetId));
+      if (!selectedStillExists) {
+        setComparisonFleetId('');
+        setComparisonFleetName('');
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, comparisonFleetId, firstSnapshotId, lang, secondSnapshotId]);
+
+  useEffect(() => {
     if (activeTab !== 'fleet') return undefined;
     const requestId = ++fleetStatsRequestRef.current;
 
@@ -414,6 +521,10 @@ const StarTargeting = () => {
       setExpandedFleetId(null);
 
       const isCurrent = selectedTournament === 'current';
+      if (isCurrent && !tournamentStatus.isLive) {
+        setFleetStatsLoading(false);
+        return;
+      }
       const selectedCollection = isCurrent
         ? null
         : tournamentCollections.find(
@@ -593,6 +704,31 @@ const StarTargeting = () => {
     }));
   };
 
+  const selectComparisonFleet = (value) => {
+    setComparisonFleetName(value);
+    const exactMatch = comparisonFleets.find((fleet) =>
+      fleet.name.localeCompare(value, lang, { sensitivity: 'base' }) === 0
+    );
+    setComparisonFleetId(exactMatch ? String(exactMatch.id) : '');
+    setComparisonResult(null);
+  };
+
+  const runFleetComparison = async () => {
+    if (!comparisonFleetId || !firstSnapshotId || !secondSnapshotId) return;
+    setComparisonLoading(true);
+    setComparisonResult(null);
+    const fleet = comparisonFleets.find((candidate) => String(candidate.id) === String(comparisonFleetId));
+    try {
+      const [firstMembers, secondMembers] = await Promise.all([
+        getAllianceDataFromCollection(firstSnapshotId, comparisonFleetId, fleet?.name || comparisonFleetName),
+        getAllianceDataFromCollection(secondSnapshotId, comparisonFleetId, fleet?.name || comparisonFleetName)
+      ]);
+      setComparisonResult(compareFleetMembers(firstMembers, secondMembers));
+    } finally {
+      setComparisonLoading(false);
+    }
+  };
+
   const fleetOptions = useMemo(() => {
     const unique = Array.from(new Set(data.map(d => d.fleet)));
     return ['ALL', ...unique];
@@ -692,6 +828,142 @@ const StarTargeting = () => {
           {t('pages.targeting.individualTab')}
         </button>
       </div>
+
+      {activeTab === 'comparison' && (
+        <div className="space-y-5 rounded-lg bg-slate-900 p-4 shadow-sm sm:p-6">
+          <div>
+            <h2 className="text-sm font-black text-slate-100">{t('pages.targeting.snapshotComparisonTitle')}</h2>
+            <p className="mt-1 max-w-2xl text-[10px] text-slate-500">{t('pages.targeting.snapshotComparisonDescription')}</p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              {
+                key: 'first',
+                label: t('pages.targeting.firstSnapshot'),
+                date: firstSnapshotDate,
+                hour: firstSnapshotHour,
+                resolved: firstResolvedSnapshot,
+                setDate: setFirstSnapshotDate,
+                setHour: setFirstSnapshotHour
+              },
+              {
+                key: 'second',
+                label: t('pages.targeting.secondSnapshot'),
+                date: secondSnapshotDate,
+                hour: secondSnapshotHour,
+                resolved: secondResolvedSnapshot,
+                setDate: setSecondSnapshotDate,
+                setHour: setSecondSnapshotHour
+              }
+            ].map((picker) => (
+              <fieldset key={picker.key} className="space-y-1">
+                <legend className="text-xs font-bold text-slate-300">{picker.label}</legend>
+                <div className="grid grid-cols-[minmax(0,1fr)_112px] gap-2">
+                  <input
+                    type="date"
+                    value={picker.date}
+                    onChange={(event) => picker.setDate(event.target.value)}
+                    aria-label={`${picker.label} ${t('pages.targeting.snapshotDate')}`}
+                    className="min-w-0 rounded-lg bg-slate-950 px-3 py-2.5 text-xs text-slate-100 outline-none [color-scheme:dark] focus:ring-1 focus:ring-indigo-500"
+                  />
+                  <select
+                    value={picker.hour}
+                    onChange={(event) => picker.setHour(event.target.value)}
+                    aria-label={`${picker.label} ${t('pages.targeting.snapshotHour')}`}
+                    className="rounded-lg bg-slate-950 px-2 py-2.5 text-xs text-slate-100 outline-none focus:ring-1 focus:ring-indigo-500"
+                  >
+                    <option value="">{t('pages.targeting.automaticHour')}</option>
+                    {UTC_HOURS.map((hour) => <option key={hour} value={hour}>{hour}:00 UTC</option>)}
+                  </select>
+                </div>
+                <p className="min-h-4 truncate font-mono text-[9px] text-indigo-300">
+                  {picker.resolved
+                    ? t('pages.targeting.resolvedSnapshot', {
+                      time: new Date(picker.resolved.timestamp).toLocaleString(lang, {
+                        timeZone: 'UTC',
+                        dateStyle: 'medium',
+                        timeStyle: 'short'
+                      })
+                    })
+                    : snapshotResolutionLoading ? t('pages.targeting.resolvingSnapshot') : '—'}
+                </p>
+              </fieldset>
+            ))}
+            <label className="space-y-1">
+              <span className="block text-xs font-bold text-slate-300">{t('pages.targeting.searchFleet')}</span>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="search"
+                  list="fleet-comparison-options"
+                  value={comparisonFleetName}
+                  onChange={(event) => selectComparisonFleet(event.target.value)}
+                  placeholder={t('pages.targeting.searchFleetPlaceholder')}
+                  className="w-full rounded-lg bg-slate-950 py-2.5 pl-9 pr-3 text-xs text-slate-100 outline-none placeholder:text-slate-600 focus:ring-1 focus:ring-indigo-500"
+                />
+                <datalist id="fleet-comparison-options">
+                  {comparisonFleets.map((fleet) => <option key={fleet.id} value={fleet.name}>#{fleet.id}</option>)}
+                </datalist>
+              </div>
+            </label>
+          </div>
+
+          <p className={`text-[10px] ${snapshotResolutionError ? 'text-rose-300' : 'text-slate-500'}`}>
+            {snapshotResolutionError
+              ? t('pages.targeting.snapshotNotFound')
+              : t('pages.targeting.snapshotSelectionRules')}
+          </p>
+
+          <button
+            type="button"
+            onClick={runFleetComparison}
+            disabled={snapshotResolutionLoading || comparisonLoading || !comparisonFleetId || !firstSnapshotId || !secondSnapshotId || firstSnapshotId === secondSnapshotId}
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-black text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ArrowRightLeft className={`h-4 w-4 ${comparisonLoading ? 'animate-pulse' : ''}`} />
+            {comparisonLoading ? t('pages.targeting.comparingSnapshots') : t('pages.targeting.compareSnapshots')}
+          </button>
+
+          {comparisonResult && (
+            <div className="space-y-4 border-t border-slate-800 pt-5">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                {[
+                  ['firstCount', comparisonResult.firstCount, 'text-slate-200'],
+                  ['secondCount', comparisonResult.secondCount, 'text-slate-200'],
+                  ['membersChanged', comparisonResult.changedCount, 'text-amber-300'],
+                  ['membersJoined', comparisonResult.joined.length, 'text-emerald-300'],
+                  ['membersLeft', comparisonResult.left.length, 'text-rose-300']
+                ].map(([key, value, color]) => (
+                  <div key={key} className="rounded-lg bg-slate-950 p-3">
+                    <div className="text-[9px] font-bold uppercase tracking-wider text-slate-500">{t(`pages.targeting.${key}`)}</div>
+                    <div className={`mt-1 font-mono text-xl font-black ${color}`}>{value}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {[
+                  ['membersJoinedList', comparisonResult.joined, 'text-emerald-300'],
+                  ['membersLeftList', comparisonResult.left, 'text-rose-300']
+                ].map(([key, members, color]) => (
+                  <div key={key} className="overflow-hidden rounded-lg bg-slate-950">
+                    <h3 className={`px-4 py-3 text-xs font-black ${color}`}>{t(`pages.targeting.${key}`, { count: members.length })}</h3>
+                    <div className="max-h-72 overflow-y-auto">
+                      {members.map((member) => (
+                        <div key={member.id} className="flex items-center justify-between border-t border-slate-900 px-4 py-2 text-xs">
+                          <span className="font-bold text-slate-200">{member.name}</span>
+                          <span className="font-mono text-[9px] text-slate-600">#{member.id}</span>
+                        </div>
+                      ))}
+                      {members.length === 0 && <div className="border-t border-slate-900 px-4 py-6 text-center text-[10px] text-slate-600">{t('pages.targeting.noMemberChanges')}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {activeTab === 'individual' && <div className="space-y-6 rounded-lg bg-slate-900 p-4 shadow-sm sm:p-8">
         {/* Filter Controls */}
@@ -803,7 +1075,9 @@ const StarTargeting = () => {
               onChange={(event) => setSelectedTournament(event.target.value)}
               className="w-full rounded-lg bg-slate-950 px-3 py-2.5 text-xs text-slate-100 outline-none focus:ring-1 focus:ring-indigo-500"
             >
-              <option value="current">{t('pages.targeting.currentTournament')}</option>
+              {tournamentStatus.isLive && (
+                <option value="current">{t('pages.targeting.currentTournament')}</option>
+              )}
               {tournamentCollections.map((collection, index) => (
                 <option key={collection.collection_id} value={collection.collection_id}>
                   {index === 0 ? `${t('pages.targeting.lastTournament')} · ` : ''}
@@ -944,7 +1218,20 @@ const StarTargeting = () => {
                                   <tr key={member.id} className="hover:bg-slate-800/30">
                                     <td className="px-2 py-2 font-mono text-slate-600">{memberIndex + 1}</td>
                                     <td className="px-2 py-2">
-                                      <div className="font-bold text-slate-200">{member.name}</div>
+                                      <button
+                                        type="button"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleRowClick({
+                                            ...member,
+                                            fleet: fleet.fleetName,
+                                            fleetId: fleet.fleetId
+                                          });
+                                        }}
+                                        className="font-bold text-slate-200 underline-offset-2 transition hover:text-indigo-300 hover:underline"
+                                      >
+                                        {member.name}
+                                      </button>
                                       <div className="font-mono text-[8px] text-slate-600">#{member.id}</div>
                                     </td>
                                     {member.dailyStars.map((stars, dayIndex) => (
