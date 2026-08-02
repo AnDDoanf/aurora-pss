@@ -21,152 +21,13 @@ import {
   TILE_SIZE,
   validateLayout
 } from './layoutModel';
+import { HullChangePrompt, TouchRoomPreview } from './_components/BuilderOverlays';
+import { RoomPalette } from './_components/RoomPalette';
 
-const EMPTY_LAYOUT_URL = 'https://pixel-prestige.com/ship-builder.php?ship=386&rooms=';
-const LINE_BUILD_ROOT_IDS = new Set([3, 103, 247]);
-
-const isLineBuildDesign = (design) => LINE_BUILD_ROOT_IDS.has(Number(design?.rootId || design?.id));
-
-const pointerIsInside = (clientX, clientY, rect) => Boolean(rect
-  && clientX >= rect.left && clientX <= rect.right
-  && clientY >= rect.top && clientY <= rect.bottom);
-
-const normalizedRect = (startX, startY, endX, endY) => ({
-  left: Math.min(startX, endX),
-  top: Math.min(startY, endY),
-  width: Math.abs(endX - startX),
-  height: Math.abs(endY - startY)
-});
-
-const gridLine = (start, end) => {
-  const cells = [];
-  let column = Number(start.column);
-  let row = Number(start.row);
-  const targetColumn = Number(end.column);
-  const targetRow = Number(end.row);
-  const columnStep = column < targetColumn ? 1 : -1;
-  const rowStep = row < targetRow ? 1 : -1;
-  const columnDistance = Math.abs(targetColumn - column);
-  const rowDistance = Math.abs(targetRow - row);
-  let error = columnDistance - rowDistance;
-
-  while (true) {
-    cells.push({ column, row });
-    if (column === targetColumn && row === targetRow) break;
-    const doubledError = error * 2;
-    if (doubledError > -rowDistance) {
-      error -= rowDistance;
-      column += columnStep;
-    }
-    if (doubledError < columnDistance) {
-      error += columnDistance;
-      row += rowStep;
-    }
-  }
-  return cells;
-};
-
-const copyText = async (value) => {
-  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(value);
-  const textarea = document.createElement('textarea');
-  textarea.value = value;
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand('copy');
-  textarea.remove();
-};
-
-function RoomTile({ room, design, issues, selected, zoom, onSelect, onMoveStart, onMove, onDragEnd }) {
-  const drag = useRef(null);
-
-  if (!design) {
-    return (
-      <button
-        type="button"
-        data-ship-room="true"
-        onPointerDown={(event) => event.stopPropagation()}
-        onClick={() => onSelect(room.uid)}
-        className="absolute z-20 flex items-center justify-center bg-rose-950/90 text-[8px] font-bold text-rose-200"
-        style={{
-          left: room.column * TILE_SIZE * zoom,
-          top: room.row * TILE_SIZE * zoom,
-          width: TILE_SIZE * zoom,
-          height: TILE_SIZE * zoom
-        }}
-      >
-        {room.roomDesignId}
-      </button>
-    );
-  }
-
-  const handlePointerDown = (event) => {
-    if (event.button !== 0) return;
-    event.preventDefault();
-    event.stopPropagation();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    drag.current = {
-      x: event.clientX,
-      y: event.clientY,
-      column: room.column,
-      row: room.row,
-      latestColumn: room.column,
-      latestRow: room.row
-    };
-    onMoveStart();
-    onSelect(room.uid);
-  };
-
-  const handlePointerMove = (event) => {
-    if (!drag.current) return;
-    const column = drag.current.column + Math.round((event.clientX - drag.current.x) / (TILE_SIZE * zoom));
-    const row = drag.current.row + Math.round((event.clientY - drag.current.y) / (TILE_SIZE * zoom));
-    drag.current.latestColumn = column;
-    drag.current.latestRow = row;
-    onMove(room.uid, column, row);
-  };
-
-  const finishDragging = () => {
-    if (drag.current) onDragEnd(room.uid, drag.current.latestColumn, drag.current.latestRow, design);
-    drag.current = null;
-  };
-
-  const cancelDragging = () => {
-    drag.current = null;
-  };
-
-  return (
-    <button
-      type="button"
-      data-ship-room="true"
-      title={`${design.name} · ${room.column},${room.row}${issues?.length ? ` · ${issues.join(', ')}` : ''}`}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={finishDragging}
-      onPointerCancel={cancelDragging}
-      className={`absolute z-10 touch-none select-none overflow-hidden transition-[filter,box-shadow] ${
-        issues?.length
-          ? 'ring-2 ring-inset ring-rose-500 brightness-110'
-          : selected
-            ? 'ring-2 ring-inset ring-cyan-300 brightness-110'
-            : 'hover:brightness-110'
-      }`}
-      style={{
-        left: room.column * TILE_SIZE * zoom,
-        top: room.row * TILE_SIZE * zoom,
-        width: Number(design.columns || 1) * TILE_SIZE * zoom,
-        height: Number(design.rows || 1) * TILE_SIZE * zoom
-      }}
-    >
-      <img
-        src={publicUrl(`/assets/sprites/${design.imageSpriteId}.webp`)}
-        alt={design.name}
-        draggable="false"
-        className="h-full w-full object-fill [image-rendering:pixelated]"
-      />
-    </button>
-  );
-}
-
+import { RoomTile } from './_components/RoomTile';
+import {
+  EMPTY_LAYOUT_URL, copyText, gridLine, isLineBuildDesign, normalizedRect, pointerIsInside
+} from './_components/shipBuilderHelpers';
 export function ShipBuilderPage() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -768,51 +629,23 @@ export function ShipBuilderPage() {
   };
 
   const wideHull = Number(ship?.columns || 0) > 50;
-  const renderRoomPalette = (layout) => (
-    <div className={layout === 'rows'
-      ? 'ship-builder-scrollbar grid min-h-20 w-full grid-flow-col grid-rows-1 auto-cols-max items-center gap-2 overflow-x-auto pb-2 sm:min-h-36 sm:grid-rows-2'
-      : 'ship-builder-scrollbar grid w-56 grid-cols-2 content-start items-center gap-2 overflow-y-auto p-2'}>
-      {paletteRooms.length ? paletteRooms.map((entry) => (
-        (() => {
-          const rootId = Number(entry.rootId || entry.id);
-          const deployed = rooms.filter((room) => {
-            const deployedDesign = roomById.get(Number(room.roomDesignId));
-            return Number(deployedDesign?.rootId || deployedDesign?.id) === rootId;
-          }).length;
-          const limit = deploymentLimitForDesign(ship, entry, roomPurchases);
-          const capped = hasConflictingSuperWeapon(rooms, entry, roomById) || deployed >= limit;
-          const capLabel = Number.isFinite(limit)
-            ? t('shipBuilder.deploymentCap', { deployed, limit })
-            : '';
-          return (
-        <button
-          type="button"
-          key={entry.id}
-          draggable={!capped}
-          aria-disabled={capped}
-          title={t('shipBuilder.designTooltip', {
-            name: entry.name, id: entry.id, columns: entry.columns, rows: entry.rows, cap: capLabel
-          })}
-          onDragStart={(event) => startPaletteDrag(event, entry)}
-          onDragEnd={() => setDropActive(false)}
-          onPointerDown={(event) => startPalettePointerDrag(event, entry)}
-          onPointerMove={movePalettePointerDrag}
-          onPointerUp={finishPalettePointerDrag}
-          onPointerCancel={cancelPalettePointerDrag}
-          onClick={() => selectPaletteRoom(entry)}
-          className={`group flex h-16 min-w-16 shrink-0 touch-pan-x items-center justify-center bg-transparent p-1 transition hover:brightness-125 ${capped ? 'cursor-default opacity-30' : 'cursor-grab active:cursor-grabbing'} ${
-            Number(activeLineDesignId) === Number(entry.id)
-              ? 'ring-2 ring-inset ring-cyan-400'
-              : Number(selectedPaletteDesignId) === Number(entry.id) ? 'ring-2 ring-inset ring-indigo-400' : ''
-          }`}
-        >
-          <img src={publicUrl(`/assets/sprites/${entry.imageSpriteId}.webp`)} alt={entry.name} className="max-h-16 max-w-full object-contain [image-rendering:pixelated]" />
-        </button>
-          );
-        })()
-      )) : <div className="col-span-2 flex items-center justify-center text-xs text-slate-500">{t('shipBuilder.noRooms')}</div>}
-    </div>
-  );
+  const roomPaletteProps = {
+    activeLineDesignId,
+    cancelPointerDrag: cancelPalettePointerDrag,
+    entries: paletteRooms,
+    finishPointerDrag: finishPalettePointerDrag,
+    movePointerDrag: movePalettePointerDrag,
+    onDragEnd: () => setDropActive(false),
+    onDragStart: startPaletteDrag,
+    onPointerDown: startPalettePointerDrag,
+    onSelect: selectPaletteRoom,
+    roomById,
+    roomPurchases,
+    rooms,
+    selectedPaletteDesignId,
+    ship,
+    t
+  };
 
   if (loading) {
     return <div className="p-12 text-center font-mono text-sm text-slate-400">{t('shipBuilder.loading')}</div>;
@@ -820,51 +653,15 @@ export function ShipBuilderPage() {
 
   return (
     <div className="w-full space-y-4 py-1 text-[var(--text-main)]">
-      {pendingHullId != null && (
-        <div
-          role="alertdialog"
-          aria-live="assertive"
-          aria-label={t('shipBuilder.confirmHullChange')}
-          className="fixed bottom-3 left-3 right-3 z-[100] flex flex-col gap-3 rounded-xl bg-[var(--bg-card-header)] p-4 text-[var(--text-main)] shadow-2xl sm:bottom-6 sm:left-auto sm:right-6 sm:w-[28rem]"
-        >
-          <div>
-            <div className="text-sm font-black">{t('shipBuilder.removeAllRooms')}</div>
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              {t(rooms.length === 1 ? 'shipBuilder.changeHullWarningOne' : 'shipBuilder.changeHullWarning', {
-                hull: ships.find((entry) => Number(entry.id) === pendingHullId)?.name
-                  || t('shipBuilder.fallbackHull', { id: pendingHullId }),
-                count: rooms.length
-              })}
-            </p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setPendingHullId(null)} className="rounded-lg bg-[var(--bg-input)] px-3 py-2 text-xs font-bold text-[var(--text-main)] hover:brightness-105">
-              {t('shipBuilder.keepLayout')}
-            </button>
-            <button type="button" onClick={confirmHullChange} className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-3 py-2 text-xs font-bold text-white hover:bg-rose-500">
-              <Trash2 className="h-4 w-4" /> {t('shipBuilder.removeRooms')}
-            </button>
-          </div>
-        </div>
-      )}
-      {touchPaletteDrag && (
-        <div
-          className="pointer-events-none fixed z-[110] flex items-center justify-center opacity-90 drop-shadow-2xl"
-          style={{
-            left: touchPaletteDrag.x,
-            top: touchPaletteDrag.y,
-            width: Number(touchPaletteDrag.design.columns || 1) * TILE_SIZE * zoom,
-            height: Number(touchPaletteDrag.design.rows || 1) * TILE_SIZE * zoom,
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <img
-            src={publicUrl(`/assets/sprites/${touchPaletteDrag.design.imageSpriteId}.webp`)}
-            alt=""
-            className="h-full w-full object-fill [image-rendering:pixelated]"
-          />
-        </div>
-      )}
+      <HullChangePrompt
+        pendingHullId={pendingHullId}
+        rooms={rooms}
+        ships={ships}
+        onCancel={() => setPendingHullId(null)}
+        onConfirm={confirmHullChange}
+        t={t}
+      />
+      <TouchRoomPreview drag={touchPaletteDrag} tileSize={TILE_SIZE} zoom={zoom} />
       <section className="overflow-hidden rounded-2xl bg-[var(--bg-card)]">
         <div className="bg-[var(--bg-card-header)] p-5 sm:p-7">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
@@ -1164,13 +961,13 @@ export function ShipBuilderPage() {
           </div>
           {!wideHull && (
             <aside className="hidden h-full w-56 shrink-0 overflow-hidden bg-transparent sm:flex">
-              {renderRoomPalette('columns')}
+              <RoomPalette layout="columns" {...roomPaletteProps} />
             </aside>
           )}
         </div>
 
         <div className={`${wideHull ? 'block' : 'block sm:hidden'} shrink-0 bg-transparent px-3 pt-2`}>
-            {renderRoomPalette('rows')}
+            <RoomPalette layout="rows" {...roomPaletteProps} />
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-3 bg-[var(--bg-card-header)] p-3 text-xs text-[var(--text-muted)]">

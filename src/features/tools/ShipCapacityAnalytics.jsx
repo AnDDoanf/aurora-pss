@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Sword, Sliders, BarChart3, RotateCcw } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { SEOHead } from '../../components/SEOHead';
-import { SnapshotTimeline } from './components/SnapshotTimeline';
-import { WeaponConfigurator } from './components/WeaponConfigurator';
-import { DefenseConfigurator } from './components/DefenseConfigurator';
-import { AnalyticsResults } from './components/AnalyticsResults';
+import { SnapshotTimeline } from './_components/SnapshotTimeline';
+import { WeaponConfigurator } from './_components/WeaponConfigurator';
+import { DefenseConfigurator } from './_components/DefenseConfigurator';
+import { AnalyticsResults } from './_components/AnalyticsResults';
 
 const STORAGE_KEY_SNAPSHOTS = 'pss_capacity_analytics_snapshots';
 const STORAGE_KEY_ACTIVE_ID = 'pss_capacity_analytics_active_id';
