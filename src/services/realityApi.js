@@ -2,9 +2,12 @@ import axios from 'axios';
 import { extractPrestigeError } from '../features/prestige/prestigePath';
 
 const REALITY_DIRECT_BASE = 'https://pss.reality.net';
+const DEFAULT_GOOGLE_PROXY = 'https://script.google.com/macros/s/AKfycbzBIKVNThUxIL6mxs1pUISmiYYQXOuhdZfxJ-nZcZklXiYrfezhCy9QZp44Lzf973SdIw/exec';
 const normalizeBaseUrl = (value) => String(value || '').trim().replace(/\/+$/, '');
 const configuredRealityBase = normalizeBaseUrl(import.meta.env.VITE_REALITY_API_BASE_URL);
-const configuredGoogleProxy = normalizeBaseUrl(import.meta.env.VITE_FLEET_DATA_PROXY_URL);
+const configuredGoogleProxy = normalizeBaseUrl(
+  import.meta.env.VITE_FLEET_DATA_PROXY_URL || DEFAULT_GOOGLE_PROXY
+);
 const directRealityConfigured = configuredRealityBase === REALITY_DIRECT_BASE;
 const REALITY_NET_BASE = import.meta.env.DEV
   ? (configuredRealityBase || '/api-reality')
