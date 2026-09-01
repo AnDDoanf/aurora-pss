@@ -1,4 +1,5 @@
 const FLEET_DATA_ORIGIN = 'https://fleetdata.dolores2.xyz';
+const REALITY_ORIGIN = 'https://pss.reality.net';
 
 function doGet(e) {
   const parameters = e && e.parameter ? e.parameter : {};
@@ -30,6 +31,51 @@ function doGet(e) {
     return json_(data);
   } catch (error) {
     return json_({ error: error.message || String(error) });
+  }
+}
+
+function doPost(e) {
+  const parameters = e && e.parameter ? e.parameter : {};
+
+  try {
+    if (parameters.action !== 'runPrestige') {
+      return json_({ error: 'Invalid action' });
+    }
+    return json_(runPrestige_(parameters));
+  } catch (error) {
+    return json_({
+      status: 'error',
+      error: error.message || String(error),
+      message: error.message || String(error)
+    });
+  }
+}
+
+function runPrestige_(parameters) {
+  const targetName = requireText_('target_name', parameters.target_name, 120, true);
+  const payload = {
+    username: requireText_('username', parameters.username, 120, false),
+    target_name: targetName,
+    unowned_textarea: requireText_('unowned_textarea', parameters.unowned_textarea, 100000, false),
+    additional_crew: requireText_('additional_crew', parameters.additional_crew, 100000, false)
+  };
+  const response = UrlFetchApp.fetch(REALITY_ORIGIN + '/run-script', {
+    method: 'post',
+    payload: payload,
+    followRedirects: true,
+    muteHttpExceptions: true
+  });
+  const status = response.getResponseCode();
+  const body = response.getContentText();
+
+  if (status < 200 || status >= 300) {
+    throw new Error('Prestige service returned HTTP ' + status + ': ' + body.slice(0, 200));
+  }
+
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    throw new Error('Prestige service returned an invalid response.');
   }
 }
 
@@ -102,6 +148,17 @@ function requireDigits_(name, value) {
   if (!/^\d+$/.test(String(value || ''))) {
     throw new Error(`Invalid ${name}`);
   }
+}
+
+function requireText_(name, value, maxLength, required) {
+  const text = String(value || '').trim();
+  if (required && !text) {
+    throw new Error('Missing ' + name);
+  }
+  if (text.length > maxLength) {
+    throw new Error(name + ' is too long');
+  }
+  return text;
 }
 
 function json_(data) {

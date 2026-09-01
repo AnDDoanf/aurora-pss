@@ -1,8 +1,20 @@
 import axios from 'axios';
 import { extractPrestigeError } from '../features/prestige/prestigePath';
 
-const REALITY_NET_BASE = import.meta.env.VITE_REALITY_API_BASE_URL
-  || (import.meta.env.DEV ? '/api-reality' : 'https://pss.reality.net');
+const REALITY_DIRECT_BASE = 'https://pss.reality.net';
+const normalizeBaseUrl = (value) => String(value || '').trim().replace(/\/+$/, '');
+const configuredRealityBase = normalizeBaseUrl(import.meta.env.VITE_REALITY_API_BASE_URL);
+const configuredGoogleProxy = normalizeBaseUrl(import.meta.env.VITE_FLEET_DATA_PROXY_URL);
+const directRealityConfigured = configuredRealityBase === REALITY_DIRECT_BASE;
+const REALITY_NET_BASE = import.meta.env.DEV
+  ? (configuredRealityBase || '/api-reality')
+  : ((!configuredRealityBase || directRealityConfigured) && configuredGoogleProxy
+    ? configuredGoogleProxy
+    : (configuredRealityBase || REALITY_DIRECT_BASE));
+const REALITY_USES_APPS_SCRIPT = /script\.google\.com\/macros\/s\//i.test(REALITY_NET_BASE);
+const REALITY_ENDPOINT = REALITY_USES_APPS_SCRIPT
+  ? REALITY_NET_BASE
+  : `${REALITY_NET_BASE}/run-script`;
 
 export const runPrestigePathFinder = async (shipName, targetCrew, unownedExclude = '', unownedExtra = '') => {
   try {
@@ -11,9 +23,10 @@ export const runPrestigePathFinder = async (shipName, targetCrew, unownedExclude
     formData.append('target_name', targetCrew);
     formData.append('unowned_textarea', unownedExclude);
     formData.append('additional_crew', unownedExtra);
+    if (REALITY_USES_APPS_SCRIPT) formData.append('action', 'runPrestige');
 
     const response = await axios.post(
-      `${REALITY_NET_BASE}/run-script`,
+      REALITY_ENDPOINT,
       formData,
       { timeout: 2000000 }
     );
