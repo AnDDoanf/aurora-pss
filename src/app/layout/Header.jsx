@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Globe, Menu, Moon, Sun, Search, ChevronDown, Users, LayoutGrid, Rocket, Package, Cpu, Award, Dumbbell, BarChart3, Target, Grid3X3 } from 'lucide-react';
+import { Globe, Menu, Moon, Sun, Search, ChevronDown, Users, LayoutGrid, Rocket, Package, Cpu, Award, Dumbbell, BarChart3, Target, Grid3X3, GitMerge } from 'lucide-react';
 import { useTranslation } from '../../i18n/useTranslation';
 import { DirectSearchInput } from '../../features/search/DirectSearchInput';
 import { publicUrl } from '../../utils/publicUrl';
@@ -29,6 +29,12 @@ export function Header({ onOpenSearch, onToggleMobileNav, theme, onToggleTheme }
     { label: t('layout.collectionsSkins'), path: `/${lang}/library/collections`, icon: Award, desc: t('layout.collectionDesc') }
   ];
   const toolItems = [
+    {
+      label: t('layout.prestige'),
+      path: `/${lang}/tools/prestige`,
+      icon: GitMerge,
+      desc: t('layout.prestigeDesc')
+    },
     {
       label: t('nav.shipBuilder'),
       path: `/${lang}/tools/ship-builder`,

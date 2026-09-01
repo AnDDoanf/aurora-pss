@@ -177,6 +177,10 @@ export const router = createBrowserRouter([
             element: <Suspense fallback={<LoadingFallback />}><PlayerIntelligencePage /></Suspense>
           },
           {
+            path: 'tools/prestige',
+            element: <Suspense fallback={<LoadingFallback />}><SmartAdvisor /></Suspense>
+          },
+          {
             path: 'tools/advisor',
             element: <Suspense fallback={<LoadingFallback />}><SmartAdvisor /></Suspense>
           },
